@@ -5,10 +5,15 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun FitCoachApp() {
     val navController = rememberNavController()
+    val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
+
+    // Démarrage conditionnel selon l'état de connexion
+    val startDestination = if (isUserLoggedIn) "home" else "onboarding"
     NavHost(navController = navController, startDestination = "onboarding") {
         composable("onboarding") {
             FirstOnboardingScreen(
@@ -29,7 +34,14 @@ fun FitCoachApp() {
             )
         }
         composable("home") {
-            HomeScreen()
+            HomeScreen(
+                onLogout = {
+                    FirebaseAuth.getInstance().signOut()
+                    navController.navigate("onboarding") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

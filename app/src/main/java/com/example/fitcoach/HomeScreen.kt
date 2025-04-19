@@ -15,7 +15,9 @@ import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onLogout: () -> Unit
+) {
     val user = FirebaseAuth.getInstance().currentUser
 
     Column(
@@ -26,9 +28,7 @@ fun HomeScreen() {
     ) {
         Text("Bienvenue, ${user?.email ?: "Utilisateur inconnu"} !", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            FirebaseAuth.getInstance().signOut()
-        }) {
+        Button(onClick = onLogout) {
             Text("Se déconnecter")
         }
     }
