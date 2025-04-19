@@ -30,12 +30,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
         setContent {
-            FirstOnboardingScreen()
+            FitCoachApp()
         }
     }
 }
 @Composable
-fun FirstOnboardingScreen() {
+fun FirstOnboardingScreen(
+    onLoginClick: () -> Unit,
+    onGetStartedClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -92,7 +95,7 @@ fun FirstOnboardingScreen() {
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 modifier = Modifier.clickable {
-                    // TODO: Navigate to Sign In page
+                    onLoginClick()
                 }
             )
 
@@ -100,7 +103,7 @@ fun FirstOnboardingScreen() {
 
             Button(
                 onClick = {
-                    // TODO: Navigate to Sign Up or Welcome
+                    onGetStartedClick()
                 },
                 shape = RoundedCornerShape(30.dp),
                 colors = ButtonDefaults.buttonColors(
