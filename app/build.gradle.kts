@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
-    alias(libs.plugins.google.gms.google.services)
+    //alias(libs.plugins.google.gms.google.services)
 
 }
 
