@@ -23,11 +23,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         FirebaseApp.initializeApp(this)
         setContent {
             FirstOnboardingScreen()
@@ -40,15 +40,13 @@ fun FirstOnboardingScreen() {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        // 👇 Image de fond (tu dois ajouter une image dans drawable)
         Image(
-            painter = painterResource(id = R.drawable.onboarding1), // Remplace par ton image
+            painter = painterResource(id = R.drawable.page1),
             contentDescription = "Workout Background",
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
 
-        // 👇 Dégradé pour lisibilité du texte
         Box(
             modifier = Modifier
                 .fillMaxSize()

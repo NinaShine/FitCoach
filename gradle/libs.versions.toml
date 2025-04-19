@@ -1,23 +1,26 @@
 [versions]
-agp = "8.9.1"
-kotlin = "1.9.22"
+agp = "8.2.0"                     # Version plus récente pour supporter SDK 35
+kotlin = "1.9.21"                 # Version compatible avec KSP 1.9.22-1.0.17
+ksp = "1.9.22-1.0.17"
 coreKtx = "1.12.0"
 junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.7"
+junitVersion = "1.1.5"
+espressoCore = "3.5.1"
+lifecycleRuntimeKtx = "2.6.2"
 activityCompose = "1.8.1"
-composeBom = "2024.04.01"
-fragmentKtx = "1.8.6"
-constraintlayout = "2.2.1"
-appcompat = "1.7.0"
-navigationFragment = "2.8.8"
-navigationUiKtx = "2.8.8"
-googleGmsGoogleServices = "4.4.2"
-firebaseAuth = "23.2.0"
-credentials = "1.5.0"
-credentialsPlayServicesAuth = "1.5.0"
-googleid = "1.1.1"
+composeBom = "2023.10.01"
+fragmentKtx = "1.6.2"
+constraintlayout = "2.1.4"
+appcompat = "1.6.1"
+navigationFragment = "2.7.5"
+navigationUiKtx = "2.7.5"
+googleGmsGoogleServices = "4.4.0"
+firebaseAuth = "22.3.0"           # Version récente de Firebase Auth
+credentials = "1.2.0"
+credentialsPlayServicesAuth = "1.2.0"
+googleid = "1.1.0"
+composeCompiler = "1.5.6"         # Version compatible avec Kotlin 1.9.22
+roomVersion = "2.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,9 +46,13 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+# Room dependencies
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomVersion" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomVersion" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
