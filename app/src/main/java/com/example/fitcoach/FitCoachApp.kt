@@ -14,6 +14,7 @@ fun FitCoachApp() {
 
     // Démarrage conditionnel selon l'état de connexion
     val startDestination = if (isUserLoggedIn) "home" else "onboarding"
+
     NavHost(navController = navController, startDestination = "onboarding") {
         composable("onboarding") {
             FirstOnboardingScreen(
