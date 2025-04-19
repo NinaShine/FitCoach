@@ -1,26 +1,26 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("com.google.devtools.ksp")
     alias(libs.plugins.google.gms.google.services)
-
+    alias(libs.plugins.ksp) // Utiliser la référence du plugin depuis le catalog
 }
 
 android {
     namespace = "com.example.fitcoach"
-    compileSdk = 34
+    compileSdk = 35 // SDK 35 comme demandé
 
     defaultConfig {
         applicationId = "com.example.fitcoach"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35 // SDK 35 comme demandé
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
-        }    }
+        }
+    }
 
     buildTypes {
         release {
@@ -43,7 +43,7 @@ android {
         viewBinding = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packaging {
         resources {
@@ -53,6 +53,8 @@ android {
 }
 
 dependencies {
+    // Utiliser la référence du compilateur depuis le catalog
+    implementation("androidx.compose.compiler:compiler:${libs.versions.composeCompiler.get()}")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -67,42 +69,27 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
 
-    val roomVersion = "2.6.1"
+    // Room Database - utiliser les références du catalog
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.room.ktx)
 
-    implementation("androidx.room:room-runtime:$roomVersion")
-    annotationProcessor("androidx.room:room-compiler:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
-    implementation("androidx.compose.material:material-icons-extended:1.6.1")
-
-    // To use Kotlin Symbol Processing (KSP)
-    implementation("androidx.room:room-ktx:$roomVersion")
-
-    // Jetpack Compose
-    implementation("androidx.compose.ui:ui:1.5.0")
+    // Jetpack Compose - versions compatibles
+    implementation("androidx.compose.ui:ui:1.5.4")
     implementation("androidx.compose.material3:material3:1.1.2")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-
-    // Room Database
-    implementation("androidx.room:room-runtime:2.5.2")
-    implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.navigation.fragment)
-    implementation(libs.androidx.navigation.ui.ktx)
-    implementation("androidx.room:room-ktx:2.5.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-    // Lifecycle (pour Flow)
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.2")
+    implementation("androidx.navigation:navigation-compose:2.7.5")
 
-    // ViewModel et LiveData (optionnel)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
