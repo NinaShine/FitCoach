@@ -2,16 +2,19 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.ksp) 
     alias(libs.plugins.ksp) // Utiliser la référence du plugin depuis le catalog
 }
 
 android {
     namespace = "com.example.fitcoach"
+    compileSdk = 35 
     compileSdk = 35 // SDK 35 comme demandé
 
     defaultConfig {
         applicationId = "com.example.fitcoach"
         minSdk = 24
+        targetSdk = 35 
         targetSdk = 35 // SDK 35 comme demandé
         versionCode = 1
         versionName = "1.0"
@@ -19,6 +22,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+    }
         }
     }
 
@@ -44,6 +49,7 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packaging {
         resources {
@@ -53,6 +59,8 @@ android {
 }
 
 dependencies {
+    // Utiliser la référence du compilateur depuis le catalog
+    implementation("androidx.compose.compiler:compiler:${libs.versions.composeCompiler.get()}")
     // Utiliser la référence du compilateur depuis le catalog
     implementation("androidx.compose.compiler:compiler:${libs.versions.composeCompiler.get()}")
 
@@ -73,21 +81,34 @@ dependencies {
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
+    // Room Database - utiliser les références du catalog
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.room.ktx)
 
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
     // Jetpack Compose - versions compatibles
     implementation("androidx.compose.ui:ui:1.5.4")
+    // Jetpack Compose - versions compatibles
+    implementation("androidx.compose.ui:ui:1.5.4")
     implementation("androidx.compose.material3:material3:1.1.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.5")
+    implementation("androidx.navigation:navigation-compose:2.7.5")
 
+    // ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
@@ -98,4 +119,15 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+
+
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.google.firebase:firebase-analytics")
+
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
 }

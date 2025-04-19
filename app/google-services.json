@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "529028530664",
-    "project_id": "fitcoach-ff0d6",
-    "storage_bucket": "fitcoach-ff0d6.firebasestorage.app"
+    "project_number": "520320356111",
+    "project_id": "fitcoach-5b357",
+    "storage_bucket": "fitcoach-5b357.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:529028530664:android:c96e34fc3be8c86d10245d",
+        "mobilesdk_app_id": "1:520320356111:android:d4e950d56d8e4b8c9f387a",
         "android_client_info": {
           "package_name": "com.example.fitcoach"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAuTECXZi5AB3OHhJCSD8qMOmuEURfHypk"
+          "current_key": "AIzaSyAw_r6U3xePDtN7-9lk8_14YVVUB1PC9Rg"
         }
       ],
       "services": {
