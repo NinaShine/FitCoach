@@ -2,8 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
-    alias(libs.plugins.ksp) 
-    alias(libs.plugins.ksp) // Utiliser la référence du plugin depuis le catalog
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -24,8 +23,7 @@ android {
             useSupportLibrary = true
         }
     }
-        }
-    }
+
 
     buildTypes {
         release {
