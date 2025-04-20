@@ -49,4 +49,3 @@ fun HomeScreenPreview() {
         HomeScreen(onLogout = {})
     }
 }
-

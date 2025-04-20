@@ -76,6 +76,9 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
 
+    implementation("androidx.compose.foundation:foundation:1.5.4")
+
+
     // Room Database - utiliser les références du catalog
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
@@ -118,9 +121,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.compose.material3:material3:1.3.2")
+
 
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+
+    implementation("com.google.firebase:firebase-auth-ktx")
+
 
 
     // TODO: Add the dependencies for Firebase products you want to use

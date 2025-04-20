@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
@@ -55,7 +56,6 @@ fun RegisterScreen(
     var error by remember { mutableStateOf<String?>(null) }
     var passwordVisible by remember { mutableStateOf(false) }
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,73 +63,123 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
 
-        Text("Create an account", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(24.dp))
+        // ✅ Croix en haut à gauche
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            IconButton(
+                onClick = {
+                    navController.navigate("onboarding") {
+                        popUpTo("register") { inclusive = true }
+                    }
+                },
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close, // Remplace par icône de croix si dispo
+                    contentDescription = "Close",
+                    tint = Color.Gray
+                )
+            }
+        }
 
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") },
-            leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp), // coins arrondis
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color(0xFFFAEDE6),
-                unfocusedBorderColor = Color(0xFFFAEDE6),
-                focusedBorderColor = Color(0xFFE86144),
-                focusedLabelColor = Color(0xFFE86144),
-            ),
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Create an account",
+            style = MaterialTheme.typography.headlineMedium
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // ✅ Input - Username
+        Box(
+            modifier = Modifier
+                .width(338.dp)
+                .height(68.dp)
+        ) {
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Username") },
+                leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
+                modifier = Modifier
+                    .fillMaxSize(), // 👈 remplir la box 338x68
+                shape = RoundedCornerShape(20.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color(0xFFFAEDE6),
+                    unfocusedBorderColor = Color(0xFFFAEDE6),
+                    focusedBorderColor = Color(0xFFE86144),
+                    focusedLabelColor = Color(0xFFE86144),
+                )
+            )
+        }
 
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            leadingIcon = {Icon(Icons.Default.Email, contentDescription = null)},
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp), // coins arrondis
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color(0xFFFAEDE6),
-                unfocusedBorderColor = Color(0xFFFAEDE6),
-                focusedBorderColor = Color(0xFFE86144),
-                focusedLabelColor = Color(0xFFE86144),
+        // ✅ Input - Email
+        Box(
+            modifier = Modifier
+                .width(338.dp)
+                .height(68.dp)
+        ) {
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
+                modifier = Modifier.fillMaxSize(), // 👈 très important
+                shape = RoundedCornerShape(20.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color(0xFFFAEDE6),
+                    unfocusedBorderColor = Color(0xFFFAEDE6),
+                    focusedBorderColor = Color(0xFFE86144),
+                    focusedLabelColor = Color(0xFFE86144),
+                )
             )
-        )
+        }
+
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            leadingIcon = {Icon(Icons.Default.Lock, contentDescription = null)},
-            trailingIcon = {
-                val image = if (passwordVisible)
-                    Icons.Default.Visibility
-                else Icons.Default.VisibilityOff
 
-                val description = if (passwordVisible) "Hide password" else "Show password"
-
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(imageVector = image, contentDescription = description)
-                }
-            },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            shape = RoundedCornerShape(20.dp), // coins arrondis
-            modifier = Modifier.fillMaxWidth(),
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color(0xFFFAEDE6),
-                unfocusedBorderColor = Color(0xFFFAEDE6),
-                focusedBorderColor = Color(0xFFE86144),
-                focusedLabelColor = Color(0xFFE86144),
+        Box(
+            modifier = Modifier
+                .width(338.dp)
+                .height(68.dp)
+        ) {
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                        )
+                    }
+                },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxSize(), // 👈 important ici aussi
+                shape = RoundedCornerShape(20.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = Color(0xFFFAEDE6),
+                    unfocusedBorderColor = Color(0xFFFAEDE6),
+                    focusedBorderColor = Color(0xFFE86144),
+                    focusedLabelColor = Color(0xFFE86144),
+                )
             )
-        )
+        }
+
+
         Spacer(modifier = Modifier.height(24.dp))
 
+        // ✅ Bouton "Sign Up"
         Button(
             onClick = {
                 FirebaseAuth.getInstance()
@@ -152,13 +202,11 @@ fun RegisterScreen(
                             error = task.exception?.message ?: "Erreur lors de l'inscription"
                         }
                     }
-            }
-
-
-            ,
+            },
             modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
+                .width(338.dp)
+                .height(68.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFE86144)
             )
@@ -166,8 +214,9 @@ fun RegisterScreen(
             Text("Sign Up", color = Color.White, fontSize = MaterialTheme.typography.bodyLarge.fontSize)
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
+        // ✅ Lien Sign In en bas
         Row(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
@@ -187,7 +236,7 @@ fun RegisterScreen(
             ) {
                 Text(
                     text = "Sign In",
-                    color = Color(0xFFE86144),
+                    color = Color(0xFFE86144), // ✅ Orange Figma
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -200,14 +249,3 @@ fun RegisterScreen(
     }
 }
 
-
-@Preview(showBackground = true, name = "📝 Register Screen")
-@Composable
-fun RegisterScreenPreview() {
-    MaterialTheme {
-        RegisterScreen(
-            navController = androidx.navigation.compose.rememberNavController(),
-            onRegisterSuccess = {}
-        )
-    }
-}
