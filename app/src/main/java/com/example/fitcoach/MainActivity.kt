@@ -110,6 +110,46 @@ fun FitCoachApp() {
                 }
             )
         }
+        composable("question3") {
+            QuestionThreeScreen(
+                navController = navController,
+                onNextClick = { gender, birthdate ->
+                    // TODO: enregistrer si besoin dans Firestore ou ViewModel
+                    navController.navigate("question4") // ou "question4" plus tard
+                }
+            )
+        }
+        composable("question4") {
+            QuestionFourScreen(
+                navController = navController,
+                onNextClick = { response ->
+                    // TODO: enregistrer si besoin dans Firestore ou ViewModel
+                    navController.navigate("question5")
+                }
+            )
+        }
+        composable("question5") {
+            QuestionFiveScreen(
+                navController = navController,
+                onNextClick = { stepGoal ->
+                    // TODO : enregistrer la valeur si besoin
+                    navController.navigate("createProfile")
+                }
+            )
+        }
+        composable("createProfile") {
+            CreateProfileScreen(
+                navController = navController,
+                onProfileCreated = { avatarUri, firstName, lastName ->
+                    // TODO : tu peux sauvegarder ces valeurs dans un ViewModel ou Firestore
+                    navController.navigate("home")
+                }
+            )
+        }
+
+
+
+
 
 
 

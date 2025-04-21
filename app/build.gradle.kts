@@ -62,6 +62,9 @@ dependencies {
     implementation("androidx.compose.compiler:compiler:${libs.versions.composeCompiler.get()}")
     // Utiliser la référence du compilateur depuis le catalog
     implementation("androidx.compose.compiler:compiler:${libs.versions.composeCompiler.get()}")
+    //uRI
+    implementation("io.coil-kt:coil-compose:2.2.2")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -113,6 +116,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+
+    implementation("androidx.activity:activity-compose:1.7.2") // ou version récente
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
