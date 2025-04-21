@@ -48,7 +48,9 @@ class MainActivity : ComponentActivity() {
 fun FitCoachApp() {
     val navController = rememberNavController()
     val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
-    val startDestination = if (isUserLoggedIn) "home" else "onboarding"
+    //val startDestination = if (isUserLoggedIn) "home" else "onboarding"
+    val startDestination = "onboarding"
+
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable("onboarding") {
@@ -142,10 +144,14 @@ fun FitCoachApp() {
                 navController = navController,
                 onProfileCreated = { avatarUri, firstName, lastName ->
                     // TODO : tu peux sauvegarder ces valeurs dans un ViewModel ou Firestore
-                    navController.navigate("home")
+                    navController.navigate("onboardingFlow")
                 }
             )
         }
+        composable("onboardingFlow") {
+            OnboardingScreens(navController = navController)
+        }
+
 
 
 

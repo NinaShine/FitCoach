@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.Image
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun OnboardingScreens(navController: NavController) {
@@ -27,7 +28,7 @@ fun OnboardingScreens(navController: NavController) {
         OnboardingPage(R.drawable.onboarding5, "", "Track your progress every day, take on challenges, share your achievements with your friends and climb the leaderboards!")
     )
 
-    var currentPage by remember { mutableStateOf(0) }
+    var currentPage by rememberSaveable { mutableStateOf(0) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
