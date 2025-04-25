@@ -962,7 +962,7 @@ fun CreateProfileScreen(
         Button(
             onClick = {
                 onProfileCreated(avatarUri, firstName, lastName)
-                navController.navigate("home")
+                navController.navigate("onboarding1")
             },
             modifier = Modifier
                 .width(338.dp)

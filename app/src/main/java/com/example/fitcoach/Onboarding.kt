@@ -18,10 +18,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.saveable.rememberSaveable
 
+data class OnboardingPage(val image: Int, val title: String, val description: String)
+
 @Composable
 fun OnboardingScreens(navController: NavController) {
     val pages = listOf(
-        OnboardingPage(R.drawable.onboarding5, "Welcome in Fit’ify", "Your smart coach for personalized and motivating workouts."),
+        OnboardingPage(R.drawable.onboarding1, "Welcome in Fit’ify", "Your smart coach for personalized and motivating workouts."),
         OnboardingPage(R.drawable.onboarding2, "", "Fit’ify tracks your performance live. You move, it picks up."),
         OnboardingPage(R.drawable.onboarding3, "", "Workout at home, outside or in a gym."),
         OnboardingPage(R.drawable.onboarding4, "", "Train with music that automatically adapts to your exercise, your pace, your location, and even the daylight!"),
@@ -41,7 +43,7 @@ fun OnboardingScreens(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 48.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
@@ -98,26 +100,30 @@ fun OnboardingScreens(navController: NavController) {
                 )
             }
 
-            Button(
-                onClick = {
-                    if (currentPage < pages.lastIndex) {
-                        currentPage++
-                    } else {
-                        navController.navigate("home") {
-                            popUpTo("onboardingFlow") { inclusive = true }
-                        }
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE86144))
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.BottomEnd
             ) {
-                Text("Next", color = Color.White, fontSize = 18.sp)
+                IconButton(
+                    onClick = {
+                        if (currentPage < pages.lastIndex) {
+                            currentPage++
+                        } else {
+                            navController.navigate("home") {
+                                popUpTo("onboardingFlow") { inclusive = true }
+                            }
+                        }
+                    },
+                    modifier = Modifier.size(60.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.next),
+                        contentDescription = "Next",
+                        tint = Color(0xFFE86144),
+                        modifier = Modifier.size(48.dp)
+                    )
+                }
             }
         }
     }
 }
-
-data class OnboardingPage(val image: Int, val title: String, val description: String)

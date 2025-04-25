@@ -143,14 +143,16 @@ fun FitCoachApp() {
             CreateProfileScreen(
                 navController = navController,
                 onProfileCreated = { avatarUri, firstName, lastName ->
-                    // TODO : tu peux sauvegarder ces valeurs dans un ViewModel ou Firestore
-                    navController.navigate("onboardingFlow")
+                    navController.navigate("onboarding1") // ✅ ici
                 }
             )
         }
-        composable("onboardingFlow") {
-            OnboardingScreens(navController = navController)
+        composable("onboarding1") {
+            OnboardingScreens(navController)
         }
+
+
+
 
 
 
