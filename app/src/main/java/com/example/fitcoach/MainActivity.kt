@@ -1,6 +1,8 @@
 package com.example.fitcoach
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -38,10 +40,46 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
+
+        handleSpotifyRedirect(intent)
+
         setContent {
             FitCoachApp()
         }
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleSpotifyRedirect(intent)
+    }
+
+    private fun handleSpotifyRedirect(intent: Intent?) {
+        intent?.data?.let { uri ->
+            if (uri.toString().startsWith("fitcoach://callback")) {
+                Log.d("Spotify", "Spotify callback URL: $uri")
+
+                val fragment = uri.fragment // après le "#"
+                val params = fragment?.split("&")?.associate {
+                    val (key, value) = it.split("=")
+                    key to value
+                }
+
+                val accessToken = params?.get("access_token")
+                accessToken?.let {
+                    // 🎉 access_token récupéré !
+                    Log.d("Spotify", "AccessToken = $accessToken")
+
+                    // TODO : Sauvegarder en mémoire pour utiliser avec Retrofit, etc.
+                }
+            }
+        }
+    }
+
+    object SpotifySession {
+        var accessToken: String? = null
+    }
+
+
 }
 
 @Composable
@@ -56,7 +94,11 @@ fun FitCoachApp() {
         composable("onboarding") {
             FirstOnboardingScreen(
                 onLoginClick = { navController.navigate("login") },
-                onGetStartedClick = { navController.navigate("secondOnboarding") } // 👈 nouvelle page
+                onGetStartedClick = {
+                    navController.navigate("secondOnboarding")
+                    //onGetStartedClick = { navController.navigate("music") // 👈 nouvelle page
+
+                }
             )
         }
         composable("secondOnboarding") {
@@ -150,6 +192,17 @@ fun FitCoachApp() {
         composable("onboarding1") {
             OnboardingScreens(navController)
         }
+
+        composable("music") {
+            MusicScreen(navController = navController, accessToken = "")
+        }
+
+        composable("searchMusic"){
+            SearchMusicScreen()
+        }
+
+
+
 
 
 

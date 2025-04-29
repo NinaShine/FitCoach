@@ -84,6 +84,7 @@ dependencies {
 
     // Room Database - utiliser les références du catalog
     implementation(libs.room.runtime)
+    implementation(libs.appcompat)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
     // Room Database - utiliser les références du catalog
@@ -144,5 +145,15 @@ dependencies {
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
     implementation("com.google.firebase:firebase-firestore")
+
+    // retrofit
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Custom tabs
+
+    implementation("androidx.browser:browser:1.7.0")
+
 
 }

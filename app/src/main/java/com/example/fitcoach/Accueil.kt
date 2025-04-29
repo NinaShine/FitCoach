@@ -6,8 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.relocation.bringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewResponder
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,6 +28,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 
 
 data class Recommendation(val title: String, val duration: String, val imageRes: Int)
@@ -372,7 +372,7 @@ fun FitBottomBar(
             tonalElevation = 8.dp,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp)
+                .height(65.dp)
                 .align(Alignment.BottomCenter) // ancrée en bas du Box
         ) {
             bottomNavItems.take(2).forEach {
@@ -385,12 +385,13 @@ fun FitBottomBar(
                             Text(it.label, fontSize = 10.sp)
                         }
                     },
+                    modifier = Modifier.padding(top = 8.dp),
                     label = null
                 )
             }
 
             /*  La “case” centrale reste vide pour réserver l’espace :      */
-            Spacer(Modifier.weight(1f))
+            Spacer(Modifier.weight(0.8f))
 
             bottomNavItems.drop(2).forEach {
                 NavigationBarItem(
@@ -402,6 +403,7 @@ fun FitBottomBar(
                             Text(it.label, fontSize = 10.sp)
                         }
                     },
+                    modifier = Modifier.padding(top = 8.dp),
                     label = null,
                 )
             }
@@ -412,7 +414,7 @@ fun FitBottomBar(
             modifier = Modifier
                 .size(56.dp)
                 .align(Alignment.TopCenter)   // centré horizontalement
-                .offset(y = (-18).dp)         // remonte de la moitié ≈ dépasse
+                .offset(y = (-18).dp)         // remonte de la moitié pour que ca dépasse un peu
                 .clip(CircleShape)
                 .background(Color(0xFFE86144))
                 .clickable { onCentralClick() },
@@ -446,7 +448,7 @@ fun DividerVertical(
     thickness: Dp = 2.dp,
 ) {
     Divider(
-        // Epaisseur → largeur
+        // Epaisseur -> largeur
         modifier = modifier
             .fillMaxHeight()
             .width(thickness), // largeur = épaisseur du trait
@@ -475,8 +477,18 @@ fun AccueilPageWithNavBar() {
             )
         }
     ) { padding ->
-        Box(modifier = Modifier.padding(10.dp)) {
-            AccueilScreen()
+        Box(modifier = Modifier.padding(12.dp)) {
+            when (currentRoute) {
+                "home" -> AccueilScreen()
+                "music" -> MusicScreen(navController = rememberNavController(), getSpotifyAccessToken(LocalContext.current).toString())
+                "workout" -> WorkoutScreen()
+                "social" -> SocialScreen()
+                else -> {
+                    AccueilScreen()
+                }
+
+                // autres pages à venir
+            }
         }
     }
 }
