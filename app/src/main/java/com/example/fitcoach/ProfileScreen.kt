@@ -9,30 +9,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShowChart
-import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
@@ -46,7 +36,7 @@ fun getCurrentUsername(): String {
 fun ProfileScreen(username: String = getCurrentUsername()) {
     //val user = FirebaseAuth.getInstance().currentUser
     //val username = user?.displayName ?: "Utilisateur"
-    val age = 28 // valeur temporaire
+    val age = 28
     Text(username, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
 
@@ -81,7 +71,6 @@ fun ProfileScreen(username: String = getCurrentUsername()) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Progress Circles
         Row(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),
@@ -121,7 +110,6 @@ fun ProfileScreen(username: String = getCurrentUsername()) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // List Items
         ProfileOptionItem("Friends", Icons.Default.Person)
         ProfileOptionItem("Reward Collection", Icons.Default.EmojiEvents)
         ProfileOptionItem("Statistics", Icons.Default.ShowChart)
@@ -148,7 +136,7 @@ fun ProfileOptionItem(title: String, icon: ImageVector) {
             .background(Color.White)
             .padding(horizontal = 16.dp, vertical = 12.dp)
             .clickable {
-                // TODO: Naviguer vers la page correspondante
+                // TODO: Naviguer vers .....
             },
         verticalAlignment = Alignment.CenterVertically
     ) {

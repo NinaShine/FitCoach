@@ -86,7 +86,6 @@ fun SearchMusicScreen() {
         Spacer(modifier = Modifier.height(40.dp))
 
         if (searchResults.isEmpty()) {
-            // Texte initial
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Find music", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
@@ -100,7 +99,6 @@ fun SearchMusicScreen() {
                 Icon(Icons.Default.Favorite, contentDescription = null, tint = Color.Red, modifier = Modifier.size(32.dp))
             }
         } else {
-            // Afficher les résultats
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 searchResults.forEach { track ->
                     TrackItem(track)
@@ -121,7 +119,6 @@ fun TrackItem(track: TrackResult) {
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Image de l'album
         Image(
             painter = rememberAsyncImagePainter(track.imageUrl),
             contentDescription = track.name,
@@ -133,7 +130,6 @@ fun TrackItem(track: TrackResult) {
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        // Nom du morceau
         Column(modifier = Modifier.weight(1f)) {
             Text(track.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             Text(track.artist, fontSize = 12.sp, color = Color.Gray)
@@ -141,7 +137,6 @@ fun TrackItem(track: TrackResult) {
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        // Bouton pour ajouter à la playlist
         Icon(
             imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
             contentDescription = "Like",
@@ -150,7 +145,7 @@ fun TrackItem(track: TrackResult) {
                 .size(24.dp)
                 .clickable {
                     isLiked = !isLiked
-                    // TODO : Ajouter ici l'action pour insérer dans une playlist
+                    // TODO : Ajouter ici l'action pour insérer dans une playlist (pour apres)
                 }
         )
     }

@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import com.example.fitcoach.MainActivity.SpotifySession
 import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
@@ -14,8 +13,8 @@ import androidx.core.content.edit
 
 class SpotifyAuthActivity : ComponentActivity() {
 
-    private val clientId = "23b18fa0f82640f4a7c372678881a764"          // 🔥 remplace ici
-    private val clientSecret = "09824133c068416dbaa40cd7bac9c99f"  // 🔥 remplace ici
+    private val clientId = "23b18fa0f82640f4a7c372678881a764"
+    private val clientSecret = "09824133c068416dbaa40cd7bac9c99f"
     private val redirectUri = "fitcoach://callback"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,8 +80,6 @@ class SpotifyAuthActivity : ComponentActivity() {
                     fetchSpotifyProfile(accessToken)
                     fetchSpotifyPlaylists(accessToken)
 
-                    //SpotifySession.accessToken = accessToken
-
                     saveAccessTokenLocally(accessToken)
 
 
@@ -90,11 +87,9 @@ class SpotifyAuthActivity : ComponentActivity() {
                         val intent = Intent(this@SpotifyAuthActivity, SpotifyMusicActivity::class.java)
                         //intent.putExtra("accessToken", accessToken)
                         startActivity(intent)
-                        finish() // on ferme SpotifyAuthActivity
+                        finish()
                     }
 
-
-                    // ➡️ Ici tu peux sauvegarder le token dans SharedPreferences par exemple !
                 } else {
                     Log.e("SpotifyAuth", "Erreur de réponse: ${response.message}")
                 }

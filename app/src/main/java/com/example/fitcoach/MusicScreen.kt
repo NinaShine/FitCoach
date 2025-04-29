@@ -1,6 +1,5 @@
 package com.example.fitcoach
 
-import android.app.DownloadManager.Request
 import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -20,7 +19,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,10 +42,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import org.json.JSONObject
-import java.io.IOException
-import javax.security.auth.callback.Callback
+
 
 
 // lien du tuto : https://developer.spotify.com/documentation/android/tutorials/getting-started
@@ -58,8 +53,8 @@ fun MusicScreen(navController: NavController, accessToken: String) {
     val scope = rememberCoroutineScope()
 
 
-    val clientId = "23b18fa0f82640f4a7c372678881a764" // ⬅️ à remplacer par ton vrai Client ID
-    val redirectUri = "fitcoach://callback" // ⬅️ à configurer aussi dans ton Dashboard Spotify
+    val clientId = "23b18fa0f82640f4a7c372678881a764"
+    val redirectUri = "fitcoach://callback"
     val scopes = listOf(
         "user-read-private",
         "user-read-email",
@@ -76,7 +71,7 @@ fun MusicScreen(navController: NavController, accessToken: String) {
     val currentSong = Song(
         title = "On verra",
         artist = "Nekfeu",
-        imageRes = R.drawable.spotify_icon // icône temporaire
+        imageRes = R.drawable.spotify_icon
     )
 
     LaunchedEffect(accessToken) {
@@ -122,9 +117,9 @@ fun MusicScreen(navController: NavController, accessToken: String) {
         }
 
         Divider(
-            color = Color.Black,   // couleur de la ligne
-            thickness = 1.dp,      // épaisseur
-            modifier = Modifier.width(80.dp) // largeur : toute la ligne
+            color = Color.Black,
+            thickness = 1.dp,
+            modifier = Modifier.width(80.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -133,7 +128,6 @@ fun MusicScreen(navController: NavController, accessToken: String) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Current Song Block
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -155,7 +149,6 @@ fun MusicScreen(navController: NavController, accessToken: String) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Fake audio bar
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -172,7 +165,6 @@ fun MusicScreen(navController: NavController, accessToken: String) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Controls
                 Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
                     Icon(Icons.Default.SkipPrevious, contentDescription = null)
                     Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(48.dp))
@@ -183,7 +175,6 @@ fun MusicScreen(navController: NavController, accessToken: String) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Filters
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip("Training", selected = true)
             FilterChip("Chill", selected = false)
@@ -280,30 +271,6 @@ fun FilterChip(label: String, selected: Boolean) {
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             color = if (selected) Color.White else Color.Black
         )
-    }
-}
-
-@Composable
-fun SongItem(song: Song) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFFFFF3E0), shape = RoundedCornerShape(16.dp))
-            .padding(12.dp)
-    ) {
-        Image(
-            painter = painterResource(id = song.imageRes),
-            contentDescription = song.title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(56.dp)
-                .clip(RoundedCornerShape(12.dp))
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column {
-            Text(song.title, fontWeight = FontWeight.Bold)
-            Text(song.artist, fontSize = 12.sp, color = Color.Gray)
-        }
     }
 }
 

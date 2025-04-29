@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 
-@Preview(showBackground = true, name = "🏁 Onboarding Screen")
+@Preview(showBackground = true, name = "Onboarding Screen")
 @Composable
 fun FirstOnboardingScreenPreview() {
     MaterialTheme {
@@ -16,7 +16,7 @@ fun FirstOnboardingScreenPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "🔐 Login Screen")
+@Preview(showBackground = true, name = "Login Screen")
 @Composable
 fun LoginScreenPreview() {
     val fakeNavController = rememberNavController()

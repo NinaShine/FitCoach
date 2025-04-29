@@ -42,7 +42,7 @@ import coil.compose.rememberAsyncImagePainter
 @Composable
 fun QuestionOneScreen(
     navController: NavController,
-    onNextClick: (String) -> Unit // on passe la réponse sélectionnée
+    onNextClick: (String) -> Unit
 ) {
     val options = listOf(
         "Muscle gain", "Endurance", "Weight loss", "Well-being", "Other"
@@ -56,7 +56,6 @@ fun QuestionOneScreen(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ✅ Header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -83,7 +82,6 @@ fun QuestionOneScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ✅ Question
             Text(
                 text = "What are your main goals?",
                 fontSize = 24.sp,
@@ -91,7 +89,6 @@ fun QuestionOneScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // ✅ Options
             options.forEach { option ->
                 val isSelected = selectedOption == option
                 Row(
@@ -125,7 +122,6 @@ fun QuestionOneScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // ✅ Button Next
             Button(
                 onClick = {
                     selectedOption?.let { onNextClick(it) }
@@ -163,7 +159,6 @@ fun QuestionTwoScreen(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ✅ Header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -197,7 +192,6 @@ fun QuestionTwoScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // ✅ Height cell
             Box(
                 modifier = Modifier
                     .width(338.dp)
@@ -216,7 +210,6 @@ fun QuestionTwoScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ✅ Weight cell
             Box(
                 modifier = Modifier
                     .width(338.dp)
@@ -239,7 +232,6 @@ fun QuestionTwoScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // ✅ Button Next
             Button(
                 onClick = { onNextClick(height, weight, unit) },
                 modifier = Modifier
@@ -253,11 +245,10 @@ fun QuestionTwoScreen(
             }
         }
 
-        // ✅ Height Picker Bottom Sheet
         if (showHeightPicker) {
             ModalBottomSheet(
                 onDismissRequest = { showHeightPicker = false },
-                containerColor = Color.White // optionnel, pour forcer fond blanc
+                containerColor = Color.White
             ) {
                 PickerSheet(
                     title = "Select Height",
@@ -273,7 +264,6 @@ fun QuestionTwoScreen(
         }
 
 
-        // ✅ Weight Picker Bottom Sheet
         if (showWeightPicker) {
             ModalBottomSheet(
                 onDismissRequest = { showWeightPicker = false }
@@ -332,7 +322,6 @@ fun PickerSheet(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // ✅ Valeurs
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
             items(valueRange.toList()) {
                 Text(
@@ -348,7 +337,6 @@ fun PickerSheet(
             }
         }
 
-        // ✅ Switch kg/lb
         if (showUnitToggle) {
             Spacer(modifier = Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.Center) {
@@ -387,7 +375,6 @@ fun QuestionThreeScreen(
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -431,7 +418,6 @@ fun QuestionThreeScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Gender picker trigger
         Box(
             modifier = Modifier
                 .width(338.dp)
@@ -447,7 +433,6 @@ fun QuestionThreeScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Date of birth
         Box(
             modifier = Modifier
                 .width(338.dp)
@@ -481,7 +466,6 @@ fun QuestionThreeScreen(
         }
     }
 
-    // Gender bottom sheet
     if (showGenderPicker) {
         ModalBottomSheet(
             onDismissRequest = { showGenderPicker = false }
@@ -514,7 +498,6 @@ fun QuestionThreeScreen(
         }
     }
 
-    // Date picker bottom sheet
     if (showDatePicker) {
         ModalBottomSheet(onDismissRequest = { showDatePicker = false }) {
             val days = 1..31
@@ -581,7 +564,7 @@ fun QuestionThreeScreen(
 @Composable
 fun QuestionFourScreen(
     navController: NavController,
-    onNextClick: (String) -> Unit // on passe la réponse sélectionnée
+    onNextClick: (String) -> Unit
 ) {
     val options = listOf(
         "At home", "In the gym", "Outdoors", "Never mind"
@@ -595,7 +578,6 @@ fun QuestionFourScreen(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ✅ Header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -622,7 +604,6 @@ fun QuestionFourScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ✅ Question
             Text(
                 text = "Where do you prefer to train?",
                 fontSize = 24.sp,
@@ -630,7 +611,6 @@ fun QuestionFourScreen(
                 modifier = Modifier.padding(bottom = 24.dp)
             )
 
-            // ✅ Options
             options.forEach { option ->
                 val isSelected = selectedOption == option
                 Row(
@@ -664,7 +644,6 @@ fun QuestionFourScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // ✅ Button Next
             Button(
                 onClick = {
                     selectedOption?.let { onNextClick(it) }
@@ -705,7 +684,6 @@ fun QuestionFiveScreen(
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 🔹 Header
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -732,7 +710,6 @@ fun QuestionFiveScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 🔹 Question
         Text(
             text = "What is your daily step goal?",
             fontSize = 24.sp,
@@ -743,7 +720,6 @@ fun QuestionFiveScreen(
                 .align(Alignment.CenterHorizontally)
         )
 
-        // 🔹 Standard Options
         options.forEach { (label, tag, color) ->
             val isSelected = selectedOption == label
             Row(
@@ -766,7 +742,6 @@ fun QuestionFiveScreen(
             }
         }
 
-        // 🔹 Custom Goal Cell
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -841,7 +816,6 @@ fun QuestionFiveScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // 🔹 Button Next
         Button(
             onClick = {
                 val value = if (selectedOption == "custom") customGoal else selectedOption?.filter { it.isDigit() }?.replace(" ", "")?.toIntOrNull() ?: 0
@@ -884,12 +858,10 @@ fun CreateProfileScreen(
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
-        // ❌ Titre
         Text("Create a profile", style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // ✅ Avatar
         Box(
             modifier = Modifier
                 .size(130.dp)
@@ -916,7 +888,6 @@ fun CreateProfileScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // ✅ Bouton "Change avatar"
         Text(
             text = "Change avatar",
             color = Color(0xFFE86144),
@@ -927,7 +898,6 @@ fun CreateProfileScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // ✅ Inputs
         Column(
             modifier = Modifier
                 .width(338.dp)
@@ -958,7 +928,6 @@ fun CreateProfileScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // ✅ Bouton Next
         Button(
             onClick = {
                 onProfileCreated(avatarUri, firstName, lastName)

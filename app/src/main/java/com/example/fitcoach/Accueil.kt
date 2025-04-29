@@ -101,9 +101,9 @@ fun AccueilScreen() {
         }
 
         Divider(
-            color = Color.Black,   // couleur de la ligne
-            thickness = 1.dp,      // épaisseur
-            modifier = Modifier.width(80.dp) // largeur : toute la ligne
+            color = Color.Black,
+            thickness = 1.dp,
+            modifier = Modifier.width(80.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -116,7 +116,6 @@ fun AccueilScreen() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Première colonne : Track Distance & Workout
             Column(
                 modifier = Modifier
                     .weight(1f),
@@ -161,7 +160,6 @@ fun AccueilScreen() {
                 )
             }
 
-            // Deuxième colonne : Music & Calories
             Column(
                 modifier = Modifier
                     .weight(1f),
@@ -178,7 +176,7 @@ fun AccueilScreen() {
                         .fillMaxWidth()
                         .height(100.dp)
                         .clickable {
-                            // TODO: Naviguer vers la page musique
+                            // Naviguer vers la page musique (a la fin si on aa le temopss
                         }
                 )
 
@@ -188,7 +186,6 @@ fun AccueilScreen() {
                     content = {
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Roue + kcal côte à côte
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
@@ -243,9 +240,6 @@ fun AccueilScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(210.dp)
-                        .clickable {
-                            // TODO: Naviguer vers la page de suivi de calories
-                        }
                 )
             }
         }
@@ -365,15 +359,15 @@ fun FitBottomBar(
     currentRoute: String,
     onCentralClick: () -> Unit
 ) {
-    Box {                                      // ← conteneur libre, pas de clip
+    Box {
         /* ---------- Barre de navigation ---------- */
-        NavigationBar(                         // occupe toute la largeur
+        NavigationBar(
             containerColor = Color.White,
             tonalElevation = 8.dp,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(65.dp)
-                .align(Alignment.BottomCenter) // ancrée en bas du Box
+                .align(Alignment.BottomCenter)
         ) {
             bottomNavItems.take(2).forEach {
                 NavigationBarItem(
@@ -390,7 +384,7 @@ fun FitBottomBar(
                 )
             }
 
-            /*  La “case” centrale reste vide pour réserver l’espace :      */
+
             Spacer(Modifier.weight(0.8f))
 
             bottomNavItems.drop(2).forEach {
@@ -409,12 +403,12 @@ fun FitBottomBar(
             }
         }
 
-        /* ---------- Bouton central flottant ---------- */
+        /* ---------- Bouton central flottant + ---------- */
         Box(
             modifier = Modifier
                 .size(56.dp)
-                .align(Alignment.TopCenter)   // centré horizontalement
-                .offset(y = (-18).dp)         // remonte de la moitié pour que ca dépasse un peu
+                .align(Alignment.TopCenter)
+                .offset(y = (-18).dp)
                 .clip(CircleShape)
                 .background(Color(0xFFE86144))
                 .clickable { onCentralClick() },
@@ -448,10 +442,9 @@ fun DividerVertical(
     thickness: Dp = 2.dp,
 ) {
     Divider(
-        // Epaisseur -> largeur
         modifier = modifier
             .fillMaxHeight()
-            .width(thickness), // largeur = épaisseur du trait
+            .width(thickness),
         color = color,
         thickness = thickness
     )
@@ -468,7 +461,6 @@ fun AccueilPageWithNavBar() {
             FitBottomBar(
                 onItemSelected = { selectedRoute ->
                     currentRoute = selectedRoute
-                    // TODO: Naviguer vers les pages correspondantes
                 },
                 currentRoute = currentRoute,
                 onCentralClick = {

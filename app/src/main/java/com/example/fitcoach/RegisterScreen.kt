@@ -64,7 +64,6 @@ fun RegisterScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // ✅ Croix en haut à gauche
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,7 +78,7 @@ fun RegisterScreen(
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Close, // Remplace par icône de croix si dispo
+                    imageVector = Icons.Default.Close,
                     contentDescription = "Close",
                     tint = Color.Gray
                 )
@@ -95,7 +94,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // ✅ Input - Username
         Box(
             modifier = Modifier
                 .width(338.dp)
@@ -107,7 +105,7 @@ fun RegisterScreen(
                 label = { Text("Username") },
                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
                 modifier = Modifier
-                    .fillMaxSize(), // 👈 remplir la box 338x68
+                    .fillMaxSize(),
                 shape = RoundedCornerShape(20.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedContainerColor = Color(0xFFFAEDE6),
@@ -121,7 +119,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // ✅ Input - Email
         Box(
             modifier = Modifier
                 .width(338.dp)
@@ -132,7 +129,7 @@ fun RegisterScreen(
                 onValueChange = { email = it },
                 label = { Text("Email") },
                 leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
-                modifier = Modifier.fillMaxSize(), // 👈 très important
+                modifier = Modifier.fillMaxSize(),
                 shape = RoundedCornerShape(20.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedContainerColor = Color(0xFFFAEDE6),
@@ -165,7 +162,7 @@ fun RegisterScreen(
                     }
                 },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxSize(), // 👈 important ici aussi
+                modifier = Modifier.fillMaxSize(),
                 shape = RoundedCornerShape(20.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedContainerColor = Color(0xFFFAEDE6),
@@ -179,7 +176,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // ✅ Bouton "Sign Up"
         Button(
             onClick = {
                 FirebaseAuth.getInstance()
@@ -216,7 +212,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // ✅ Lien Sign In en bas
         Row(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
@@ -236,7 +231,7 @@ fun RegisterScreen(
             ) {
                 Text(
                     text = "Sign In",
-                    color = Color(0xFFE86144), // ✅ Orange Figma
+                    color = Color(0xFFE86144),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

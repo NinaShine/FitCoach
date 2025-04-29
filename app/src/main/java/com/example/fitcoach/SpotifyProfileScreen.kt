@@ -162,7 +162,7 @@ suspend fun fetchSpotifyPlaylists(accessToken: String): List<SpotifyPlaylist> {
                     val imageUrl = if (images.length() > 0) {
                         images.getJSONObject(0).getString("url")
                     } else {
-                        "" // Tu peux aussi mettre une URL par défaut ici si tu veux
+                        ""
                     }
 
                     playlists.add(SpotifyPlaylist(name, id, imageUrl))

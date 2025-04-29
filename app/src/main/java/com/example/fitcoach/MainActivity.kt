@@ -23,7 +23,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -66,17 +65,10 @@ class MainActivity : ComponentActivity() {
 
                 val accessToken = params?.get("access_token")
                 accessToken?.let {
-                    // 🎉 access_token récupéré !
                     Log.d("Spotify", "AccessToken = $accessToken")
-
-                    // TODO : Sauvegarder en mémoire pour utiliser avec Retrofit, etc.
                 }
             }
         }
-    }
-
-    object SpotifySession {
-        var accessToken: String? = null
     }
 
 
@@ -96,7 +88,7 @@ fun FitCoachApp() {
                 onLoginClick = { navController.navigate("login") },
                 onGetStartedClick = {
                     navController.navigate("secondOnboarding")
-                    //onGetStartedClick = { navController.navigate("music") // 👈 nouvelle page
+                    //onGetStartedClick = { navController.navigate("music") //  pour tester music screen (a enlever apres)
 
                 }
             )
@@ -139,8 +131,7 @@ fun FitCoachApp() {
             QuestionOneScreen(
                 navController = navController,
                 onNextClick = { selectedGoal ->
-                    // Tu peux l'enregistrer ici plus tard
-                    navController.navigate("question2") // à créer ensuite
+                    navController.navigate("question2")
                 }
             )
         }
@@ -148,7 +139,7 @@ fun FitCoachApp() {
             QuestionTwoScreen(
                 navController = navController,
                 onNextClick = { height, weight, unit ->
-                    // TODO: enregistrer si besoin dans Firestore ou ViewModel
+                    // TODO: enregistrer si besoin dans Firestore ou ViewModel ( a voirrr)
 
                     navController.navigate("question3")
                 }
@@ -159,7 +150,7 @@ fun FitCoachApp() {
                 navController = navController,
                 onNextClick = { gender, birthdate ->
                     // TODO: enregistrer si besoin dans Firestore ou ViewModel
-                    navController.navigate("question4") // ou "question4" plus tard
+                    navController.navigate("question4")
                 }
             )
         }
@@ -176,7 +167,6 @@ fun FitCoachApp() {
             QuestionFiveScreen(
                 navController = navController,
                 onNextClick = { stepGoal ->
-                    // TODO : enregistrer la valeur si besoin
                     navController.navigate("createProfile")
                 }
             )
@@ -185,7 +175,7 @@ fun FitCoachApp() {
             CreateProfileScreen(
                 navController = navController,
                 onProfileCreated = { avatarUri, firstName, lastName ->
-                    navController.navigate("onboarding1") // ✅ ici
+                    navController.navigate("onboarding1")
                 }
             )
         }
@@ -273,13 +263,13 @@ fun FirstOnboardingScreen(
                 Text(
                     text = "Already have an account? ",
                     color = Color.White,
-                    fontSize = 16.sp // ✅ augmenté
+                    fontSize = 16.sp
                 )
                 Text(
                     text = "Log in",
                     color = Color(0xFFE76F51),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp, // ✅ augmenté aussi
+                    fontSize = 16.sp,
                     modifier = Modifier.clickable { onLoginClick() }
                 )
             }
@@ -289,13 +279,13 @@ fun FirstOnboardingScreen(
 
             Button(
                 onClick = { onGetStartedClick() },
-                shape = RoundedCornerShape(20.dp), // ✅ corner radius Figma
+                shape = RoundedCornerShape(20.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFE76F51)
                 ),
                 modifier = Modifier
-                    .width(338.dp) // ✅ largeur Figma
-                    .height(68.dp) // ✅ hauteur Figma
+                    .width(338.dp)
+                    .height(68.dp)
             ) {
                 Text(
                     text = "Get Started",
@@ -329,7 +319,6 @@ fun SecondOnboardingScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // ✅ Partie haute - grille agrandie
         Box(modifier = Modifier.height(420.dp)) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
@@ -351,7 +340,6 @@ fun SecondOnboardingScreen(
                 }
             }
 
-            // ✅ Dégradé fondu
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -365,7 +353,6 @@ fun SecondOnboardingScreen(
             )
         }
 
-        // ✅ Partie centrale - texte et bouton
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -409,7 +396,6 @@ fun SecondOnboardingScreen(
             }
         }
 
-        // ✅ Partie basse - Sign In aligné tout en bas
         Row(
             modifier = Modifier
                 .fillMaxWidth()

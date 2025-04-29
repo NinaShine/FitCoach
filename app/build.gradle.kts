@@ -9,13 +9,13 @@ plugins {
 android {
     namespace = "com.example.fitcoach"
     compileSdk = 35 
-    compileSdk = 35 // SDK 35 comme demandé
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.fitcoach"
         minSdk = 24
         targetSdk = 35 
-        targetSdk = 35 // SDK 35 comme demandé
+        targetSdk = 35 
         versionCode = 1
         versionName = "1.0"
 

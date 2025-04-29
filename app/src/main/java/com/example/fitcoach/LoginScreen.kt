@@ -27,11 +27,9 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -59,7 +57,6 @@ fun LoginScreen(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // ✅ Croix en haut
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -96,9 +93,10 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // ✅ Boutons sociaux
             Button(
-                onClick = { /* Sign in with Apple */ },
+                onClick = {
+                /* Sign in with Apple A FAIRE ET N PAS OUBLIER*/
+                },
                 modifier = Modifier
                     .width(338.dp)
                     .height(68.dp),
@@ -118,7 +116,9 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
-                onClick = { /* Sign in with Google */ },
+                onClick = {
+                /* Sign in with Google  A FAIRE ET PAS OUBLIER*/
+                },
                 modifier = Modifier
                     .width(338.dp)
                     .height(68.dp),
@@ -213,7 +213,10 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            TextButton(onClick = { /* Forgot Password */ }) {
+            TextButton(
+                onClick = {
+                /* Forgot Password A FAIRE NE PAS OUBLIER*/
+                }) {
                 Text("Forgot Password?", color = Color.Gray)
             }
 
@@ -223,7 +226,6 @@ fun LoginScreen(
             }
         }
 
-        // ✅ Lien en bas fixé
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
