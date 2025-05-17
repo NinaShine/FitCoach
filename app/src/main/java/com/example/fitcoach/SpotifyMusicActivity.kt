@@ -9,8 +9,6 @@ import androidx.navigation.compose.rememberNavController
 class SpotifyMusicActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //val accessToken = intent.getStringExtra("accessToken") ?: ""
         setContent {
             val context = LocalContext.current
             val accessToken = getSpotifyAccessToken(context) ?: ""
