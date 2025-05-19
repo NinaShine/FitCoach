@@ -45,9 +45,6 @@
 
         </activity>
 
-        <activity android:name=".SpotifyMusicActivity">
-        </activity>
-
     </application>
 
 </manifest>
