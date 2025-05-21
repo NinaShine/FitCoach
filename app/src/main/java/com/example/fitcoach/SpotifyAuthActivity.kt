@@ -10,12 +10,12 @@ import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
 import androidx.core.content.edit
+import com.example.fitcoach.ui.screen.fetchSpotifyPlaylists
+import com.example.fitcoach.ui.screen.fetchSpotifyProfile
 
 class SpotifyAuthActivity : ComponentActivity() {
-
-    private val clientId = "23b18fa0f82640f4a7c372678881a764"
-    private val clientSecret = "09824133c068416dbaa40cd7bac9c99f"
     private val redirectUri = "fitcoach://callback"
+    private val backendUrl = "https://fitcoachspotify.vercel.app/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,13 +37,57 @@ class SpotifyAuthActivity : ComponentActivity() {
             Log.d("SpotifyAuth", "Code récupéré: $code")
 
             if (code != null) {
-                exchangeCodeForAccessToken(code)
+                //exchangeCodeForAccessToken(code)
+                getAccessTokenFromBackend(this, code) { accessToken ->
+                    Log.d("SpotifyAuth", "AccessToken récupéré via backend : $accessToken")
+
+                    saveAccessTokenLocally(accessToken)
+
+                    runOnUiThread {
+                        val intent = Intent(this, MainActivity::class.java).apply {
+                            putExtra("navigateTo", "musicWithNavBar")
+                        }
+                        startActivity(intent)
+                        finish()
+                    }
+                }
             } else {
-                Log.e("SpotifyAuth", "Pas de code dans l'URI")
+                Log.e("SpotifyAuth", "Aucun code reçu dans le callback URI")
             }
         }
+
     }
 
+    private fun getAccessTokenFromBackend(context: Context, code: String, onSuccess: (String) -> Unit) {
+        val client = OkHttpClient()
+        val requestUrl = "$backendUrl?code=$code"
+
+
+        val request = Request.Builder()
+            //.url(backendUrl)
+            .url(requestUrl)
+            .get()
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("SpotifyAuth", "❌ Erreur réseau vers backend Vercel : ${e.message}")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val json = JSONObject(response.body?.string() ?: "")
+                    val accessToken = json.getString("access_token")
+                    Log.d("SpotifyAuth", "✅ Token reçu via backend : $accessToken")
+
+                    onSuccess(accessToken)
+                } else {
+                    Log.e("SpotifyAuth", "❌ Réponse backend invalide : ${response.code}")
+                }
+            }
+        })
+    }
+/*
     private fun exchangeCodeForAccessToken(code: String) {
         val client = OkHttpClient()
 
@@ -84,9 +128,10 @@ class SpotifyAuthActivity : ComponentActivity() {
 
 
                     runOnUiThread {
-                        val intent = Intent(this@SpotifyAuthActivity, MainActivity::class.java).apply {
-                            putExtra("navigateTo", "musicWithNavBar")
-                        }
+                        val intent =
+                            Intent(this@SpotifyAuthActivity, MainActivity::class.java).apply {
+                                putExtra("navigateTo", "musicWithNavBar")
+                            }
                         //intent.putExtra("accessToken", accessToken)
                         startActivity(intent)
                         finish()
@@ -100,6 +145,8 @@ class SpotifyAuthActivity : ComponentActivity() {
 
 
     }
+
+ */
 
     private fun saveAccessTokenLocally(token: String) {
         val prefs = getSharedPreferences("SpotifyPrefs", Context.MODE_PRIVATE)
@@ -134,6 +181,7 @@ class SpotifyAuthActivity : ComponentActivity() {
             }
         }
     }
+    /*
     fun fetchSpotifyPlaylists(accessToken: String) {
         val client = OkHttpClient()
 
@@ -164,6 +212,46 @@ class SpotifyAuthActivity : ComponentActivity() {
             }
         }
     }
+
+     */
+
+    fun fetchSpotifyPlaylists(accessToken: String) {
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+            .url("https://api.spotify.com/v1/me/playlists")
+            .addHeader("Authorization", "Bearer $accessToken")
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("SpotifyPlaylist", "❌ Erreur réseau : ${e.message}")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    Log.d("SpotifyPlaylist", "✅ Réponse : $responseBody")
+
+                    responseBody?.let {
+                        val json = JSONObject(it)
+                        val items = json.getJSONArray("items")
+
+                        for (i in 0 until items.length()) {
+                            val playlist = items.getJSONObject(i)
+                            val name = playlist.getString("name")
+                            val id = playlist.getString("id")
+
+                            Log.d("SpotifyPlaylist", "🎵 Playlist : $name (ID: $id)")
+                        }
+                    }
+                } else {
+                    Log.e("SpotifyPlaylist", "❌ Erreur API Spotify : ${response.code}")
+                }
+            }
+        })
+    }
+
 
 
 }

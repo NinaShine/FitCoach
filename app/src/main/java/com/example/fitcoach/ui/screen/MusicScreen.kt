@@ -54,6 +54,7 @@ fun MusicScreen(navController: NavController, accessToken: String) {
     var playlists by remember { mutableStateOf<List<SpotifyPlaylist>>(emptyList()) }
     val scope = rememberCoroutineScope()
 
+    Log.d("MusicScreen", "Access token utilisé = $accessToken")
 
     val clientId = "23b18fa0f82640f4a7c372678881a764"
     val redirectUri = "fitcoach://callback"
