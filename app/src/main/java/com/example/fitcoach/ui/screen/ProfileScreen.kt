@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.fitcoach.R
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 
 fun getCurrentUsername(): String {
@@ -35,19 +37,18 @@ fun getCurrentUsername(): String {
 
 
 @Composable
-fun ProfileScreen(username: String = getCurrentUsername(), navController: NavController) {
+fun ProfileScreen(navController: NavController) {
     val user = FirebaseAuth.getInstance().currentUser
     //val username = user?.displayName ?: "Utilisateur"
     val username = user?.email ?: "Utilisateur"
     val age = 28
     Text(username, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFFDF4EF))
-            .padding(16.dp)
+            .padding(28.dp)
     ) {
         // Photo + nom
         Row(
@@ -117,6 +118,28 @@ fun ProfileScreen(username: String = getCurrentUsername(), navController: NavCon
         ProfileOptionItem("Reward Collection", Icons.Default.EmojiEvents)
         ProfileOptionItem("Statistics", Icons.Default.ShowChart)
         ProfileOptionItem("Settings", Icons.Default.Settings)
+
+        Spacer(modifier = Modifier.height(100.dp))
+
+        Box(
+            modifier = Modifier
+                .size(60.dp)
+                .align(Alignment.CenterHorizontally)
+                .background(
+                    color = Color(0xFFE86144).copy(alpha = 0.1f),
+                    shape = CircleShape
+                )
+                .clickable { navController.popBackStack() },
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.close),
+                contentDescription = null,
+                tint = Color(0xFFE86144),
+                modifier = Modifier.size(28.dp)
+                    .align(Alignment.Center)
+            )
+        }
+
     }
 }
 
@@ -149,13 +172,13 @@ fun ProfileOptionItem(title: String, icon: ImageVector) {
         Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = Color.Gray)
     }
 }
-/*
+
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen(username = "Emma Smith")
+    ProfileScreen(navController = NavController(LocalContext.current))
 }
 
- */
+
 
 

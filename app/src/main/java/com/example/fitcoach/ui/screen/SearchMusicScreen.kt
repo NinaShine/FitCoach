@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
@@ -36,6 +37,7 @@ import org.json.JSONObject
 import java.io.IOException
 import com.example.fitcoach.data.model.TrackResult
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchMusicScreen(navController: NavController) {
     var searchText by remember { mutableStateOf("") }
@@ -43,65 +45,86 @@ fun SearchMusicScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Header
-        Text("Music Assistant", fontSize = 22.sp, fontWeight = FontWeight.Bold)
-        Text("Your rhythm, your energy", fontSize = 14.sp, color = Color.Gray)
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Barre de recherche
-        OutlinedTextField(
-            value = searchText,
-            onValueChange = { searchText = it },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-            placeholder = { Text("Search") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(MaterialTheme.shapes.medium),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Search,
-                keyboardType = KeyboardType.Text
-            ),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    if (searchText.isNotBlank()) {
-                        scope.launch {
-                            searchMusicOnSpotify(context,searchText) { results ->
-                                searchResults = results
-                            }
-                        }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Search Music") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
                 }
             )
-        )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Header
+            Text("Music Assistant", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text("Your rhythm, your energy", fontSize = 14.sp, color = Color.Gray)
 
-        Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
-        if (searchResults.isEmpty()) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Find music", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    "Add it to the playlist with\nthe icon",
-                    textAlign = TextAlign.Center,
-                    color = Color.Gray,
-                    fontSize = 14.sp
+            // Barre de recherche
+            OutlinedTextField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+                placeholder = { Text("Search") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.medium),
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Search,
+                    keyboardType = KeyboardType.Text
+                ),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        if (searchText.isNotBlank()) {
+                            scope.launch {
+                                searchMusicOnSpotify(context, searchText) { results ->
+                                    searchResults = results
+                                }
+                            }
+                        }
+                    }
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                Icon(Icons.Default.Favorite, contentDescription = null, tint = Color.Red, modifier = Modifier.size(32.dp))
-            }
-        } else {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                searchResults.forEach { track ->
-                    TrackItem(track)
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            if (searchResults.isEmpty()) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Find music", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "Add it to the playlist with\nthe icon",
+                        textAlign = TextAlign.Center,
+                        color = Color.Gray,
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Icon(
+                        Icons.Default.Favorite,
+                        contentDescription = null,
+                        tint = Color.Red,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    searchResults.forEach { track ->
+                        TrackItem(track)
+                    }
                 }
             }
         }
@@ -213,11 +236,11 @@ fun getSpotifyAccessToken(context: Context): String? {
     return prefs.getString("access_token", null)
 }
 
-/*
+
 @Preview
 @Composable
 fun SearchMusicScreenPreview() {
-    SearchMusicScreen()
+    SearchMusicScreen(navController = NavController(LocalContext.current))
 }
 
- */
+
