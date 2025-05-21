@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fitcoach.ui.screen.FitCoachApp
+import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.MainViewModel
 import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     private val maintViewModel = MainViewModel()
+    private val currentlyPlayingVm = CurrentlyPlayingViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
@@ -20,7 +23,8 @@ class MainActivity : ComponentActivity() {
         val navigateTo = intent.getStringExtra("navigateTo")
 
         setContent {
-            FitCoachApp(maintViewModel, initialRoute = navigateTo)
+            FitCoachApp(maintViewModel, currentlyPlayingVm = currentlyPlayingVm,
+                initialRoute = navigateTo)
         }
     }
     /*

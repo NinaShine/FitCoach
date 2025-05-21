@@ -1,5 +1,6 @@
 package com.example.fitcoach.ui.screen
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -13,12 +14,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.*
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,21 +42,42 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.fitcoach.data.model.Song
+import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
+import com.example.fitcoach.viewmodel.MusicViewModel
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 
 
 // lien du tuto : https://developer.spotify.com/documentation/android/tutorials/getting-started
 @Composable
-fun MusicScreen(navController: NavController, accessToken: String) {
+fun MusicScreen(navController: NavController, accessToken: String, currentlyPlayingVm : CurrentlyPlayingViewModel) {
     val context = LocalContext.current
-    var playlists by remember { mutableStateOf<List<SpotifyPlaylist>>(emptyList()) }
+    //var playlists by remember { mutableStateOf<List<SpotifyPlaylist>>(emptyList()) }
     val scope = rememberCoroutineScope()
+
+    val viewModel: MusicViewModel = viewModel()
+    val playlists by viewModel.playlists.collectAsState()
+
+    var isTokenValid by remember { mutableStateOf<Boolean?>(null) }
+    LaunchedEffect(Unit) {
+        isSpotifyTokenValid(context) { valid ->
+            isTokenValid = valid
+        }
+    }
+
 
     Log.d("MusicScreen", "Access token utilisé = $accessToken")
 
@@ -76,12 +101,31 @@ fun MusicScreen(navController: NavController, accessToken: String) {
         artist = "Nekfeu",
         imageRes = R.drawable.spotify_icon
     )
-
+/*
     LaunchedEffect(accessToken) {
         scope.launch(Dispatchers.IO) {
             playlists = fetchSpotifyPlaylists(accessToken)
         }
     }
+
+ */
+
+    LaunchedEffect(accessToken) {
+        viewModel.loadPlaylists(accessToken)
+    }
+
+
+    //val currentlyPlayingVm: CurrentlyPlayingViewModel = viewModel()
+    val playing by currentlyPlayingVm.track.collectAsState()
+
+    LaunchedEffect(accessToken) {
+        currentlyPlayingVm.loadCurrentlyPlaying(accessToken)
+    }
+
+    LaunchedEffect(playing) {
+        Log.d("CurrentlyPlaying", "🎧 Nouvelle chanson: ${playing?.title}")
+    }
+
 
 
     Column(
@@ -113,7 +157,7 @@ fun MusicScreen(navController: NavController, accessToken: String) {
                         .size(45.dp)
                         .clip(CircleShape)
                         .clickable {
-                            // TODO: Naviguer vers la page profil
+                            navController.navigate("profile")
                         }
                 )
             }
@@ -131,50 +175,166 @@ fun MusicScreen(navController: NavController, accessToken: String) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    brush = Brush.horizontalGradient(listOf(Color(0xFFFFB47E), Color(0xFFFF8762))),
-                    shape = RoundedCornerShape(20.dp)
-                )
-                .padding(16.dp)
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(
-                    painter = painterResource(id = currentSong.imageRes),
-                    contentDescription = "Current song",
-                    modifier = Modifier.size(64.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(currentSong.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(currentSong.artist, fontSize = 14.sp, color = Color.Black)
 
-                Spacer(modifier = Modifier.height(16.dp))
+        playing?.let { now ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            brush = Brush.horizontalGradient(listOf(Color(0xFFFFB47E), Color(0xFFFF8762))),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                        .padding(16.dp)
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
+                        // Info musique
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            AsyncImage(
+                                model = now.imageUrl,
+                                contentDescription = now.title,
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                            )
+                            Spacer(Modifier.width(12.dp))
+                            Column {
+                                Text(now.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                                Text(now.artist, fontSize = 14.sp, color = Color.Black)
+                                if (!now.isPlaying) {
+                                    Text("Paused", fontSize = 12.sp, color = Color.Gray)
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Barre de progression
+                        val progress = now.progressMs.toFloat() / now.durationMs
+                        LinearProgressIndicator(
+                            progress = { progress.coerceIn(0f, 1f) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(6.dp)
+                                .clip(RoundedCornerShape(50)),
+                            color = Color.White,
+                            trackColor = Color(0xFFFFD7C2),
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(formatMs(now.progressMs), fontSize = 12.sp, color = Color.White)
+                            Text(formatMs(now.durationMs), fontSize = 12.sp, color = Color.White)
+                        }
+
+
+                        // Contrôles
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            IconButton(onClick = { currentlyPlayingVm.skipPrevious(accessToken) }) {
+                                Icon(
+                                    Icons.Default.SkipPrevious,
+                                    contentDescription = "Previous",
+                                    tint = Color.White
+                                )
+                            }
+                            IconButton(onClick = {
+                                if (playing?.isPlaying == true) {
+                                    currentlyPlayingVm.pauseCurrentlyPlaying(accessToken)
+                                } else {
+                                    currentlyPlayingVm.resumeCurrentlyPlaying(accessToken)
+                                }
+                            }) {
+                                Icon(
+                                    imageVector = if (playing?.isPlaying == true) Icons.Default.Pause else Icons.Default.PlayArrow,
+                                    contentDescription = "Play/Pause",
+                                    modifier = Modifier.size(48.dp),
+                                    tint = Color.White
+                                )
+                            }
+                            IconButton(onClick = { currentlyPlayingVm.skipNext(accessToken) }) {
+                                Icon(
+                                    Icons.Default.SkipNext,
+                                    contentDescription = "Next",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+
+                    }
+                }
+            }
+        } ?: run {
+            Text("No track is currently playing", color = Color.Gray)
+        }
+
+
+
+        /*
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(4.dp)
-                        .background(Color.White.copy(alpha = 0.5f))
+                        .background(
+                            brush = Brush.horizontalGradient(listOf(Color(0xFFFFB47E), Color(0xFFFF8762))),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                        .padding(16.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(0.4f)
-                            .fillMaxHeight()
-                            .background(Color.White)
-                    )
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Image(
+                            painter = painterResource(id = currentSong.imageRes),
+                            contentDescription = "Current song",
+                            modifier = Modifier.size(64.dp)
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(currentSong.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text(currentSong.artist, fontSize = 14.sp, color = Color.Black)
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(4.dp)
+                                .background(Color.White.copy(alpha = 0.5f))
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.4f)
+                                    .fillMaxHeight()
+                                    .background(Color.White)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
+                            Icon(Icons.Default.SkipPrevious, contentDescription = null)
+                            Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(48.dp))
+                            Icon(Icons.Default.SkipNext, contentDescription = null)
+                        }
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-                    Icon(Icons.Default.SkipPrevious, contentDescription = null)
-                    Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(48.dp))
-                    Icon(Icons.Default.SkipNext, contentDescription = null)
-                }
-            }
-        }
+         */
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -206,7 +366,7 @@ fun MusicScreen(navController: NavController, accessToken: String) {
 
         // Login with Spotify button
 
-        //if(getSpotifyAccessToken(context) == null){
+        if (isTokenValid == false) {
             Button(
                 onClick = {
                     Log.d("Spotify Music Screen", "Auth URL: $authUrl")
@@ -214,15 +374,13 @@ fun MusicScreen(navController: NavController, accessToken: String) {
                     val intent = Intent(Intent.ACTION_VIEW, authUrl.toUri())
                     ContextCompat.startActivity(context, intent, null)
 
-                    Log.d("Spotify Music Screen", "Auth URL: $authUrl")
-
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE86144)),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Login with Spotify", color = Color.White)
             }
-        //}
+        }
 
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -264,6 +422,37 @@ fun MusicScreen(navController: NavController, accessToken: String) {
 
 }
 
+fun formatMs(ms: Int): String {
+    val totalSeconds = ms / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return String.format("%d:%02d", minutes, seconds)
+}
+
+fun isSpotifyTokenValid(context: Context, callback: (Boolean) -> Unit) {
+    val accessToken = getSpotifyAccessToken(context)
+    if (accessToken == null) {
+        callback(false)
+        return
+    }
+
+    val client = OkHttpClient()
+    val request = Request.Builder()
+        .url("https://api.spotify.com/v1/me")
+        .addHeader("Authorization", "Bearer $accessToken")
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            callback(false)  // échec réseau ou autre
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            callback(response.isSuccessful)
+        }
+    })
+}
+
 
 @Composable
 fun FilterChip(label: String, selected: Boolean) {
@@ -280,7 +469,7 @@ fun FilterChip(label: String, selected: Boolean) {
 }
 
 @Composable
-fun MusicScreenWithNavBar(navController: NavController) {
+fun MusicScreenWithNavBar(navController: NavController, currentlyPlayingVm : CurrentlyPlayingViewModel) {
     var currentRoute by remember { mutableStateOf("music") }
 
     Scaffold(
@@ -301,13 +490,15 @@ fun MusicScreenWithNavBar(navController: NavController) {
                 "home" -> AccueilScreen(navController = navController)
                 "music" -> MusicScreen(
                     navController = navController,
-                    accessToken = getSpotifyAccessToken(LocalContext.current).toString()
+                    accessToken = getSpotifyAccessToken(LocalContext.current).toString(),
+                    currentlyPlayingVm = currentlyPlayingVm
                 )
                 "workout" -> WorkoutScreen()
                 "social" -> SocialScreen()
                 else -> MusicScreen(
                     navController = navController,
-                    accessToken = getSpotifyAccessToken(LocalContext.current).toString()
+                    accessToken = getSpotifyAccessToken(LocalContext.current).toString(),
+                    currentlyPlayingVm = currentlyPlayingVm
                 )
             }
         }

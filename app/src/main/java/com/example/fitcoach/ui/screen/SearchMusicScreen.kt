@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.launch
@@ -36,10 +37,11 @@ import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
 import com.example.fitcoach.data.model.TrackResult
+import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchMusicScreen(navController: NavController) {
+fun SearchMusicScreen(navController: NavController, currentlyPlayingVm : CurrentlyPlayingViewModel) {
     var searchText by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf(listOf<TrackResult>()) }
     val scope = rememberCoroutineScope()
@@ -123,7 +125,11 @@ fun SearchMusicScreen(navController: NavController) {
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     searchResults.forEach { track ->
-                        TrackItem(track)
+                        TrackItem(track = track, onClick = {
+                            currentlyPlayingVm.setTrack(track)
+                            navController.navigate("musicWithNavBar")
+                            //navController.popBackStack() // retourne à MusicScreen
+                        })
                     }
                 }
             }
@@ -132,14 +138,15 @@ fun SearchMusicScreen(navController: NavController) {
 }
 
 @Composable
-fun TrackItem(track: TrackResult) {
+fun TrackItem(track: TrackResult,  onClick: () -> Unit) {
     var isLiked by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color(0xFFFFF3E0), shape = RoundedCornerShape(12.dp))
-            .padding(12.dp),
+            .padding(12.dp)
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -240,7 +247,7 @@ fun getSpotifyAccessToken(context: Context): String? {
 @Preview
 @Composable
 fun SearchMusicScreenPreview() {
-    SearchMusicScreen(navController = NavController(LocalContext.current))
+    SearchMusicScreen(navController = NavController(LocalContext.current), currentlyPlayingVm = CurrentlyPlayingViewModel())
 }
 
 

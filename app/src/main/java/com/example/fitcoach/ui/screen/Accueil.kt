@@ -41,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.MusicScreen
 import com.example.fitcoach.ui.screen.WorkoutScreen
+import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -480,7 +481,8 @@ fun AccueilPageWithNavBar(navController: NavController) {
                 "home" -> AccueilScreen(navController = navController)
                 "music" -> MusicScreen(
                     navController = navController,
-                    accessToken = getSpotifyAccessToken(LocalContext.current).toString()
+                    accessToken = getSpotifyAccessToken(LocalContext.current).toString(),
+                    currentlyPlayingVm = CurrentlyPlayingViewModel()
                 )
                 "workout" -> WorkoutScreen()
                 "social" -> SocialScreen()

@@ -38,16 +38,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.HomeScreen
 import com.example.fitcoach.R
+import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun FitCoachApp(mainViewModel: MainViewModel, initialRoute: String? = null) {
+fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: String? = null) {
     val navController = rememberNavController()
     val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
     //val startDestination = if (isUserLoggedIn) "home" else "onboarding"
@@ -161,14 +163,14 @@ fun FitCoachApp(mainViewModel: MainViewModel, initialRoute: String? = null) {
 
         composable("music") {
             val accessToken = getSpotifyAccessToken(LocalContext.current).orEmpty()
-            MusicScreen(navController = navController, accessToken = accessToken)
+            MusicScreen(navController = navController, accessToken = accessToken, currentlyPlayingVm = currentlyPlayingVm)
         }
         composable ("musicWithNavBar"){
-            MusicScreenWithNavBar(navController = navController)
+            MusicScreenWithNavBar(navController = navController, currentlyPlayingVm = currentlyPlayingVm)
         }
 
         composable("searchMusic"){
-            SearchMusicScreen(navController = navController)
+            SearchMusicScreen(navController = navController, currentlyPlayingVm = currentlyPlayingVm)
         }
 
         composable("accueil"){
