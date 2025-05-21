@@ -84,7 +84,9 @@ class SpotifyAuthActivity : ComponentActivity() {
 
 
                     runOnUiThread {
-                        val intent = Intent(this@SpotifyAuthActivity, SpotifyMusicActivity::class.java)
+                        val intent = Intent(this@SpotifyAuthActivity, MainActivity::class.java).apply {
+                            putExtra("navigateTo", "musicWithNavBar")
+                        }
                         //intent.putExtra("accessToken", accessToken)
                         startActivity(intent)
                         finish()
