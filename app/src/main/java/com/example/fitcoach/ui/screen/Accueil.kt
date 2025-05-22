@@ -484,7 +484,7 @@ fun AccueilPageWithNavBar(navController: NavController) {
                     accessToken = getSpotifyAccessToken(LocalContext.current).toString(),
                     currentlyPlayingVm = CurrentlyPlayingViewModel()
                 )
-                "workout" -> WorkoutScreen()
+                "workout" -> WorkoutScreen(navController)
                 "social" -> SocialScreen()
                 else -> {
                     AccueilScreen(navController = navController)

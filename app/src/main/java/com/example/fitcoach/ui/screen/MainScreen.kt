@@ -189,9 +189,15 @@ fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlay
         composable("profile"){
             ProfileScreen(navController = navController)
         }
-
-
-
+        composable("workout") {
+            WorkoutScreen(navController)
+        }
+        composable("workout_help") {
+            WorkoutHelpScreen(navController = navController)
+        }
+        composable("quick_workout") {
+            QuickWorkoutScreen(navController = navController)
+        }
 
 
 

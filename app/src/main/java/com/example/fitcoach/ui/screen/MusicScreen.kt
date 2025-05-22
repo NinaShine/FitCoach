@@ -493,7 +493,7 @@ fun MusicScreenWithNavBar(navController: NavController, currentlyPlayingVm : Cur
                     accessToken = getSpotifyAccessToken(LocalContext.current).toString(),
                     currentlyPlayingVm = currentlyPlayingVm
                 )
-                "workout" -> WorkoutScreen()
+                "workout" -> WorkoutScreen(navController)
                 "social" -> SocialScreen()
                 else -> MusicScreen(
                     navController = navController,
