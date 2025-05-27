@@ -3,18 +3,15 @@ package com.example.fitcoach.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,7 +27,9 @@ fun QuickWorkoutScreen(navController: NavController) {
     var volume by remember { mutableStateOf(0) }
     var series by remember { mutableStateOf(0) }
 
-    // Chrono logic
+    var showConfirmDialog by remember { mutableStateOf(false) }
+
+    // Chronomètre
     LaunchedEffect(isRunning) {
         while (isRunning) {
             delay(1000L)
@@ -38,12 +37,40 @@ fun QuickWorkoutScreen(navController: NavController) {
         }
     }
 
+    // POPUP DE CONFIRMATION
+    if (showConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showConfirmDialog = false },
+            title = { Text("Confirm Exit") },
+            text = { Text("Are you sure you want to abandon your training session?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showConfirmDialog = false
+                        isRunning = false
+                        navController.navigate("workout") {
+                            popUpTo("quick_workout") { inclusive = true }
+                        }
+                    }
+                ) {
+                    Text("Yes", color = Color.Red)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showConfirmDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    // UI PRINCIPALE
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header
+        //  Haut de page
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -62,7 +89,7 @@ fun QuickWorkoutScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Stats Row
+        // Stats
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
@@ -74,12 +101,12 @@ fun QuickWorkoutScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Dumbbell Start
+        // Démarrage chrono
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { isRunning = true } // Start chrono
+                .clickable { isRunning = true }
         ) {
             Icon(
                 painter = painterResource(R.drawable.dumbell),
@@ -92,6 +119,7 @@ fun QuickWorkoutScreen(navController: NavController) {
         }
 
         Spacer(modifier = Modifier.height(12.dp))
+
         Text(
             text = "Add an exercise to start your workout",
             fontSize = 14.sp,
@@ -100,9 +128,9 @@ fun QuickWorkoutScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Add Exercise Button
+        // ➕ Ajouter un exercice
         Button(
-            onClick = { navController.navigate("exercise_list") },
+            onClick = { navController.navigate("exercise_list") }, // à implémenter plus tard
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp),
@@ -116,13 +144,13 @@ fun QuickWorkoutScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Settings + Abandon (uniform style)
+        // ⚙Settings et abandon
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Button(
-                onClick = { /* TODO settings */ },
+                onClick = { /* Settings à ajouter */ },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFBF2ED)),
                 shape = RoundedCornerShape(16.dp)
@@ -131,10 +159,7 @@ fun QuickWorkoutScreen(navController: NavController) {
             }
 
             Button(
-                onClick = {
-                    // Show confirm dialog here
-                    navController.navigate("confirm_abandon")
-                },
+                onClick = { showConfirmDialog = true },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFBF2ED)),
                 shape = RoundedCornerShape(16.dp)
@@ -145,19 +170,51 @@ fun QuickWorkoutScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // BOT
-        Column(
+        // Bot section
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { navController.navigate("chatbot") },
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(top = 24.dp),
+            contentAlignment = Alignment.Center
         ) {
-            TextBotMessage("You're the GOAT")
-            TextBotMessage("Keep up the hard work !")
-            TextBotMessage("Tap me if you need help !", highlight = true)
+            // Messages autour
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                TextBotMessage("You're the GOAT")
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    TextBotMessage("Keep up the hard work !")
+                    TextBotMessage("Tap me if you need help !", highlight = true)
+                }
+            }
+
+            // Bot cliquable au centre, par-dessus
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.height(60.dp))
+                Box(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .background(color = Color(0xFFFBF2ED), shape = RoundedCornerShape(40.dp))
+                        .clickable { navController.navigate("chatbot") },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.robot_assistant), // ton icône
+                        contentDescription = "Bot",
+                        modifier = Modifier.size(48.dp),
+                        tint = Color.Unspecified
+                    )
+                }
+            }
         }
+
     }
 }
+
+// --- Composants utilitaires ---
+
 
 @Composable
 fun WorkoutStat(title: String, value: String) {

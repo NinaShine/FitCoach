@@ -199,6 +199,16 @@ fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlay
             QuickWorkoutScreen(navController = navController)
         }
 
+        composable("exercise_list") {
+            ExerciseListScreen(navController = navController)
+        }
+
+        composable("exercise_detail/{id}") { backStackEntry ->
+            ExerciseDetailScreen(navController = navController, backStackEntry = backStackEntry)
+        }
+
+
+
 
 
     }
