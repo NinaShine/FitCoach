@@ -144,7 +144,7 @@ dependencies {
 
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
-    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 
     // retrofit
 
@@ -154,6 +154,10 @@ dependencies {
     // Custom tabs
 
     implementation("androidx.browser:browser:1.7.0")
+
+    // okhttp
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
 
 
 }

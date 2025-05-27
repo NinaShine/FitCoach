@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fitcoach.viewmodel.AuthViewModel
+import com.example.fitcoach.viewmodel.UserOnboardingViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.userProfileChangeRequest
 
@@ -49,7 +50,8 @@ import com.google.firebase.auth.userProfileChangeRequest
 fun RegisterScreen(
     navController: NavController,
     onRegisterSuccess: () -> Unit,
-    viewModel: AuthViewModel = viewModel()
+    viewModel: AuthViewModel = viewModel(),
+    onboardingViewModel: UserOnboardingViewModel
 ) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -190,30 +192,7 @@ fun RegisterScreen(
 
         Button(
             onClick = {
-                viewModel.signUp(email, password, username)
-                /*
-                FirebaseAuth.getInstance()
-                    .createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val user = FirebaseAuth.getInstance().currentUser
-                            val profileUpdates = userProfileChangeRequest {
-                                displayName = username
-                            }
-                            user?.updateProfile(profileUpdates)
-                                ?.addOnCompleteListener { updateTask ->
-                                    if (updateTask.isSuccessful) {
-                                        onRegisterSuccess()
-                                    } else {
-                                        error = "Compte créé, mais impossible d'ajouter le nom."
-                                    }
-                                }
-                        } else {
-                            error = task.exception?.message ?: "Erreur lors de l'inscription"
-                        }
-                    }
-
-                 */
+                viewModel.signUp(email, password, username, onboardingViewModel)
             },
             modifier = Modifier
                 .width(338.dp)
