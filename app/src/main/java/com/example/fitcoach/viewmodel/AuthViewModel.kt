@@ -26,7 +26,7 @@ class AuthViewModel : ViewModel() {
             }
     }
 
-    fun signUp(email: String, password: String, username: String) {
+    fun signUp(email: String, password: String, username: String,  onboardingViewModel: UserOnboardingViewModel) {
         errorMessage.value = null
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
@@ -37,6 +37,7 @@ class AuthViewModel : ViewModel() {
                 user?.updateProfile(profileUpdates)
                     ?.addOnCompleteListener { updateTask ->
                         if (updateTask.isSuccessful) {
+                            onboardingViewModel.answers.username = username
                             isUserAuthenticated.value = true
                             authSuccess.value = true
                         } else {

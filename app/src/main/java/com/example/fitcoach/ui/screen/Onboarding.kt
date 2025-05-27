@@ -67,7 +67,7 @@ fun OnboardingScreens(navController: NavController) {
                     "Skip",
                     modifier = Modifier
                         .clickable {
-                            navController.navigate("home") {
+                            navController.navigate("accueil") {
                                 popUpTo("onboardingFlow") { inclusive = true }
                             }
                         },
@@ -108,7 +108,7 @@ fun OnboardingScreens(navController: NavController) {
                         if (currentPage < pages.lastIndex) {
                             currentPage++
                         } else {
-                            navController.navigate("home") {
+                            navController.navigate("accueil") {
                                 popUpTo("onboardingFlow") { inclusive = true }
                             }
                         }
