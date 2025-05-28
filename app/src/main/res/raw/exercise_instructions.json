@@ -1,0 +1,94 @@
+{
+  "exercise_instructions": [
+    {
+      "exerciseId": "0001",
+      "instructions": [
+        "Allongez-vous sur le dos, genoux fléchis et pieds au sol",
+        "Placez vos mains derrière la tête sans tirer sur le cou",
+        "Soulevez votre torse à 3/4 de la hauteur maximale (pas complètement)",
+        "Contractez les abdominaux et maintenez la position brièvement",
+        "Redescendez lentement sans poser complètement la tête au sol"
+      ]
+    },
+    {
+      "exerciseId": "0002",
+      "instructions": [
+        "Tenez-vous debout, pieds écartés à la largeur des épaules",
+        "Placez une main derrière la tête, l'autre sur la hanche",
+        "Inclinez-vous latéralement à 45 degrés vers le côté opposé",
+        "Contractez les obliques et revenez à la position centrale",
+        "Alternez les côtés ou faites une série complète d'un côté puis l'autre"
+      ]
+    },
+    {
+      "exerciseId": "0003",
+      "instructions": [
+        "Allongez-vous sur le dos, mains derrière la tête",
+        "Soulevez légèrement les épaules du sol",
+        "Amenez le coude droit vers le genou gauche levé",
+        "Alternez en amenant le coude gauche vers le genou droit",
+        "Gardez un mouvement fluide comme si vous pédaliez dans l'air"
+      ]
+    },
+    {
+      "exerciseId": "0004",
+      "instructions": [
+        "Allongez-vous sur le dos, bras le long du corps",
+        "Soulevez légèrement les épaules et la tête du sol",
+        "Tendez le bras droit pour toucher le talon droit",
+        "Revenez au centre puis tendez le bras gauche vers le talon gauche",
+        "Alternez les mouvements en gardant les abdominaux contractés"
+      ]
+    },
+    {
+      "exerciseId": "0005",
+      "instructions": [
+        "Tenez-vous debout, bras levés au-dessus de la tête",
+        "Tirez alternativement chaque bras vers le bas sur le côté",
+        "Contractez les muscles du dos comme si vous tiriez une barre",
+        "Gardez le torse droit et les épaules vers l'arrière",
+        "Alternez les bras de manière contrôlée et rythmée"
+      ]
+    },
+    {
+      "exerciseId": "0006",
+      "instructions": [
+        "Agenouillez-vous devant un banc ou une surface stable",
+        "Placez vos mains sur le bord, bras tendus",
+        "Descendez lentement en fléchissant les bras",
+        "Poussez pour remonter à la position de départ",
+        "Gardez le corps aligné et les genoux au sol pour l'assistance"
+      ]
+    },
+    {
+      "exerciseId": "0007",
+      "instructions": [
+        "Suspendez-vous à une barre avec assistance (élastique ou partenaire)",
+        "Gardez les bras tendus et le corps stable",
+        "Levez les genoux vers la poitrine",
+        "Contractez les abdominaux en haut du mouvement",
+        "Redescendez les jambes lentement et contrôlé"
+      ]
+    },
+    {
+      "exerciseId": "0008",
+      "instructions": [
+        "Allongez-vous sur le dos, jambes levées à 90 degrés",
+        "Placez vos mains sous les fesses pour le support",
+        "Levez les jambes vers le plafond puis lancez-les sur le côté",
+        "Contractez les abdominaux pour contrôler le mouvement latéral",
+        "Ramenez les jambes au centre et répétez de l'autre côté"
+      ]
+    },
+    {
+      "exerciseId": "0009",
+      "instructions": [
+        "Allongez-vous sur le dos, jambes levées à 90 degrés",
+        "Placez vos mains sous les fesses pour l'assistance",
+        "Levez les jambes vers le plafond en contractant les abdos",
+        "Lancez les jambes vers le bas sans toucher le sol",
+        "Remontez immédiatement les jambes vers le plafond"
+      ]
+    }
+  ]
+}

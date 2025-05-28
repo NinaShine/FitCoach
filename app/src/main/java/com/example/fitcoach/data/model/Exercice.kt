@@ -6,5 +6,12 @@ data class Exercise(
     val bodyPart: String,
     val equipment: String,
     val gifUrl: String,
-    val target: String
+    val target: String,
+    val instructions: List<String> = emptyList()
+)
+
+// Modèle pour les instructions locales
+data class ExerciseInstructions(
+    val exerciseId: String,
+    val instructions: List<String>
 )
