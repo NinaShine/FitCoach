@@ -4,11 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,86 +26,121 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.fitcoach.R
+import com.example.fitcoach.repository.RoutineRepository
 
 @Composable
 fun WorkoutScreen(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Top Bar
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    val routines = RoutineRepository.getAllRoutines()
+    val scrollState = rememberScrollState()
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Scrollable content
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp) // bottom padding to avoid overlapping the fixed button
+                .verticalScroll(scrollState)
         ) {
-            Text("fit’fy", fontSize = 24.sp, color = Color.Black)
-            Row {
-                Image(
-                    painter = painterResource(R.drawable.robot_assistant),
-                    contentDescription = null,
-                    modifier = Modifier.size(40.dp)
-                )
+            // Top Bar
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("fit’fy", fontSize = 24.sp, color = Color.Black)
+                Row {
+                    Image(
+                        painter = painterResource(R.drawable.robot_assistant),
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Image(
+                        painter = painterResource(R.drawable.july_photo_profile),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+            Text("Quick Start", fontSize = 20.sp)
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = {
+                    navController.navigate("quick_workout")
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFBF2ED)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null, tint = Color.Black)
                 Spacer(modifier = Modifier.width(8.dp))
-                Image(
-                    painter = painterResource(R.drawable.july_photo_profile),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
+                Text("Start an Empty Workout", color = Color.Black)
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+            Text("Routines", fontSize = 20.sp)
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                RoutineButton(
+                    icon = Icons.Default.Description,
+                    text = "New Routine",
+                    modifier = Modifier.weight(1f),
+                    onClick = { navController.navigate("create_routine") }
                 )
+                RoutineButton(
+                    icon = Icons.Default.Search,
+                    text = "Explore Routines",
+                    modifier = Modifier.weight(1f),
+                    onClick = { navController.navigate("explore_routines") }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Saved routines
+            Text("Les routines enregistrées", fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+            routines.forEach { routine ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFFFBF2ED))
+                        .clickable {
+                            navController.navigate("routine_detail/${routine.id}")
+                        }
+                        .padding(16.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(routine.title, fontSize = 16.sp)
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text("${routine.exercises.size} exercices", fontSize = 14.sp)
+                    }
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-        Text("Quick Start", fontSize = 20.sp)
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Button(
-            onClick = {
-                navController.navigate("quick_workout")
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFBF2ED)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Icon(Icons.Default.Add, contentDescription = null, tint = Color.Black)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Start an Empty Workout", color = Color.Black)
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-        Text("Routines", fontSize = 20.sp)
-
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            RoutineButton(
-                icon = Icons.Default.Description,
-                text = "New Routine",
-                modifier = Modifier.weight(1f)
-            )
-            RoutineButton(
-                icon = Icons.Default.Search,
-                text = "Explore Routines",
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Bottom Help Button
+        // Fixed bottom help button
         Box(
             modifier = Modifier
+                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .height(60.dp)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(Color(0xFFFBF2ED))
                 .clickable {
@@ -113,20 +151,25 @@ fun WorkoutScreen(navController: NavController) {
             Row(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Text("How to get started", fontSize = 16.sp)
                 Spacer(modifier = Modifier.weight(1f))
-                Icon(Icons.Default.Add, contentDescription = null)
+                Icon(Icons.Default.NavigateNext, contentDescription = null)
             }
         }
     }
 }
 
 @Composable
-fun RoutineButton(icon: ImageVector, text: String, modifier: Modifier = Modifier) {
+fun RoutineButton(
+    icon: ImageVector,
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Box(
         modifier = modifier
             .height(100.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Color(0xFFEF8E79))
-            .clickable { /* TODO */ },
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

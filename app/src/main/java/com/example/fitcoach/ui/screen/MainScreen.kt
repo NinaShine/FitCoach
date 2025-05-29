@@ -58,8 +58,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: String? = null) {
     val navController = rememberNavController()
     val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
-    //val defaultStart = "onboarding"
-    val defaultStart = if (FirebaseAuth.getInstance().currentUser != null) "accueil" else "onboarding"
+    val defaultStart = "onboarding"
+    //val defaultStart = if (FirebaseAuth.getInstance().currentUser != null) "accueil" else "onboarding"
     val startDestination = initialRoute ?: defaultStart
 
     val currentUserName = mainViewModel.currentUserName.value
@@ -228,6 +228,36 @@ fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlay
         composable("privacy_settings"){
             PrivacyScreen(navController = navController)
         }
+
+        composable("exercise_list") {
+            ExerciseListScreen(navController = navController)
+        }
+
+        composable("exercise_detail/{id}") { backStackEntry ->
+            ExerciseDetailScreen(navController = navController, backStackEntry = backStackEntry)
+        }
+        composable("explore_routines") {
+            ExploreRoutinesScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable("create_routine") {
+            CreateRoutineScreen(navController)
+        }
+
+        composable("exercise_list_2") {
+            ExerciseListScreen2(navController)
+        }
+        composable("routine_detail/{id}") { backStackEntry ->
+            val routineId = backStackEntry.arguments?.getString("id") ?: return@composable
+            RoutineDetailScreen(routineId = routineId, navController = navController)
+        }
+
+
+
+
 
 
 

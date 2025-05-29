@@ -7,7 +7,4 @@ data class Workout(
     val exercises: List<Exercise> = emptyList()
 )
 
-data class Exercise(
-    val name: String = "",
-    val reps: Int = 0
-)
+
