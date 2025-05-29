@@ -206,6 +206,13 @@ fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlay
         composable("exercise_detail/{id}") { backStackEntry ->
             ExerciseDetailScreen(navController = navController, backStackEntry = backStackEntry)
         }
+        composable("explore_routines") {
+            ExploreRoutinesScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
 
 
 

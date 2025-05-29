@@ -87,14 +87,17 @@ fun WorkoutScreen(navController: NavController) {
             RoutineButton(
                 icon = Icons.Default.Description,
                 text = "New Routine",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = { /* Action pour "New Routine" */ }
             )
             RoutineButton(
                 icon = Icons.Default.Search,
                 text = "Explore Routines",
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("explore_routines") }
             )
         }
+
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -120,13 +123,18 @@ fun WorkoutScreen(navController: NavController) {
 }
 
 @Composable
-fun RoutineButton(icon: ImageVector, text: String, modifier: Modifier = Modifier) {
+fun RoutineButton(
+    icon: ImageVector,
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Box(
         modifier = modifier
             .height(100.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Color(0xFFEF8E79))
-            .clickable { /* TODO */ },
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

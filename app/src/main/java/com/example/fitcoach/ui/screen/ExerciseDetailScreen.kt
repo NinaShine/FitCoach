@@ -137,16 +137,6 @@ fun ExerciseDetailScreen(
                     }
                 }
 
-                item {
-                    Button(
-                        onClick = { /* add this exercise */ },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE86144))
-                    ) {
-                        Text("Ajouter cet exercice", color = Color.White)
-                    }
-                }
             }
         }
     }
