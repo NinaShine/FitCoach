@@ -212,17 +212,6 @@ fun LoginScreen(
             Button(
                 onClick = {
                     viewModel.signIn(email, password)
-                    /*
-                    FirebaseAuth.getInstance()
-                        .signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                onLoginSuccess()
-                            } else {
-                                error = task.exception?.message ?: "Erreur inconnue"
-                            }
-                        }
-                     */
                 },
                 modifier = Modifier.width(338.dp).height(68.dp),
                 shape = RoundedCornerShape(20.dp),

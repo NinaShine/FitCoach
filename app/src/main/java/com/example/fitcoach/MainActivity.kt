@@ -1,22 +1,36 @@
 package com.example.fitcoach
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fitcoach.ui.screen.FitCoachApp
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.MainViewModel
 import com.google.firebase.FirebaseApp
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : ComponentActivity() {
     private val maintViewModel = MainViewModel()
     private val currentlyPlayingVm = CurrentlyPlayingViewModel()
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d("FCM Token", "Device token: $token")
+                // TODO : Enregistrer ce token sur Firestore si besoin
+            } else {
+                Log.e("FCM Token", "Failed to get token", task.exception)
+            }
+        }
 
         //handleSpotifyRedirect(intent)
 

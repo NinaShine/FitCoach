@@ -12,8 +12,43 @@ data class UserAnswers(
     var firstName: String = "",
     var lastName: String = "",
     var avatarUrl: String? = null,
-    var username: String = ""
-)
+    var username: String = "",
+    var bio: String? = null,
+    var notificationsEnabled: Boolean = true,
+    var fcmToken: String? = null,
+    var friends: List<String> = emptyList(),
+    var workouts: List<String> = emptyList(),
+    var rewards: List<String> = emptyList(),
+    var achievements: List<String> = emptyList(),
+    var progress: List<Int> = emptyList()
+) {
+    companion object {
+        fun fromUserProfile(profile: UserProfile): UserAnswers {
+            return UserAnswers(
+                goal = profile.goal ?: "",
+                height = profile.height ?: 0,
+                weight = profile.weight ?: 0,
+                weightUnit = profile.weightUnit ?: "",
+                gender = profile.gender ?: "",
+                birthDate = profile.birthDate ?: "",
+                trainingPlace = profile.trainingPlace ?: "",
+                stepGoal = profile.stepGoal ?: 0,
+                firstName = profile.firstName ?: "",
+                lastName = profile.lastName ?: "",
+                avatarUrl = profile.avatarUrl,
+                username = profile.username ?: "",
+                bio = profile.bio,
+                notificationsEnabled = profile.notificationsEnabled ?: true,
+                fcmToken = profile.fcmToken,
+                friends = profile.friends ?: emptyList(),
+                workouts = profile.workouts ?: emptyList(),
+                rewards = profile.rewards ?: emptyList(),
+                achievements = profile.achievements ?: emptyList(),
+                progress = profile.progress ?: emptyList()
+            )
+        }
+    }
+}
 
 fun UserAnswers.toUserProfile(): UserProfile {
     return UserProfile(
@@ -29,6 +64,14 @@ fun UserAnswers.toUserProfile(): UserProfile {
         birthDate = birthDate,
         trainingPlace = trainingPlace,
         stepGoal = stepGoal,
-        username = username
+        username = username,
+        bio = bio,
+        notificationsEnabled = notificationsEnabled,
+        fcmToken = fcmToken,
+        friends = friends,
+        workouts = workouts,
+        rewards = rewards,
+        achievements = achievements,
+        progress = progress
     )
 }

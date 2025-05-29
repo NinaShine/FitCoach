@@ -1,5 +1,8 @@
 package com.example.fitcoach.ui.screen
 
+import android.R.attr.onClick
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +17,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,23 +31,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fitcoach.R
-import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
-
-fun getCurrentUsername(): String {
-    return FirebaseAuth.getInstance().currentUser?.displayName ?: "Utilisateur"
-}
+import com.example.fitcoach.viewmodel.UserProfileViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProfileScreen(navController: NavController) {
-    val user = FirebaseAuth.getInstance().currentUser
-    //val username = user?.displayName ?: "Utilisateur"
-    val username = user?.email ?: "Utilisateur"
-    val age = 28
-    Text(username, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+    val viewModel: UserProfileViewModel = viewModel()
+    val username by viewModel.username
+    val age by viewModel.birthDate
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchUsername()
+        viewModel.fetchAge()
+    }
+
+    //Text(username, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
     Column(
         modifier = Modifier
@@ -65,7 +72,8 @@ fun ProfileScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                Text(username, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                //Text(username, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(username ?: "Chargement...", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Text("$age years old", fontSize = 14.sp, color = Color.Gray)
             }
         }
@@ -114,10 +122,12 @@ fun ProfileScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        ProfileOptionItem("Friends", Icons.Default.Person)
-        ProfileOptionItem("Reward Collection", Icons.Default.EmojiEvents)
-        ProfileOptionItem("Statistics", Icons.Default.ShowChart)
-        ProfileOptionItem("Settings", Icons.Default.Settings)
+        ProfileOptionItem("Friends", Icons.Default.Person) { /* navigate to friends */ }
+        ProfileOptionItem("Reward Collection", Icons.Default.EmojiEvents) { /* navigate to rewards */ }
+        ProfileOptionItem("Statistics", Icons.Default.ShowChart) { /* navigate to stats */ }
+        ProfileOptionItem("Settings", Icons.Default.Settings) {
+            navController.navigate("settings")
+        }
 
         Spacer(modifier = Modifier.height(100.dp))
 
@@ -152,7 +162,7 @@ fun StatBlock(value: String, label: String) {
 }
 
 @Composable
-fun ProfileOptionItem(title: String, icon: ImageVector) {
+fun ProfileOptionItem(title: String, icon: ImageVector, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -162,7 +172,7 @@ fun ProfileOptionItem(title: String, icon: ImageVector) {
             .background(Color.White)
             .padding(horizontal = 16.dp, vertical = 12.dp)
             .clickable {
-                // TODO: Naviguer vers .....
+                onClick()
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -173,6 +183,7 @@ fun ProfileOptionItem(title: String, icon: ImageVector) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {

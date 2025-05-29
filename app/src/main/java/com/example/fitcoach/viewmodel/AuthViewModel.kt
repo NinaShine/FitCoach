@@ -1,9 +1,11 @@
 package com.example.fitcoach.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AuthViewModel : ViewModel() {
 
@@ -68,5 +70,20 @@ class AuthViewModel : ViewModel() {
                 errorMessage.value = it.message
             }
     }
+
+    private fun saveTokenToFirestore(token: String) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("users").document(uid)
+            .update("fcmToken", token)
+            .addOnSuccessListener {
+                Log.d("FCM", "Token FCM enregistré dans Firestore.")
+            }
+            .addOnFailureListener {
+                Log.e("FCM", "Échec d'enregistrement du token FCM : ${it.message}")
+            }
+    }
+
 
 }

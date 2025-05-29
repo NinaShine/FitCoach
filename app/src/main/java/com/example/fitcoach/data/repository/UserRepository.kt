@@ -18,4 +18,21 @@ object UserRepository {
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it) }
     }
+
+    fun updateUserProfile(
+        updates: Map<String, Any?>,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val uid = auth.currentUser?.uid
+        if (uid == null) {
+            onFailure(Exception("Utilisateur non connecté"))
+            return
+        }
+
+        db.collection("users").document(uid)
+            .update(updates)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
+    }
 }
