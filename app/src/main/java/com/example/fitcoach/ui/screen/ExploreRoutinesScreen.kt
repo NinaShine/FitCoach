@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -26,6 +28,50 @@ import com.example.fitcoach.viewmodel.ExploreViewModel
 import com.example.fitcoach.data.model.YouTubeVideo
 
 @Composable
+fun CategoryButton(
+    text: String,
+    icon: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val backgroundColor = if (isSelected) Color(0xFFFAC9A8) else Color(0xFFFBF2ED)
+
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        modifier = modifier
+            .height(60.dp)
+            .clickable { onClick() }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = text,
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f, fill = false)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = icon,
+                    fontSize = 20.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun ExploreRoutinesScreen(
     viewModel: ExploreViewModel = viewModel(),
     onBack: () -> Unit
@@ -34,21 +80,28 @@ fun ExploreRoutinesScreen(
     val levelOptions = listOf("Beginner", "Intermediate", "Advanced")
     val objectiveOptions = listOf("Fat Loss", "Muscle Gain", "Endurance")
     val equipmentOptions = listOf("Dumbbells", "Bodyweight", "Full Gym")
+    val durationOptions = listOf("< 10 min", "10-20 min", "> 20 min")
 
     var selectedLevel by remember { mutableStateOf<String?>(null) }
     var selectedObjective by remember { mutableStateOf<String?>(null) }
     var selectedEquipment by remember { mutableStateOf<String?>(null) }
+    var selectedDuration by remember { mutableStateOf<String?>(null) }
+    var selectedCategory by remember { mutableStateOf<String?>(null) }
 
     var showLevelMenu by remember { mutableStateOf(false) }
     var showObjectiveMenu by remember { mutableStateOf(false) }
     var showEquipmentMenu by remember { mutableStateOf(false) }
+    var showFilterDialog by remember { mutableStateOf(false) }
 
     var showAll by remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        // Top Bar
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,17 +115,15 @@ fun ExploreRoutinesScreen(
             Spacer(modifier = Modifier.width(24.dp))
         }
 
-        // Filters title
         Text("Programs", fontSize = 18.sp, modifier = Modifier.padding(start = 16.dp, bottom = 8.dp))
 
-        // Filter Buttons
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            FilterButtonWithIcon("Filters", null, { /* TODO */ }, Icons.Default.FilterList)
+            FilterButtonWithIcon("Filters", null, { showFilterDialog = true }, Icons.Default.FilterList)
             FilterButtonWithIcon("Level", selectedLevel, { showLevelMenu = true }, Icons.Default.ArrowDropDown)
             FilterButtonWithIcon("Objective", selectedObjective, { showObjectiveMenu = true }, Icons.Default.ArrowDropDown)
             FilterButtonWithIcon("Equipment", selectedEquipment, { showEquipmentMenu = true }, Icons.Default.ArrowDropDown)
@@ -108,40 +159,140 @@ fun ExploreRoutinesScreen(
             }
         }
 
-        // Scrollable Videos
-        Box(modifier = Modifier.weight(1f)) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                val displayedVideos = if (showAll) videos else videos.take(3)
-                items(displayedVideos) { video ->
-                    VideoCard(video)
+        if (showFilterDialog) {
+            AlertDialog(
+                onDismissRequest = { showFilterDialog = false },
+                title = { Text("More Filters") },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Duration")
+                        durationOptions.forEach { option ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        selectedDuration = option
+                                    }
+                                    .padding(4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = selectedDuration == option,
+                                    onClick = { selectedDuration = option }
+                                )
+                                Text(option)
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        showFilterDialog = false
+                        val combinedQuery = listOfNotNull(
+                            selectedLevel,
+                            selectedObjective,
+                            selectedEquipment,
+                            selectedDuration
+                        ).joinToString(" ")
+                        viewModel.searchVideos(combinedQuery)
+                    }) {
+                        Text("Apply")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showFilterDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .height(290.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            if (showAll) {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(videos) { video ->
+                        VideoCard(video)
+                    }
+                }
+            } else {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    videos.take(3).forEach { video ->
+                        VideoCard(video)
+                    }
                 }
             }
         }
 
-        // Show all programs button
-        Button(
-            onClick = { showAll = true },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text("Show all programs")
+        if (!showAll && videos.size > 3) {
+            Button(
+                onClick = { showAll = true },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFBF2ED)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+            ) {
+                Text("Show all programs", color = Color.Black)
+            }
         }
 
-        // Routine buttons (Home, Gym, Outside, etc.)
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            listOf("Home", "Gym", "Outside").forEach {
-                FilterButton(it)
+            Text("Routines", fontSize = 18.sp, modifier = Modifier.padding(bottom = 8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                CategoryButton("At home", "🏠", selectedCategory == "At home", {
+                    selectedCategory = "At home"
+                    viewModel.searchVideos("home workout")
+                }, Modifier.weight(1f))
+
+                CategoryButton("Journey", "💼", selectedCategory == "Journey", {
+                    selectedCategory = "Journey"
+                    viewModel.searchVideos("travel workout")
+                }, Modifier.weight(1f))
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                CategoryButton("Dumbbells\nOnly", "🏋️", selectedCategory == "Dumbbells\nOnly", {
+                    selectedCategory = "Dumbbells\nOnly"
+                    viewModel.searchVideos("dumbbell workout")
+                }, Modifier.weight(1f))
+
+                CategoryButton("Gym", "💪", selectedCategory == "Gym", {
+                    selectedCategory = "Gym"
+                    viewModel.searchVideos("gym workout")
+                }, Modifier.weight(1f))
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                CategoryButton("Cardio and\nFitness", "❤️", selectedCategory == "Cardio and\nFitness", {
+                    selectedCategory = "Cardio and\nFitness"
+                    viewModel.searchVideos("cardio fitness")
+                }, Modifier.weight(1f))
+
+                CategoryButton("Stretching", "🧘‍♀️", selectedCategory == "Stretching", {
+                    selectedCategory = "Stretching"
+                    viewModel.searchVideos("stretching workout")
+                }, Modifier.weight(1f))
             }
         }
     }
@@ -166,26 +317,14 @@ fun FilterButtonWithIcon(label: String, selected: String?, onClick: () -> Unit, 
 }
 
 @Composable
-fun FilterButton(label: String) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color(0xFFFBF2ED))
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(label)
-    }
-}
-
-@Composable
 fun VideoCard(video: YouTubeVideo) {
     Card(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFD8C2)),
         modifier = Modifier
+            .height(90.dp)
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(Color(0xFFFFAA7C))
+            .padding(vertical = 4.dp)
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             AsyncImage(
@@ -198,7 +337,6 @@ fun VideoCard(video: YouTubeVideo) {
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.align(Alignment.CenterVertically)) {
                 Text(video.snippet.title, maxLines = 2)
-                Text("3 routines", fontSize = 12.sp, color = Color.Gray)
             }
         }
     }
