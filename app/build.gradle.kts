@@ -174,6 +174,11 @@ dependencies {
     // okhttp
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
+    // maps
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+
 
 
 }
