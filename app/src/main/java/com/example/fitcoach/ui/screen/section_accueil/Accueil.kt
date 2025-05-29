@@ -40,9 +40,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.MusicScreen
-import com.example.fitcoach.ui.screen.WorkoutScreen
 import com.example.fitcoach.ui.screen.getSpotifyAccessToken
 import com.example.fitcoach.ui.screen.section_social.SocialScreen
+import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
