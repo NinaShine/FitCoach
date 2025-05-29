@@ -13,5 +13,14 @@ data class UserProfile(
     val gender: String = "",
     val birthDate: String = "",
     val trainingPlace: String = "",
-    val stepGoal: Int = 0
+    val stepGoal: Int = 0,
+    val bio: String? = null,
+    val notificationsEnabled: Boolean = true,
+    val fcmToken : String? = null,
+    val friends: List<String> = emptyList(),
+    val workouts: List<String> = emptyList(),
+    val rewards: List<String> = emptyList(),
+    val achievements: List<String> = emptyList(),
+    val progress: List<Int> = emptyList()
+
 )

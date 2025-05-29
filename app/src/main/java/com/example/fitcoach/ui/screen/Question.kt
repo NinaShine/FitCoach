@@ -43,6 +43,8 @@ import com.example.fitcoach.R
 import com.example.fitcoach.data.repository.CloudinaryUploader
 import com.example.fitcoach.viewmodel.UserOnboardingViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 @Composable
@@ -957,6 +959,7 @@ fun CreateProfileScreen(
 
                             viewModel.saveToFirestore(
                                 onSuccess = {
+                                    saveFCMTokenToFirestore()
                                     navController.navigate("onboarding1")
                                 },
                                 onFailure = {
@@ -980,6 +983,7 @@ fun CreateProfileScreen(
 
                     viewModel.saveToFirestore(
                         onSuccess = {
+                            saveFCMTokenToFirestore()
                             navController.navigate("onboarding1")
                         },
                         onFailure = {
@@ -1003,5 +1007,24 @@ fun CreateProfileScreen(
         }
     }
 }
+
+fun saveFCMTokenToFirestore() {
+    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    val db = FirebaseFirestore.getInstance()
+
+    FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+        db.collection("users").document(uid)
+            .update("fcmToken", token)
+            .addOnSuccessListener {
+                Log.d("FCM", "Token FCM sauvegardé dans Firestore")
+            }
+            .addOnFailureListener {
+                Log.e("FCM", "Erreur en sauvegardant le token FCM : ${it.message}")
+            }
+    }.addOnFailureListener {
+        Log.e("FCM", "Impossible d’obtenir le token FCM : ${it.message}")
+    }
+}
+
 
 

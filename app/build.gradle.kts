@@ -9,12 +9,10 @@ plugins {
 android {
     namespace = "com.example.fitcoach"
     compileSdk = 35 
-    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.fitcoach"
         minSdk = 24
-        targetSdk = 35 
         targetSdk = 35 
         versionCode = 1
         versionName = "1.0"
@@ -48,7 +46,6 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packaging {
         resources {
@@ -60,8 +57,7 @@ android {
 dependencies {
     // Utiliser la référence du compilateur depuis le catalog
     implementation("androidx.compose.compiler:compiler:${libs.versions.composeCompiler.get()}")
-    // Utiliser la référence du compilateur depuis le catalog
-    implementation("androidx.compose.compiler:compiler:${libs.versions.composeCompiler.get()}")
+
     //uRI
     implementation("io.coil-kt:coil-compose:2.2.2")
 
@@ -87,34 +83,21 @@ dependencies {
     implementation(libs.appcompat)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
-    // Room Database - utiliser les références du catalog
-    implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
-    implementation(libs.room.ktx)
 
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
-    implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
-    // Jetpack Compose - versions compatibles
-    implementation("androidx.compose.ui:ui:1.5.4")
     // Jetpack Compose - versions compatibles
     implementation("androidx.compose.ui:ui:1.5.4")
     implementation("androidx.compose.material3:material3:1.1.2")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.5")
-    implementation("androidx.navigation:navigation-compose:2.7.5")
 
-    // ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
@@ -145,6 +128,11 @@ dependencies {
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.android.gms:play-services-base:18.3.0")
+    implementation("com.google.android.gms:play-services-tasks:18.0.2")
+
+
 
     // retrofit
 
