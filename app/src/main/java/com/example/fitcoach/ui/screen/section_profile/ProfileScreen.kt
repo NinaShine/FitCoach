@@ -1,6 +1,5 @@
 package com.example.fitcoach.ui.screen
 
-import android.R.attr.onClick
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image

@@ -45,24 +45,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.fitcoach.HomeScreen
 import com.example.fitcoach.R
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
-import com.example.fitcoach.viewmodel.MainViewModel
 import com.example.fitcoach.viewmodel.UserOnboardingViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: String? = null) {
+fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: String? = null) {
     val navController = rememberNavController()
     val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
     val defaultStart = "onboarding"
     //val defaultStart = if (FirebaseAuth.getInstance().currentUser != null) "accueil" else "onboarding"
     val startDestination = initialRoute ?: defaultStart
-
-    val currentUserName = mainViewModel.currentUserName.value
 
     val viewModel: UserOnboardingViewModel = viewModel()
 

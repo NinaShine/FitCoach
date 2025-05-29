@@ -10,12 +10,10 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.fitcoach.ui.screen.FitCoachApp
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
-import com.example.fitcoach.viewmodel.MainViewModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : ComponentActivity() {
-    private val maintViewModel = MainViewModel()
     private val currentlyPlayingVm = CurrentlyPlayingViewModel()
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +35,7 @@ class MainActivity : ComponentActivity() {
         val navigateTo = intent.getStringExtra("navigateTo")
 
         setContent {
-            FitCoachApp(maintViewModel, currentlyPlayingVm = currentlyPlayingVm,
+            FitCoachApp(currentlyPlayingVm = currentlyPlayingVm,
                 initialRoute = navigateTo)
         }
     }

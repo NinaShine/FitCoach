@@ -43,8 +43,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fitcoach.viewmodel.AuthViewModel
 import com.example.fitcoach.viewmodel.UserOnboardingViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.userProfileChangeRequest
 
 @Composable
 fun RegisterScreen(
