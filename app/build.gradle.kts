@@ -144,7 +144,12 @@ dependencies {
 
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
-    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.android.gms:play-services-base:18.3.0")
+    implementation("com.google.android.gms:play-services-tasks:18.0.2")
+
+
 
     // retrofit
 
@@ -164,6 +169,10 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
 
 
+
+
+    // okhttp
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
 
 

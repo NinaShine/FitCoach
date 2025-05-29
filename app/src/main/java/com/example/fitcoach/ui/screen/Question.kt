@@ -29,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalContext
@@ -38,13 +40,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
+import com.example.fitcoach.data.repository.CloudinaryUploader
+import com.example.fitcoach.viewmodel.UserOnboardingViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 @Composable
-fun QuestionOneScreen(
-    navController: NavController,
-    onNextClick: (String) -> Unit
-) {
+fun QuestionOneScreen(navController: NavController, viewModel: UserOnboardingViewModel)
+ {
     val options = listOf(
         "Muscle gain", "Endurance", "Weight loss", "Well-being", "Other"
     )
@@ -125,7 +130,10 @@ fun QuestionOneScreen(
 
             Button(
                 onClick = {
-                    selectedOption?.let { onNextClick(it) }
+                    selectedOption?.let {
+                        viewModel.answers.goal = it
+                        navController.navigate("question2")
+                    }
                 },
                 enabled = selectedOption != null,
                 modifier = Modifier
@@ -142,10 +150,8 @@ fun QuestionOneScreen(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QuestionTwoScreen(
-    navController: NavController,
-    onNextClick: (height: Int, weight: Int, unit: String) -> Unit
-) {
+fun QuestionTwoScreen(navController: NavController, viewModel: UserOnboardingViewModel)
+ {
     var height by remember { mutableStateOf(183) }
     var weight by remember { mutableStateOf(75) }
     var unit by remember { mutableStateOf("kg") }
@@ -234,7 +240,12 @@ fun QuestionTwoScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = { onNextClick(height, weight, unit) },
+                onClick = {
+                    viewModel.answers.height = height
+                    viewModel.answers.weight = weight
+                    viewModel.answers.weightUnit = unit
+                    navController.navigate("question3")
+                },
                 modifier = Modifier
                     .width(338.dp)
                     .height(66.dp)
@@ -356,10 +367,8 @@ fun PickerSheet(
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QuestionThreeScreen(
-    navController: NavController,
-    onNextClick: (String, Triple<Int, String, Int>) -> Unit
-) {
+fun QuestionThreeScreen(navController: NavController, viewModel: UserOnboardingViewModel)
+ {
     var selectedGender by remember { mutableStateOf<String?>(null) }
     var showGenderPicker by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -452,9 +461,13 @@ fun QuestionThreeScreen(
         Button(
             onClick = {
                 selectedGender?.let {
-                    onNextClick(it, selectedDate)
+                    viewModel.answers.gender = it
+                    val dateString = "${selectedDate.first} ${selectedDate.second} ${selectedDate.third}"
+                    viewModel.answers.birthDate = dateString
+                    navController.navigate("question4")
                 }
-            },
+            }
+            ,
             enabled = selectedGender != null,
             modifier = Modifier
                 .width(338.dp)
@@ -563,10 +576,8 @@ fun QuestionThreeScreen(
 }
 
 @Composable
-fun QuestionFourScreen(
-    navController: NavController,
-    onNextClick: (String) -> Unit
-) {
+fun QuestionFourScreen(navController: NavController, viewModel: UserOnboardingViewModel)
+{
     val options = listOf(
         "At home", "In the gym", "Outdoors", "Never mind"
     )
@@ -647,8 +658,12 @@ fun QuestionFourScreen(
 
             Button(
                 onClick = {
-                    selectedOption?.let { onNextClick(it) }
-                },
+                    selectedOption?.let {
+                        viewModel.answers.trainingPlace = it
+                        navController.navigate("question5")
+                    }
+                }
+                ,
                 enabled = selectedOption != null,
                 modifier = Modifier
                     .width(338.dp)
@@ -664,9 +679,8 @@ fun QuestionFourScreen(
 }
 
 @Composable
-fun QuestionFiveScreen(
-    navController: NavController,
-    onNextClick: (Int) -> Unit
+fun QuestionFiveScreen(navController: NavController,
+                       viewModel: UserOnboardingViewModel
 ) {
     val options = listOf(
         Triple("8 000 Steps", "Mov. 7 Days", Color.Gray),
@@ -820,7 +834,8 @@ fun QuestionFiveScreen(
         Button(
             onClick = {
                 val value = if (selectedOption == "custom") customGoal else selectedOption?.filter { it.isDigit() }?.replace(" ", "")?.toIntOrNull() ?: 0
-                onNextClick(value)
+                viewModel.answers.stepGoal = value
+                navController.navigate("createProfile")
             },
             enabled = selectedOption != null,
             modifier = Modifier
@@ -838,7 +853,7 @@ fun QuestionFiveScreen(
 @Composable
 fun CreateProfileScreen(
     navController: NavController,
-    onProfileCreated: (Uri?, String, String) -> Unit // Pour transmettre les infos
+    viewModel: UserOnboardingViewModel
 ) {
     val context = LocalContext.current
     var avatarUri by remember { mutableStateOf<Uri?>(null) }
@@ -931,8 +946,55 @@ fun CreateProfileScreen(
 
         Button(
             onClick = {
-                onProfileCreated(avatarUri, firstName, lastName)
-                navController.navigate("onboarding1")
+                Log.d("DEBUG", "username = ${viewModel.answers.username}")
+                if (avatarUri != null) {
+                    CloudinaryUploader.uploadImageToCloudinary(
+                        fileUri = avatarUri!!,
+                        context = context,
+                        onSuccess = { imageUrl ->
+                            viewModel.answers.avatarUrl = imageUrl
+                            viewModel.answers.firstName = firstName
+                            viewModel.answers.lastName = lastName
+                            //viewModel.answers.username = FirebaseAuth.getInstance().currentUser?.displayName ?: ""
+
+                            viewModel.saveToFirestore(
+                                onSuccess = {
+                                    saveFCMTokenToFirestore()
+                                    navController.navigate("onboarding1")
+                                },
+                                onFailure = {
+                                    Toast.makeText(
+                                        context,
+                                        "Erreur Firestore: ${it.message}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            )
+                        },
+                        onFailure = {
+                            Toast.makeText(context, "Upload failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                } else {
+                    viewModel.answers.firstName = firstName
+                    viewModel.answers.lastName = lastName
+                    viewModel.answers.avatarUrl = null
+                    //viewModel.answers.username = FirebaseAuth.getInstance().currentUser?.displayName ?: ""
+
+                    viewModel.saveToFirestore(
+                        onSuccess = {
+                            saveFCMTokenToFirestore()
+                            navController.navigate("onboarding1")
+                        },
+                        onFailure = {
+                            Toast.makeText(
+                                context,
+                                "Erreur Firestore: ${it.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    )
+                }
             },
             modifier = Modifier
                 .width(338.dp)
@@ -945,5 +1007,24 @@ fun CreateProfileScreen(
         }
     }
 }
+
+fun saveFCMTokenToFirestore() {
+    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    val db = FirebaseFirestore.getInstance()
+
+    FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+        db.collection("users").document(uid)
+            .update("fcmToken", token)
+            .addOnSuccessListener {
+                Log.d("FCM", "Token FCM sauvegardé dans Firestore")
+            }
+            .addOnFailureListener {
+                Log.e("FCM", "Erreur en sauvegardant le token FCM : ${it.message}")
+            }
+    }.addOnFailureListener {
+        Log.e("FCM", "Impossible d’obtenir le token FCM : ${it.message}")
+    }
+}
+
 
 

@@ -1,7 +1,26 @@
 package com.example.fitcoach.data.model
 
 data class UserProfile(
+    val uid: String = "",
     val username: String = "",
-    val email: String = "",
-    val createdAt: com.google.firebase.Timestamp? = null
+    val firstName: String = "",
+    val lastName: String = "",
+    val avatarUrl: String? = null,
+    val goal: String = "",
+    val height: Int = 0,
+    val weight: Int = 0,
+    val weightUnit: String = "",
+    val gender: String = "",
+    val birthDate: String = "",
+    val trainingPlace: String = "",
+    val stepGoal: Int = 0,
+    val bio: String? = null,
+    val notificationsEnabled: Boolean = true,
+    val fcmToken : String? = null,
+    val friends: List<String> = emptyList(),
+    val workouts: List<String> = emptyList(),
+    val rewards: List<String> = emptyList(),
+    val achievements: List<String> = emptyList(),
+    val progress: List<Int> = emptyList()
+
 )

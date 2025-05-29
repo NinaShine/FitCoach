@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,12 +37,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.MusicScreen
 import com.example.fitcoach.ui.screen.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
+import com.example.fitcoach.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -72,6 +75,12 @@ val bottomNavItems = listOf(
 @Composable
 fun AccueilScreen(navController: NavController) {
     val user = FirebaseAuth.getInstance().currentUser
+    val viewModel: UserProfileViewModel = viewModel()
+    val username by viewModel.username
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchUsername()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -114,7 +123,7 @@ fun AccueilScreen(navController: NavController) {
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Hey, ${user?.email ?: "Utilisateur inconnu"} !", fontSize = 25.sp)
+        Text("Hey, ${username ?: "Chargement..."} !", fontSize = 25.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 

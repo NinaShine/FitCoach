@@ -1,5 +1,8 @@
 package com.example.fitcoach.ui.screen
 
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,18 +49,22 @@ import com.example.fitcoach.HomeScreen
 import com.example.fitcoach.R
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.MainViewModel
+import com.example.fitcoach.viewmodel.UserOnboardingViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: String? = null) {
     val navController = rememberNavController()
     val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
-    //val startDestination = if (isUserLoggedIn) "home" else "onboarding"
-    //val startDestination = "onboarding"
+    //val defaultStart = "onboarding"
     val defaultStart = if (FirebaseAuth.getInstance().currentUser != null) "accueil" else "onboarding"
     val startDestination = initialRoute ?: defaultStart
 
     val currentUserName = mainViewModel.currentUserName.value
+
+    val viewModel: UserOnboardingViewModel = viewModel()
 
 
     NavHost(navController = navController, startDestination = startDestination) {
@@ -91,71 +98,51 @@ fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlay
                     navController.navigate("question1") {
                         popUpTo("register") { inclusive = true }
                     }
-                }
-            )
-        }
-        composable("home") {
-            HomeScreen(
-                onLogout = {
-                    FirebaseAuth.getInstance().signOut()
-                    navController.navigate("onboarding") {
-                        popUpTo("home") { inclusive = true }
-                    }
-                }
+                },
+                onboardingViewModel = viewModel
             )
         }
 
         composable("question1") {
-            QuestionOneScreen(
-                navController = navController,
-                onNextClick = { selectedGoal ->
-                    navController.navigate("question2")
-                }
-            )
+            QuestionOneScreen(navController = navController, viewModel)
         }
         composable("question2") {
             QuestionTwoScreen(
                 navController = navController,
-                onNextClick = { height, weight, unit ->
-                    // TODO: enregistrer si besoin dans Firestore ou ViewModel ( a voirrr)
-
-                    navController.navigate("question3")
-                }
-            )
+                viewModel)
         }
         composable("question3") {
             QuestionThreeScreen(
                 navController = navController,
-                onNextClick = { gender, birthdate ->
-                    // TODO: enregistrer si besoin dans Firestore ou ViewModel
-                    navController.navigate("question4")
-                }
-            )
+                viewModel)
         }
         composable("question4") {
             QuestionFourScreen(
                 navController = navController,
-                onNextClick = { response ->
-                    // TODO: enregistrer si besoin dans Firestore ou ViewModel
-                    navController.navigate("question5")
-                }
-            )
+                viewModel)
         }
         composable("question5") {
+            QuestionFiveScreen(navController, viewModel)
+            /*
             QuestionFiveScreen(
                 navController = navController,
                 onNextClick = { stepGoal ->
                     navController.navigate("createProfile")
                 }
             )
+             */
         }
         composable("createProfile") {
+            CreateProfileScreen(navController, viewModel)
+            /*
             CreateProfileScreen(
                 navController = navController,
                 onProfileCreated = { avatarUri, firstName, lastName ->
                     navController.navigate("onboarding1")
                 }
             )
+
+             */
         }
         composable("onboarding1") {
             OnboardingScreens(navController)
@@ -197,6 +184,49 @@ fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlay
         }
         composable("quick_workout") {
             QuickWorkoutScreen(navController = navController)
+        }
+        composable("settings"){
+            SettingsScreen(
+                navController = navController,
+                authViewModel = viewModel(),
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo("accueil") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable("edit_profile"){
+            EditProfileScreen(navController = navController)
+        }
+
+        composable("notification_settings"){
+            val context = LocalContext.current
+            NotificationSettingsScreen(
+                navController = navController,
+                initialValue = viewModel.answers.notificationsEnabled,
+                onSave = { enabled ->
+                    val uid = FirebaseAuth.getInstance().currentUser?.uid
+                    if (uid != null) {
+                        FirebaseFirestore.getInstance().collection("users")
+                            .document(uid)
+                            .update("notificationsEnabled", enabled)
+                            .addOnSuccessListener {
+                                navController.popBackStack()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(context, "Erreur Firestore : ${it.message}", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+
+                }
+            )
+
+        }
+
+        composable("privacy_settings"){
+            PrivacyScreen(navController = navController)
         }
 
         composable("exercise_list") {
