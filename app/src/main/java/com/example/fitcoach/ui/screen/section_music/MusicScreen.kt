@@ -47,6 +47,10 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
 import com.example.fitcoach.data.model.Song
+import com.example.fitcoach.ui.screen.section_accueil.AccueilScreen
+import com.example.fitcoach.ui.screen.section_accueil.FitBottomBar
+import com.example.fitcoach.ui.screen.section_social.SocialScreen
+import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.MusicViewModel
 import okhttp3.Call

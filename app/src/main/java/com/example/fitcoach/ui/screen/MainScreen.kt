@@ -46,6 +46,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.R
+import com.example.fitcoach.ui.screen.section_accueil.AccueilPageWithNavBar
+import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
+import com.example.fitcoach.ui.screen.section_workout.CreateRoutineScreen
+import com.example.fitcoach.ui.screen.section_workout.ExerciseDetailScreen
+import com.example.fitcoach.ui.screen.section_workout.ExerciseListScreen
+import com.example.fitcoach.ui.screen.section_workout.ExerciseListScreen2
+import com.example.fitcoach.ui.screen.section_workout.ExploreRoutinesScreen
+import com.example.fitcoach.ui.screen.section_workout.QuickWorkoutScreen
+import com.example.fitcoach.ui.screen.section_workout.RoutineDetailScreen
+import com.example.fitcoach.ui.screen.section_workout.WorkoutHelpScreen
+import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.UserOnboardingViewModel
 import com.google.firebase.auth.FirebaseAuth

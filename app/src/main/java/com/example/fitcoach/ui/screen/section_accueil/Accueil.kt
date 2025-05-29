@@ -1,4 +1,4 @@
-package com.example.fitcoach.ui.screen
+package com.example.fitcoach.ui.screen.section_accueil
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,6 +39,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fitcoach.R
+import com.example.fitcoach.ui.screen.MusicScreen
+import com.example.fitcoach.ui.screen.WorkoutScreen
+import com.example.fitcoach.ui.screen.getSpotifyAccessToken
+import com.example.fitcoach.ui.screen.section_social.SocialScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -77,200 +81,203 @@ fun AccueilScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         viewModel.fetchUsername()
     }
-    Column(
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(Color.White)
+            .background(Color.White),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("fit’fy", fontWeight = FontWeight.Bold, fontSize = 22.sp, modifier = Modifier.align(Alignment.CenterVertically))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.robot_assistant),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.july_photo_profile),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(45.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                            navController.navigate("profile")
-                        }
-                )
+        item {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text("fit’fy", fontWeight = FontWeight.Bold, fontSize = 22.sp, modifier = Modifier.align(Alignment.CenterVertically))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.robot_assistant),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.july_photo_profile),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(45.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                navController.navigate("profile")
+                            }
+                    )
+                }
             }
+
+            Divider(
+                color = Color.Black,
+                thickness = 1.dp,
+                modifier = Modifier.width(80.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Hey, ${username ?: "Chargement..."} !", fontSize = 25.sp)
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        Divider(
-            color = Color.Black,
-            thickness = 1.dp,
-            modifier = Modifier.width(80.dp)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Text("Hey, ${username ?: "Chargement..."} !", fontSize = 25.sp)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Grid 2x2
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+        item {
+            // Grid 2x2
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                WidgetCard(
-                    title = "Track Distance",
-                    content = {
-                        Image(
-                            painter = painterResource(id = R.drawable.map_provisoire),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .height(100.dp)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(10.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                        Text("Latest: Walking", fontSize = 12.sp, color = Color(0xFFE86144))
-                        Text("Time: 10 min", fontSize = 12.sp, textAlign = TextAlign.Center)
-                        Text("Distance: 2 km", fontSize = 12.sp, textAlign = TextAlign.Center)
-                    },
+                Column(
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clickable {
-                            // TODO: Naviguer vers la page de suivi de distance
-                        }
-                )
-
-                WidgetCard(
-                    title = "Track Workout",
-                    content = {
-                        Text("❤️", fontSize = 28.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(110.dp)
-                        .clickable {
-                            // TODO: Naviguer vers workout
-                        }
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                WidgetCard(
-                    title = "Music",
-                    icon = Icons.Default.MusicNote,
-                    content = {
-                        Text("Jul - Wesh Alors", fontSize = 14.sp, fontWeight = FontWeight.Medium)
-                    },
-                    gradient = Brush.horizontalGradient(listOf(Color(0xFFFFB47E), Color(0xFFFF8762))),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                        .clickable {
-                            // Naviguer vers la page musique (a la fin si on aa le temopss
-                        }
-                )
-
-                WidgetCalories(
-                    title = "Calories",
-                    icon = Icons.Default.Whatshot,
-                    content = {
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            CalorieProgress(current = 357, goal = 500)
-
-                            Text(
-                                "  357 kcal",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    WidgetCard(
+                        title = "Track Distance",
+                        content = {
+                            Image(
+                                painter = painterResource(id = R.drawable.map_provisoire),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(10.dp)),
+                                contentScale = ContentScale.Crop
                             )
-                        }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        // Ligne Steps | Distance
-                        Row(
-                            modifier = Modifier.fillMaxWidth().height(65.dp).padding(horizontal = 1.dp),
-                        ) {
-                            Column (
-                                modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
-                            ){
-
-                                Text(" Steps ", fontSize = 17.sp, color = Color(0xFFE86144))
-                                Spacer(modifier = Modifier.height(12.dp))
-                                Text(" 2285", fontSize = 16.sp, textAlign = TextAlign.Center)
-
+                            Text("Latest: Walking", fontSize = 12.sp, color = Color(0xFFE86144))
+                            Text("Time: 10 min", fontSize = 12.sp, textAlign = TextAlign.Center)
+                            Text("Distance: 2 km", fontSize = 12.sp, textAlign = TextAlign.Center)
+                        },
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clickable {
+                                // TODO: Naviguer vers la page de suivi de distance
                             }
+                    )
 
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            Column {
-                                DividerVertical()
+                    WidgetCard(
+                        title = "Track Workout",
+                        content = {
+                            Text("❤️", fontSize = 28.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(110.dp)
+                            .clickable {
+                                // TODO: Naviguer vers workout
                             }
+                    )
+                }
 
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            Column (
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            ){
-                                Text("Distance ", fontSize = 17.sp, color = Color(0xFFE86144))
-                                Spacer(modifier = Modifier.height(12.dp))
-                                Text("2.5 km", fontSize = 16.sp, textAlign = TextAlign.Center)
-
-                            }
-                        }
-
-                    }
-                    ,
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(210.dp)
-                )
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    WidgetCard(
+                        title = "Music",
+                        icon = Icons.Default.MusicNote,
+                        content = {
+                            Text("Jul - Wesh Alors", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                        },
+                        gradient = Brush.horizontalGradient(listOf(Color(0xFFFFB47E), Color(0xFFFF8762))),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp)
+                            .clickable {
+                                // Naviguer vers la page musique
+                            }
+                    )
+
+                    WidgetCalories(
+                        title = "Calories",
+                        icon = Icons.Default.Whatshot,
+                        content = {
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                CalorieProgress(current = 357, goal = 500)
+
+                                Text(
+                                    "  357 kcal",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(65.dp)
+                                    .padding(horizontal = 1.dp),
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .align(Alignment.CenterVertically)
+                                ) {
+                                    Text(" Steps ", fontSize = 17.sp, color = Color(0xFFE86144))
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(" 2285", fontSize = 16.sp, textAlign = TextAlign.Center)
+                                }
+
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Column {
+                                    DividerVertical()
+                                }
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Column(
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                ) {
+                                    Text("Distance ", fontSize = 17.sp, color = Color(0xFFE86144))
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text("2.5 km", fontSize = 16.sp, textAlign = TextAlign.Center)
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(210.dp)
+                    )
+                }
             }
         }
 
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Recommendation", fontWeight = FontWeight.SemiBold)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Recommendation", fontWeight = FontWeight.SemiBold)
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Liste recommandation
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(recommendations) { item ->
-                RecommendationItem(item)
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+        items(recommendations) { item ->
+            RecommendationItem(item)
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
+
 
 @Composable
 fun WidgetCard(

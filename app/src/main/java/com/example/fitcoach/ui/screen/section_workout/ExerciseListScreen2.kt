@@ -1,4 +1,4 @@
-package com.example.fitcoach.ui.screen
+package com.example.fitcoach.ui.screen.section_workout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

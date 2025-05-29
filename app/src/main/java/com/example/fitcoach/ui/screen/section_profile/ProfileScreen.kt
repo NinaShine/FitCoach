@@ -1,4 +1,4 @@
-package com.example.fitcoach.ui.screen
+package com.example.fitcoach.ui.screen.section_profile
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -6,8 +6,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -48,32 +50,55 @@ fun ProfileScreen(navController: NavController) {
         viewModel.fetchAge()
     }
 
-    //Text(username, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .background(Color(0xFFFDF4EF))
             .padding(28.dp)
     ) {
-        // Photo + nom
+        // Profile info + Close button
         Row(
             modifier = Modifier
-                .padding(bottom = 8.dp, top = 10.dp, start = 10.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = R.drawable.july_photo_profile),
-                contentDescription = "Profile picture",
-                contentScale = ContentScale.Crop,
+                .fillMaxWidth()
+                .padding(bottom = 8.dp, top = 10.dp, start = 10.dp, end = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(id = R.drawable.july_photo_profile),
+                    contentDescription = "Profile picture",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(90.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(username ?: "Chargement...", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text("$age years old", fontSize = 14.sp, color = Color.Gray)
+                }
+            }
+
+            Box(
                 modifier = Modifier
-                    .size(90.dp)
-                    .clip(CircleShape)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                //Text(username, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Text(username ?: "Chargement...", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Text("$age years old", fontSize = 14.sp, color = Color.Gray)
+                    .size(36.dp)
+                    .background(
+                        color = Color(0xFFE86144).copy(alpha = 0.1f),
+                        shape = CircleShape
+                    )
+                    .clickable { navController.popBackStack() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.close),
+                    contentDescription = null,
+                    tint = Color(0xFFE86144),
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
 
@@ -83,9 +108,9 @@ fun ProfileScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.spacedBy(25.dp)) {
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(25.dp)
+        ) {
             repeat(3) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_check_circle),
@@ -94,12 +119,10 @@ fun ProfileScreen(navController: NavController) {
                     modifier = Modifier.size(32.dp)
                 )
             }
-            Text("27", modifier = Modifier
-                .align(Alignment.CenterVertically))
+            Text("27", modifier = Modifier.align(Alignment.CenterVertically))
             Text("28", modifier = Modifier.align(Alignment.CenterVertically))
             Text("29", modifier = Modifier.align(Alignment.CenterVertically))
             Text("30", modifier = Modifier.align(Alignment.CenterVertically))
-
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -127,28 +150,6 @@ fun ProfileScreen(navController: NavController) {
         ProfileOptionItem("Settings", Icons.Default.Settings) {
             navController.navigate("settings")
         }
-
-        Spacer(modifier = Modifier.height(100.dp))
-
-        Box(
-            modifier = Modifier
-                .size(60.dp)
-                .align(Alignment.CenterHorizontally)
-                .background(
-                    color = Color(0xFFE86144).copy(alpha = 0.1f),
-                    shape = CircleShape
-                )
-                .clickable { navController.popBackStack() },
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.close),
-                contentDescription = null,
-                tint = Color(0xFFE86144),
-                modifier = Modifier.size(28.dp)
-                    .align(Alignment.Center)
-            )
-        }
-
     }
 }
 

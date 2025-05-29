@@ -1,4 +1,4 @@
-package com.example.fitcoach.ui.screen
+package com.example.fitcoach.ui.screen.section_workout
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
