@@ -213,6 +213,19 @@ fun FitCoachApp(mainViewModel: MainViewModel, currentlyPlayingVm : CurrentlyPlay
                 }
             )
         }
+        composable("create_routine") {
+            CreateRoutineScreen(navController)
+        }
+
+        composable("exercise_list_2") {
+            ExerciseListScreen2(navController)
+        }
+        composable("routine_detail/{id}") { backStackEntry ->
+            val routineId = backStackEntry.arguments?.getString("id") ?: return@composable
+            RoutineDetailScreen(routineId = routineId, navController = navController)
+        }
+
+
 
 
 
