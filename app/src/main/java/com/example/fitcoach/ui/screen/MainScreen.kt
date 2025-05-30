@@ -306,6 +306,8 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
         }
 
 
+
+
         composable("track") {
             TrackScreenWithPermission(
                 navController,
