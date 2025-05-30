@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.section_music.MusicScreen
 import com.example.fitcoach.ui.screen.getSpotifyAccessToken
+import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_social.FeedScreen
 import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_social.FeedScreen
@@ -594,10 +595,3 @@ fun AccueilPageWithNavBar(navController: NavController, liveTrackingVm: LiveTrac
     }
 }
 
-/*
-@Preview
-@Composable
-fun AccueilScreenPreview() {
-    AccueilPageWithNavBar()
-}
-*/

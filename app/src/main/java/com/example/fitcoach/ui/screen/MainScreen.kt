@@ -51,6 +51,7 @@ import com.example.fitcoach.ui.screen.section_music.MusicScreen
 import com.example.fitcoach.ui.screen.section_music.MusicScreenWithNavBar
 import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
 import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
+import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_tracking.TrackScreen
 import com.example.fitcoach.ui.screen.section_tracking.TrackScreenWithPermission
 import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
@@ -339,6 +340,11 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
 
 
 
+
+
+        composable("createPost") {
+            CreatePostScreen(navController = navController)
+        }
 
 
 

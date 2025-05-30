@@ -75,6 +75,7 @@ fun FeedScreen(currentUid: String, navController: NavController) {
     }
 }
 
+
 @Composable
 fun TopBar(
     user: UserProfile?,
@@ -278,3 +279,4 @@ fun PostCard(
         }
     }
 }
+
