@@ -264,8 +264,15 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: St
             RoutineDetailScreen(routineId = routineId, navController = navController)
         }
         composable("challenges") {
-            ChallengeScreen()
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            if (uid != null) {
+                ChallengeScreen(currentUid = uid, navController = navController)
+            } else {
+                Text("Connexion requise")
+            }
         }
+
+
 
         composable("createPost") {
             CreatePostScreen(navController = navController)
