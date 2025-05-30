@@ -48,6 +48,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.section_accueil.AccueilPageWithNavBar
 import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
+import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
 import com.example.fitcoach.ui.screen.section_tracking.TrackScreen
 import com.example.fitcoach.ui.screen.section_tracking.TrackScreenWithPermission
 import com.example.fitcoach.ui.screen.section_workout.CreateRoutineScreen
@@ -267,6 +268,9 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: St
         composable("routine_detail/{id}") { backStackEntry ->
             val routineId = backStackEntry.arguments?.getString("id") ?: return@composable
             RoutineDetailScreen(routineId = routineId, navController = navController)
+        }
+        composable("challenges") {
+            ChallengeScreen()
         }
 
         composable("track") {

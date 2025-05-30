@@ -41,7 +41,7 @@ import androidx.navigation.NavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.MusicScreen
 import com.example.fitcoach.ui.screen.getSpotifyAccessToken
-import com.example.fitcoach.ui.screen.section_social.SocialScreen
+import com.example.fitcoach.ui.screen.section_social.FeedScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.UserProfileViewModel
@@ -520,6 +520,8 @@ fun AccueilPageWithNavBar(navController: NavController) {
         }
     ) { padding ->
         Box(modifier = Modifier.padding(12.dp)) {
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+
             when (currentRoute) {
                 "home" -> AccueilScreen(navController = navController)
                 "music" -> MusicScreen(
@@ -528,13 +530,19 @@ fun AccueilPageWithNavBar(navController: NavController) {
                     currentlyPlayingVm = CurrentlyPlayingViewModel()
                 )
                 "workout" -> WorkoutScreen(navController)
-                "social" -> SocialScreen()
-                else -> {
-                    AccueilScreen(navController = navController)
+                "social" -> {
+                    if (currentUserId != null) {
+                        FeedScreen(
+                            currentUid = currentUserId,
+                            navController = navController
+                        )
+                    } else {
+                        Text("Connexion requise")
+                    }
                 }
-
-                // autres pages à venir
+                else -> AccueilScreen(navController = navController)
             }
+
         }
     }
 }
