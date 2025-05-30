@@ -281,36 +281,6 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: St
             }
         }
 
-
-
-        composable("track") {
-            TrackScreenWithPermission(
-                navController,
-                trackViewModel,
-                stepViewModel
-                )
-        }
-
-        composable("session_summary") {
-            val session = trackViewModel.lastSessionData
-
-            if (session != null) {
-                SessionSummaryScreen(
-                    navController = navController,
-                    distanceKm = session.distanceKm,
-                    durationMs = session.durationMs,
-                    speedKmH = session.speedKmH,
-                    calories = session.calories,
-                    steps = session.steps,
-                    activityType = session.activityType
-                )
-            } else {
-                Text("Aucune session enregistrée")
-            }
-        }
-
-
-
         composable("createPost") {
             CreatePostScreen(navController = navController)
         }
