@@ -287,6 +287,8 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
             }
         }
 
+
+
         composable("createPost") {
             CreatePostScreen(navController = navController)
         }
