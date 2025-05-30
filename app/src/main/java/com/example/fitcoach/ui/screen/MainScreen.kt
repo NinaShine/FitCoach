@@ -48,6 +48,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.section_accueil.AccueilPageWithNavBar
 import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
+import com.example.fitcoach.ui.screen.section_tracking.TrackScreen
+import com.example.fitcoach.ui.screen.section_tracking.TrackScreenWithPermission
 import com.example.fitcoach.ui.screen.section_workout.CreateRoutineScreen
 import com.example.fitcoach.ui.screen.section_workout.ExerciseDetailScreen
 import com.example.fitcoach.ui.screen.section_workout.ExerciseListScreen
@@ -59,6 +61,9 @@ import com.example.fitcoach.ui.screen.section_workout.WorkoutHelpScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.UserOnboardingViewModel
+import com.example.fitcoach.viewmodel.track_section.SessionSummaryScreen
+import com.example.fitcoach.viewmodel.track_section.StepCounterViewModel
+import com.example.fitcoach.viewmodel.track_section.TrackingViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -67,11 +72,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: String? = null) {
     val navController = rememberNavController()
     val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
-    val defaultStart = "onboarding"
-    //val defaultStart = if (FirebaseAuth.getInstance().currentUser != null) "accueil" else "onboarding"
+    //val defaultStart = "onboarding"
+    val defaultStart = if (FirebaseAuth.getInstance().currentUser != null) "accueil" else "onboarding"
     val startDestination = initialRoute ?: defaultStart
 
     val viewModel: UserOnboardingViewModel = viewModel()
+    val stepViewModel: StepCounterViewModel = viewModel()
+    val trackViewModel: TrackingViewModel = viewModel()
 
 
     NavHost(navController = navController, startDestination = startDestination) {
@@ -261,6 +268,34 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: St
             val routineId = backStackEntry.arguments?.getString("id") ?: return@composable
             RoutineDetailScreen(routineId = routineId, navController = navController)
         }
+
+        composable("track") {
+            TrackScreenWithPermission(
+                navController,
+                trackViewModel,
+                stepViewModel
+                )
+        }
+
+        composable("session_summary") {
+            val session = trackViewModel.lastSessionData
+
+            if (session != null) {
+                SessionSummaryScreen(
+                    navController = navController,
+                    distanceKm = session.distanceKm,
+                    durationMs = session.durationMs,
+                    speedKmH = session.speedKmH,
+                    calories = session.calories,
+                    steps = session.steps,
+                    activityType = session.activityType
+                )
+            } else {
+                Text("Aucune session enregistrée")
+            }
+        }
+
+
 
 
 

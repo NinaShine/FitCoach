@@ -45,6 +45,8 @@ import com.example.fitcoach.ui.screen.section_social.SocialScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.UserProfileViewModel
+import com.example.fitcoach.viewmodel.track_section.LastSessionViewModel
+import com.example.fitcoach.viewmodel.track_section.TrackingViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -81,6 +83,20 @@ fun AccueilScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         viewModel.fetchUsername()
     }
+
+    val lastSessionViewModel: LastSessionViewModel = viewModel()
+    val lastSession = lastSessionViewModel.lastSession.value
+
+    LaunchedEffect(Unit) {
+        lastSessionViewModel.fetchLastSession()
+    }
+
+    val trackingViewModel: TrackingViewModel = viewModel()
+
+    LaunchedEffect(Unit) {
+        trackingViewModel.startLocationUpdates()
+    }
+
 
     LazyColumn(
         modifier = Modifier
@@ -154,16 +170,31 @@ fun AccueilScreen(navController: NavController) {
                                     .clip(RoundedCornerShape(10.dp)),
                                 contentScale = ContentScale.Crop
                             )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            if (lastSession != null) {
+                                val time = lastSession["durationFormatted"] as? String ?: "Inconnu"
+                                val distance = lastSession["distanceKm"] as? String ?: "0.0"
+                                val type = lastSession["activityType"] as? String ?: "Unknown" // facultatif
+
+                                Text("Latest: $type", fontSize = 12.sp, color = Color(0xFFE86144))
+                                Text("Time: $time", fontSize = 12.sp, textAlign = TextAlign.Center)
+                                Text("Distance: $distance km", fontSize = 12.sp, textAlign = TextAlign.Center)
+                            } else {
+                                Text("No data", fontSize = 12.sp, color = Color.Gray)
+                            }
+                            /*
                             Text("Latest: Walking", fontSize = 12.sp, color = Color(0xFFE86144))
                             Text("Time: 10 min", fontSize = 12.sp, textAlign = TextAlign.Center)
                             Text("Distance: 2 km", fontSize = 12.sp, textAlign = TextAlign.Center)
+
+                             */
                         },
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .fillMaxWidth()
                             .height(200.dp)
                             .clickable {
-                                // TODO: Naviguer vers la page de suivi de distance
+                                navController.navigate("track")
                             }
                     )
 

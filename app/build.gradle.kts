@@ -158,8 +158,16 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // maps
+
+    // Google Maps Compose
     implementation("com.google.maps.android:maps-compose:2.11.4")
+
+    // Google Maps SDK
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+
+    // Pour la localisation
     implementation("com.google.android.gms:play-services-location:21.0.1")
+
 
 
 

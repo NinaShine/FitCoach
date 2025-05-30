@@ -18,6 +18,7 @@ class UserProfileViewModel : ViewModel() {
     var lN = mutableStateOf<String?>(null)
     var bio = mutableStateOf<String?>(null)
     var gender = mutableStateOf<String?>(null)
+    var weight = mutableStateOf<Double?>(null)
 
     fun fetchUsername() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -129,6 +130,20 @@ class UserProfileViewModel : ViewModel() {
             }
             .addOnFailureListener {
                 birthDate.value = "Erreur"
+            }
+    }
+
+    fun fetchUserWeight(){
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                weight.value = doc.getDouble("weight") ?: 0.0
+            }
+            .addOnFailureListener {
+                weight.value = 0.0
             }
     }
 
