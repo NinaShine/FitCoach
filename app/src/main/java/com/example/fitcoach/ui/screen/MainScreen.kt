@@ -49,6 +49,7 @@ import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.section_accueil.AccueilPageWithNavBar
 import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
 import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
+import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_workout.CreateRoutineScreen
 import com.example.fitcoach.ui.screen.section_workout.ExerciseDetailScreen
 import com.example.fitcoach.ui.screen.section_workout.ExerciseListScreen
@@ -265,6 +266,11 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: St
         composable("challenges") {
             ChallengeScreen()
         }
+
+        composable("createPost") {
+            CreatePostScreen(navController = navController)
+        }
+
 
 
 
