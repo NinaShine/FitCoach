@@ -41,6 +41,7 @@ import androidx.navigation.NavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.MusicScreen
 import com.example.fitcoach.ui.screen.getSpotifyAccessToken
+import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_social.FeedScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
@@ -483,8 +484,9 @@ fun AccueilPageWithNavBar(navController: NavController) {
                 },
                 currentRoute = currentRoute,
                 onCentralClick = {
-                    // TODO: Rediriger vers creation workout
+                    currentRoute = "createPost"
                 }
+
             )
         }
     ) { padding ->
@@ -499,6 +501,7 @@ fun AccueilPageWithNavBar(navController: NavController) {
                     currentlyPlayingVm = CurrentlyPlayingViewModel()
                 )
                 "workout" -> WorkoutScreen(navController)
+                "createPost" -> CreatePostScreen(navController = navController)
                 "social" -> {
                     if (currentUserId != null) {
                         FeedScreen(
@@ -516,10 +519,3 @@ fun AccueilPageWithNavBar(navController: NavController) {
     }
 }
 
-/*
-@Preview
-@Composable
-fun AccueilScreenPreview() {
-    AccueilPageWithNavBar()
-}
-*/
