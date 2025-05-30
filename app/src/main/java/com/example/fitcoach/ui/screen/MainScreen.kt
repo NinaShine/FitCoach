@@ -49,6 +49,7 @@ import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.section_accueil.AccueilPageWithNavBar
 import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
 import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
+import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_tracking.TrackScreen
 import com.example.fitcoach.ui.screen.section_tracking.TrackScreenWithPermission
 import com.example.fitcoach.ui.screen.section_workout.CreateRoutineScreen
@@ -299,6 +300,11 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: St
             }
         }
 
+
+
+        composable("createPost") {
+            CreatePostScreen(navController = navController)
+        }
 
 
 

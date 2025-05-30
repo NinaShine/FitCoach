@@ -35,6 +35,7 @@ fun FeedScreen(currentUid: String, navController: NavController) {
     val vm: FeedViewModel = viewModel()
     val posts by vm.posts.collectAsState()
     val users by vm.userProfiles.collectAsState()
+    val commentCounts by vm.commentCounts.collectAsState()
 
     LaunchedEffect(Unit) {
         vm.loadFeed(currentUid)
@@ -43,10 +44,11 @@ fun FeedScreen(currentUid: String, navController: NavController) {
     Column {
         TopBar(
             user = users[currentUid],
-            onProfileClick = { navController.navigate("profile") },
             navController = navController,
+            onProfileClick = { navController.navigate("profile") },
             onChallengeClick = { navController.navigate("challenges") }
         )
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -55,17 +57,24 @@ fun FeedScreen(currentUid: String, navController: NavController) {
         ) {
             items(posts) { post ->
                 val author = users[post.userId]
+                val commentCount = commentCounts[post.id] ?: 0
+
                 PostCard(
                     post = post,
                     user = author,
                     currentUserId = currentUid,
-                    onLike = { vm.likePost(post.id) },
-                    onFollow = { vm.followUser(post.userId) }
+                    commentCount = commentCount,
+                    onLikeClick = { vm.likePost(post.id) },
+                    onFollowClick = { vm.followUser(post.userId) },
+                    onCommentSubmit = { text ->
+                        vm.submitComment(post.id, currentUid, text)
+                    }
                 )
             }
         }
     }
 }
+
 
 @Composable
 fun TopBar(
@@ -122,31 +131,94 @@ fun TopBar(
 }
 
 @Composable
+fun CommentDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onSubmit: (String) -> Unit
+) {
+    var text by remember { mutableStateOf("") }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { onDismiss() },
+            title = { Text("Ajouter un commentaire") },
+            text = {
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    placeholder = { Text("Écris ton commentaire ici...") }
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onSubmit(text)
+                    text = ""
+                    onDismiss()
+                }) {
+                    Text("Publier")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text("Annuler")
+                }
+            }
+        )
+    }
+}
+
+
+@Composable
 fun PostCard(
     post: Post,
     user: UserProfile?,
     currentUserId: String,
-    onLike: () -> Unit,
-    onFollow: () -> Unit
+    commentCount: Int,
+    onLikeClick: () -> Unit,
+    onFollowClick: () -> Unit,
+    onCommentSubmit: (String) -> Unit
 ) {
+    var showCommentDialog by remember { mutableStateOf(false) }
+    var liked by remember { mutableStateOf(post.likes.contains(currentUserId)) }
+    var likeCount by remember { mutableStateOf(post.likes.size) }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEAE0))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = rememberAsyncImagePainter(user?.avatarUrl ?: "https://placehold.co/40x40"),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text("${user?.firstName ?: "User"} ${user?.lastName ?: ""}", fontWeight = FontWeight.Bold)
-                    Text("20 April at 11:45", fontSize = 12.sp, color = Color.Gray)
+
+            // 🔼 Top section with avatar, name/date, and follow button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = rememberAsyncImagePainter(user?.avatarUrl ?: "https://placehold.co/40x40"),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Column {
+                        Text("${user?.firstName ?: "User"} ${user?.lastName ?: ""}", fontWeight = FontWeight.Bold)
+                        Text("20 April at 11:45", fontSize = 12.sp, color = Color.Gray)
+                    }
+                }
+
+                if (currentUserId != post.userId && user?.friends?.contains(currentUserId) != true) {
+                    Button(
+                        onClick = onFollowClick,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800)), // Orange
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                        modifier = Modifier.height(36.dp)
+                    ) {
+                        Text("Follow", color = Color.White, fontSize = 14.sp)
+                    }
                 }
             }
 
@@ -167,27 +239,44 @@ fun PostCard(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onLike) {
-                    Icon(Icons.Default.Favorite, contentDescription = "Like", tint = Color.Red)
+                IconButton(onClick = {
+                    if (!liked) {
+                        liked = true
+                        likeCount++
+                        onLikeClick()
+                    }
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Like",
+                        tint = if (liked) Color.Red else Color.Gray
+                    )
                 }
-                Text("${post.likes.size} likes")
+                Text("$likeCount likes")
 
                 Spacer(modifier = Modifier.width(16.dp))
 
-                Icon(Icons.Default.ChatBubbleOutline, contentDescription = "Comments", tint = Color.Gray)
-                Text("18")
+                IconButton(onClick = { showCommentDialog = true }) {
+                    Icon(
+                        imageVector = Icons.Default.ChatBubbleOutline,
+                        contentDescription = "Comments",
+                        tint = Color.Gray
+                    )
+                }
+                Text("$commentCount comments")
             }
 
-            // Follow
-            if (currentUserId != post.userId && user?.friends?.contains(currentUserId) != true) {
-                Button(
-                    onClick = onFollow,
-                    modifier = Modifier.padding(top = 8.dp)
-                ) {
-                    Text("Follow")
+            // 💬 Comment dialog
+            CommentDialog(
+                showDialog = showCommentDialog,
+                onDismiss = { showCommentDialog = false },
+                onSubmit = { commentText ->
+                    onCommentSubmit(commentText)
                 }
-            }
+            )
         }
     }
 }
+

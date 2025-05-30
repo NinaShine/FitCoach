@@ -1,5 +1,6 @@
 package com.example.fitcoach.data.repository
 
+import com.example.fitcoach.data.model.Comment
 import com.example.fitcoach.data.model.Post
 import com.example.fitcoach.data.model.UserProfile
 import com.google.firebase.firestore.FieldValue
@@ -16,6 +17,7 @@ object PostRepository {
             it.toObject(Post::class.java)?.copy(id = it.id)
         }
     }
+
 
     // ✅ Liker un post (ajoute userId dans le champ "likes")
     suspend fun likePost(postId: String, userId: String) {
@@ -44,4 +46,26 @@ object PostRepository {
         }
         return usersMap
     }
+
+    suspend fun addComment(postId: String, comment: Comment) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("posts")
+            .document(postId)
+            .collection("comments")
+            .add(comment)
+            .await()
+    }
+
+    suspend fun getCommentCount(postId: String): Int {
+        val snapshot = FirebaseFirestore.getInstance()
+            .collection("posts")
+            .document(postId)
+            .collection("comments")
+            .get()
+            .await()
+
+        return snapshot.size()
+    }
+
+
 }
