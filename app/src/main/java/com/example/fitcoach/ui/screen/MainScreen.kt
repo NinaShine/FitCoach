@@ -50,6 +50,8 @@ import com.example.fitcoach.ui.screen.section_accueil.AccueilPageWithNavBar
 import com.example.fitcoach.ui.screen.section_music.MusicScreen
 import com.example.fitcoach.ui.screen.section_music.MusicScreenWithNavBar
 import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
+import com.example.fitcoach.ui.screen.section_tracking.TrackScreen
+import com.example.fitcoach.ui.screen.section_tracking.TrackScreenWithPermission
 import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
 import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_tracking.TrackScreen
@@ -347,6 +349,34 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
         composable("createPost") {
             CreatePostScreen(navController = navController)
         }
+
+
+        composable("track") {
+            TrackScreenWithPermission(
+                navController,
+                trackViewModel,
+                stepViewModel
+                )
+        }
+
+        composable("session_summary") {
+            val session = trackViewModel.lastSessionData
+
+            if (session != null) {
+                SessionSummaryScreen(
+                    navController = navController,
+                    distanceKm = session.distanceKm,
+                    durationMs = session.durationMs,
+                    speedKmH = session.speedKmH,
+                    calories = session.calories,
+                    steps = session.steps,
+                    activityType = session.activityType
+                )
+            } else {
+                Text("Aucune session enregistrée")
+            }
+        }
+
 
 
 
