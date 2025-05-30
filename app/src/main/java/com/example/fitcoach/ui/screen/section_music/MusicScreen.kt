@@ -49,10 +49,11 @@ import com.example.fitcoach.R
 import com.example.fitcoach.data.model.Song
 import com.example.fitcoach.ui.screen.section_accueil.AccueilScreen
 import com.example.fitcoach.ui.screen.section_accueil.FitBottomBar
-import com.example.fitcoach.ui.screen.section_social.SocialScreen
+import com.example.fitcoach.ui.screen.section_social.FeedScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.MusicViewModel
+import com.google.firebase.auth.FirebaseAuth
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -486,6 +487,7 @@ fun MusicScreenWithNavBar(navController: NavController, currentlyPlayingVm : Cur
         }
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
             when (currentRoute) {
                 "home" -> AccueilScreen(navController = navController)
                 "music" -> MusicScreen(
@@ -494,7 +496,16 @@ fun MusicScreenWithNavBar(navController: NavController, currentlyPlayingVm : Cur
                     currentlyPlayingVm = currentlyPlayingVm
                 )
                 "workout" -> WorkoutScreen(navController)
-                "social" -> SocialScreen()
+                "social" -> {
+                    if (currentUserId != null) {
+                        FeedScreen(
+                            currentUid = currentUserId,
+                            navController = navController
+                        )
+                    } else {
+                        Text("Connexion requise")
+                    }
+                }
                 else -> MusicScreen(
                     navController = navController,
                     accessToken = getSpotifyAccessToken(LocalContext.current).toString(),
