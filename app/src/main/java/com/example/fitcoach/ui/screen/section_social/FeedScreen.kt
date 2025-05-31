@@ -159,6 +159,9 @@ fun TopBar(
                     modifier = Modifier
                         .size(50.dp)
                         .clip(CircleShape)
+                        .clickable {
+                            navController.navigate("chatbot")
+                        }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Image(
