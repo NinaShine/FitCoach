@@ -39,13 +39,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fitcoach.R
-import com.example.fitcoach.ui.screen.MusicScreen
+import com.example.fitcoach.ui.screen.section_music.MusicScreen
 import com.example.fitcoach.ui.screen.getSpotifyAccessToken
 import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_social.FeedScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.UserProfileViewModel
+import com.example.fitcoach.viewmodel.track_section.LastSessionViewModel
+import com.example.fitcoach.viewmodel.track_section.LiveTrackingViewModel
+import com.example.fitcoach.viewmodel.track_section.TrackingViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -74,7 +77,7 @@ val bottomNavItems = listOf(
 
 
 @Composable
-fun AccueilScreen(navController: NavController) {
+fun AccueilScreen(navController: NavController, steps: Int, calories: Double, distanceKm: Double) {
     val user = FirebaseAuth.getInstance().currentUser
     val viewModel: UserProfileViewModel = viewModel()
     val username by viewModel.username
@@ -82,6 +85,33 @@ fun AccueilScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         viewModel.fetchUsername()
     }
+
+    val lastSessionViewModel: LastSessionViewModel = viewModel()
+    val lastSession = lastSessionViewModel.lastSession.value
+
+    LaunchedEffect(Unit) {
+        lastSessionViewModel.fetchLastSession()
+    }
+
+    val trackingViewModel: TrackingViewModel = viewModel()
+
+    LaunchedEffect(Unit) {
+        trackingViewModel.startLocationUpdates()
+    }
+
+    val liveTrackingVm: LiveTrackingViewModel = viewModel()
+
+    LaunchedEffect(Unit) {
+        liveTrackingVm.startListening()
+    }
+/*
+    val steps = liveTrackingVm.steps
+    val calories = liveTrackingVm.calories
+    val distanceKm = liveTrackingVm.distanceKm
+
+ */
+
+
 
     LazyColumn(
         modifier = Modifier
@@ -155,16 +185,31 @@ fun AccueilScreen(navController: NavController) {
                                     .clip(RoundedCornerShape(10.dp)),
                                 contentScale = ContentScale.Crop
                             )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            if (lastSession != null) {
+                                val time = lastSession["durationFormatted"] as? String ?: "Inconnu"
+                                val distance = lastSession["distanceKm"] as? String ?: "0.0"
+                                val type = lastSession["activityType"] as? String ?: "Unknown" // facultatif
+
+                                Text("Latest: $type", fontSize = 12.sp, color = Color(0xFFE86144))
+                                Text("Time: $time", fontSize = 12.sp, textAlign = TextAlign.Center)
+                                Text("Distance: $distance km", fontSize = 12.sp, textAlign = TextAlign.Center)
+                            } else {
+                                Text("No data", fontSize = 12.sp, color = Color.Gray)
+                            }
+                            /*
                             Text("Latest: Walking", fontSize = 12.sp, color = Color(0xFFE86144))
                             Text("Time: 10 min", fontSize = 12.sp, textAlign = TextAlign.Center)
                             Text("Distance: 2 km", fontSize = 12.sp, textAlign = TextAlign.Center)
+
+                             */
                         },
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .fillMaxWidth()
                             .height(200.dp)
                             .clickable {
-                                // TODO: Naviguer vers la page de suivi de distance
+                                navController.navigate("track")
                             }
                     )
 
@@ -177,7 +222,7 @@ fun AccueilScreen(navController: NavController) {
                             .fillMaxWidth()
                             .height(110.dp)
                             .clickable {
-                                // TODO: Naviguer vers workout
+                                navController.navigate("workout_summary")
                             }
                     )
                 }
@@ -213,10 +258,20 @@ fun AccueilScreen(navController: NavController) {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                CalorieProgress(current = 357, goal = 500)
+                                /*CalorieProgress(current = 357, goal = 500)
 
                                 Text(
                                     "  357 kcal",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+
+                                 */
+                                CalorieProgress(current = calories.toInt(), goal = 500)
+
+                                Text(
+                                    "  ${calories.toInt()} kcal",
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black
@@ -238,7 +293,8 @@ fun AccueilScreen(navController: NavController) {
                                 ) {
                                     Text(" Steps ", fontSize = 17.sp, color = Color(0xFFE86144))
                                     Spacer(modifier = Modifier.height(12.dp))
-                                    Text(" 2285", fontSize = 16.sp, textAlign = TextAlign.Center)
+                                    //Text(" 2285", fontSize = 16.sp, textAlign = TextAlign.Center)
+                                    Text("$steps", fontSize = 16.sp, textAlign = TextAlign.Center)
                                 }
 
                                 Spacer(modifier = Modifier.width(12.dp))
@@ -254,7 +310,9 @@ fun AccueilScreen(navController: NavController) {
                                 ) {
                                     Text("Distance ", fontSize = 17.sp, color = Color(0xFFE86144))
                                     Spacer(modifier = Modifier.height(12.dp))
-                                    Text("2.5 km", fontSize = 16.sp, textAlign = TextAlign.Center)
+                                    //Text("2.5 km", fontSize = 16.sp, textAlign = TextAlign.Center)
+                                    Text("%.2f km".format(distanceKm), fontSize = 16.sp, textAlign = TextAlign.Center)
+
                                 }
                             }
                         },
@@ -473,8 +531,12 @@ fun DividerVertical(
 
 
 @Composable
-fun AccueilPageWithNavBar(navController: NavController) {
+fun AccueilPageWithNavBar(navController: NavController, liveTrackingVm: LiveTrackingViewModel) {
     var currentRoute by remember { mutableStateOf("home") }
+
+    val steps = liveTrackingVm.steps
+    val calories = liveTrackingVm.calories
+    val distance = liveTrackingVm.distanceKm
 
     Scaffold(
         bottomBar = {
@@ -494,11 +556,18 @@ fun AccueilPageWithNavBar(navController: NavController) {
             val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
             when (currentRoute) {
-                "home" -> AccueilScreen(navController = navController)
+                "home" -> AccueilScreen(
+                    navController = navController,
+                    steps = steps,
+                    calories = calories,
+                    distanceKm = distance)
                 "music" -> MusicScreen(
                     navController = navController,
                     accessToken = getSpotifyAccessToken(LocalContext.current).toString(),
-                    currentlyPlayingVm = CurrentlyPlayingViewModel()
+                    currentlyPlayingVm = CurrentlyPlayingViewModel(),
+                    steps = steps,
+                    calories = calories,
+                    distanceKm = distance
                 )
                 "workout" -> WorkoutScreen(navController)
                 "createPost" -> CreatePostScreen(navController = navController)
@@ -512,7 +581,12 @@ fun AccueilPageWithNavBar(navController: NavController) {
                         Text("Connexion requise")
                     }
                 }
-                else -> AccueilScreen(navController = navController)
+                else -> AccueilScreen(
+                    navController = navController,
+                    steps = steps,
+                    calories = calories,
+                    distanceKm = distance)
+
             }
 
         }
