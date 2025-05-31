@@ -50,6 +50,7 @@ import com.example.fitcoach.ui.screen.section_accueil.AccueilPageWithNavBar
 import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
 import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
 import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
+import com.example.fitcoach.ui.screen.section_social.LeaderboardScreen
 import com.example.fitcoach.ui.screen.section_workout.CreateRoutineScreen
 import com.example.fitcoach.ui.screen.section_workout.ExerciseDetailScreen
 import com.example.fitcoach.ui.screen.section_workout.ExerciseListScreen
@@ -271,6 +272,13 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: St
                 Text("Connexion requise")
             }
         }
+        composable("leaderboard") {
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+            if (currentUserId != null) {
+                LeaderboardScreen(currentUserId, navController)
+            }
+        }
+
 
 
 
