@@ -1,12 +1,47 @@
 package com.example.fitcoach.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.fitcoach.data.model.Workout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.example.fitcoach.data.model.WorkoutExercise
+import com.example.fitcoach.data.repository.WorkoutRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 class WorkoutViewModel : ViewModel() {
+    private val repository = WorkoutRepository(FirebaseFirestore.getInstance())
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
+
+    private val _savedWorkouts = MutableStateFlow<List<Workout>>(emptyList())
+    val savedWorkouts: StateFlow<List<Workout>> = _savedWorkouts
+
+    init {
+        fetchSavedWorkouts()
+    }
+
+    fun fetchSavedWorkouts() {
+        viewModelScope.launch {
+            val workouts = repository.getWorkouts(userId)
+            _savedWorkouts.value = workouts
+        }
+    }
+
+    fun saveWorkout(workout: Workout) {
+        viewModelScope.launch {
+            repository.addWorkout(userId, workout)
+            fetchSavedWorkouts()
+        }
+    }
+    fun loadSavedWorkouts(userId: String) {
+        viewModelScope.launch {
+            val list = repository.getWorkouts(userId)
+            _savedWorkouts.value = list
+        }
+    }
 
     private val _workoutExercises = MutableStateFlow<List<WorkoutExercise>>(emptyList())
     val workoutExercises: StateFlow<List<WorkoutExercise>> = _workoutExercises.asStateFlow()
