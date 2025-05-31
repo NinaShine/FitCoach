@@ -80,7 +80,7 @@ class LiveTrackingViewModel(application: Application) : AndroidViewModel(applica
                     steps += 1
                     calories = steps * 0.04 * (weightKg / 70.0)
                     distanceKm = (steps * averageStepLengthMeters) / 1000.0
-                    Log.d("LiveTracking", "Pas simulé : $steps")
+                    //Log.d("LiveTracking", "Pas simulé : $steps")
                 }
             }
         }

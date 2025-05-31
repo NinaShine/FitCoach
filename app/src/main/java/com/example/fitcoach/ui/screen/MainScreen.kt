@@ -47,6 +47,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.section_accueil.AccueilPageWithNavBar
+import com.example.fitcoach.ui.screen.section_chatbot.ChatBotScreen
 import com.example.fitcoach.ui.screen.section_music.MusicScreen
 import com.example.fitcoach.ui.screen.section_music.MusicScreenWithNavBar
 import com.example.fitcoach.ui.screen.section_profile.EditProfileScreen
@@ -335,6 +336,11 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
                 navController = navController,
                 liveTrackingVm = liveTrackingVm)
         }
+
+        composable("chatbot") {
+            ChatBotScreen(navController = navController)
+        }
+
 
 
 

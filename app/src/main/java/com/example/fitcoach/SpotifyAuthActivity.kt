@@ -15,7 +15,9 @@ import com.example.fitcoach.ui.screen.fetchSpotifyProfile
 
 class SpotifyAuthActivity : ComponentActivity() {
     private val redirectUri = "fitcoach://callback"
-    private val backendUrl = "https://fitcoachspotify.vercel.app/"
+    //private val backendUrl = "https://fitcoachspotify.vercel.app/"
+    private val backendUrl = "https://fitcoachspotify.vercel.app/?provider=spotify"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
