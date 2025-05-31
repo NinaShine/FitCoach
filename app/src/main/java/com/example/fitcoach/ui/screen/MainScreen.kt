@@ -50,7 +50,6 @@ import com.example.fitcoach.ui.screen.section_accueil.AccueilPageWithNavBar
 import com.example.fitcoach.ui.screen.section_music.MusicScreen
 import com.example.fitcoach.ui.screen.section_music.MusicScreenWithNavBar
 import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
-import com.example.fitcoach.ui.screen.section_tracking.TrackScreen
 import com.example.fitcoach.ui.screen.section_tracking.TrackScreenWithPermission
 import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
 import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
@@ -62,6 +61,7 @@ import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
 import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_tracking.WorkoutSummaryScreenWithNavBar
 import com.example.fitcoach.ui.screen.section_social.LeaderboardScreen
+import com.example.fitcoach.ui.screen.section_tracking.WorkoutSummaryScreenWithNavBar
 import com.example.fitcoach.ui.screen.section_workout.CreateRoutineScreen
 import com.example.fitcoach.ui.screen.section_workout.ExerciseDetailScreen
 import com.example.fitcoach.ui.screen.section_workout.ExerciseListScreen
@@ -376,6 +376,14 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
                 Text("Aucune session enregistrée")
             }
         }
+
+        composable("workout_summary") {
+            WorkoutSummaryScreenWithNavBar(
+                navController = navController,
+                liveTrackingVm = liveTrackingVm)
+        }
+
+
 
 
 
