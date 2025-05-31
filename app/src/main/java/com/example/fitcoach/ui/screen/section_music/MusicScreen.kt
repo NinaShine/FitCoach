@@ -54,6 +54,7 @@ import com.example.fitcoach.ui.screen.section_social.FeedScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.MusicViewModel
+import com.example.fitcoach.viewmodel.UserProfileViewModel
 import com.example.fitcoach.viewmodel.track_section.LiveTrackingViewModel
 
 import com.google.firebase.auth.FirebaseAuth
@@ -71,6 +72,13 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
     val context = LocalContext.current
     //var playlists by remember { mutableStateOf<List<SpotifyPlaylist>>(emptyList()) }
     val scope = rememberCoroutineScope()
+
+    val userViewModel: UserProfileViewModel = viewModel()
+    val avatarUrl by userViewModel.avatarUrl
+
+    LaunchedEffect(Unit) {
+        userViewModel.fetchAvatar()
+    }
 
     val viewModel: MusicViewModel = viewModel()
     val playlists by viewModel.playlists.collectAsState()
@@ -154,7 +162,7 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Image(
-                    painter = painterResource(id = R.drawable.july_photo_profile),
+                    painter = rememberAsyncImagePainter(avatarUrl),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
