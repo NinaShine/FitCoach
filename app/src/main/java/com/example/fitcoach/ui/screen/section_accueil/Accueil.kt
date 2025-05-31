@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.section_music.MusicScreen
 import com.example.fitcoach.ui.screen.getSpotifyAccessToken
@@ -81,9 +82,11 @@ fun AccueilScreen(navController: NavController, steps: Int, calories: Double, di
     val user = FirebaseAuth.getInstance().currentUser
     val viewModel: UserProfileViewModel = viewModel()
     val username by viewModel.username
+    val avatarUrl by viewModel.avatarUrl
 
     LaunchedEffect(Unit) {
         viewModel.fetchUsername()
+        viewModel.fetchAvatar()
     }
 
     val lastSessionViewModel: LastSessionViewModel = viewModel()
@@ -137,7 +140,9 @@ fun AccueilScreen(navController: NavController, steps: Int, calories: Double, di
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Image(
-                        painter = painterResource(id = R.drawable.july_photo_profile),
+                        //painter = painterResource(id = R.drawable.july_photo_profile),
+                        // afficher avatarUrl
+                        painter = rememberAsyncImagePainter(avatarUrl),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
