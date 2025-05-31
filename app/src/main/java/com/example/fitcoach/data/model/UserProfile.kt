@@ -21,6 +21,8 @@ data class UserProfile(
     val workouts: List<String> = emptyList(),
     val rewards: List<String> = emptyList(),
     val achievements: List<String> = emptyList(),
-    val progress: List<Int> = emptyList()
+    val progress: List<Int> = emptyList(),
+    val points: Int = 0
+
 
 )

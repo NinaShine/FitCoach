@@ -1,10 +1,12 @@
 package com.example.fitcoach.data.repository
 
 import android.annotation.SuppressLint
+import com.example.fitcoach.data.model.UserLeaderboard
 import com.example.fitcoach.data.model.UserProfile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 object UserRepository {
     private val auth = FirebaseAuth.getInstance()
@@ -73,4 +75,44 @@ object UserRepository {
             }
             .addOnFailureListener { onFailure(it) }
     }
+
+    // ✅ Récupérer tous les utilisateurs triés par points (pour LeaderBoard)
+    fun getUsersSortedByPoints(
+        onSuccess: (List<UserProfile>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection("users")
+            .orderBy("points", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val users = snapshot.documents.mapNotNull { doc ->
+                    doc.toObject(UserProfile::class.java)?.copy(uid = doc.id)
+                }
+                onSuccess(users)
+            }
+            .addOnFailureListener { onFailure(it) }
+    }
+
+    suspend fun getAllUserLeaderboard(): List<UserLeaderboard> {
+        val snapshot = FirebaseFirestore.getInstance()
+            .collection("users")
+            .get()
+            .await()
+
+        return snapshot.documents.mapNotNull { doc ->
+            val firstName = doc.getString("firstName") ?: ""
+            val lastName = doc.getString("lastName") ?: ""
+            val fullName = "$firstName $lastName"
+            val avatarUrl = doc.getString("profileImageUrl") ?: ""
+            val points = doc.getLong("points")?.toInt() ?: 0
+
+            UserLeaderboard(
+                uid = doc.id,
+                fullName = fullName,
+                avatarUrl = avatarUrl,
+                points = points
+            )
+        }.sortedByDescending { it.points }
+    }
+
 }
