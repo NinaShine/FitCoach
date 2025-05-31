@@ -43,9 +43,6 @@ import com.example.fitcoach.ui.screen.section_music.MusicScreen
 import com.example.fitcoach.ui.screen.getSpotifyAccessToken
 import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_social.FeedScreen
-import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
-import com.example.fitcoach.ui.screen.section_social.FeedScreen
-import com.example.fitcoach.ui.screen.section_social.FeedScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.UserProfileViewModel
@@ -589,6 +586,7 @@ fun AccueilPageWithNavBar(navController: NavController, liveTrackingVm: LiveTrac
                     steps = steps,
                     calories = calories,
                     distanceKm = distance)
+
             }
 
         }

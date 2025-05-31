@@ -55,6 +55,7 @@ import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.MusicViewModel
 import com.example.fitcoach.viewmodel.track_section.LiveTrackingViewModel
+
 import com.google.firebase.auth.FirebaseAuth
 import okhttp3.Call
 import okhttp3.Callback
