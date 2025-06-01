@@ -1,58 +1,42 @@
 package com.example.fitcoach.ui.screen
 
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.fitcoach.R
 import com.example.fitcoach.viewmodel.AuthViewModel
-
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 
 @Composable
 fun LoginScreen(
     navController: NavController,
     onLoginSuccess: () -> Unit,
     onGoToRegister: () -> Unit,
-    //onForgotPassword: () -> Unit,
     viewModel: AuthViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    //var error by remember { mutableStateOf<String?>(null) }
     var passwordVisible by remember { mutableStateOf(false) }
 
     val error by viewModel.errorMessage
@@ -65,6 +49,32 @@ fun LoginScreen(
             viewModel.authSuccess.value = false // reset
         }
     }
+
+    val context = LocalContext.current
+
+    // 🎯 Google Sign-In launcher
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account.idToken
+            if (idToken != null) {
+                viewModel.signInWithGoogle(idToken)
+            } else {
+                viewModel.errorMessage.value = "ID Token null"
+            }
+        } catch (e: ApiException) {
+            viewModel.errorMessage.value = "Erreur Google Sign-In : ${e.localizedMessage}"
+        }
+    }
+
+    // 🔐 Configuration GoogleSignInOptions
+    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestIdToken("520320356111-lm0armssr796p8er7tjikbk9q0jekqqk.apps.googleusercontent.com") // ton client ID Web
+        .requestEmail()
+        .build()
+
+    val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -111,7 +121,7 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                /* Sign in with Apple A FAIRE ET N PAS OUBLIER*/
+                    // À implémenter si tu veux Apple Sign-In plus tard
                 },
                 modifier = Modifier
                     .width(338.dp)
@@ -133,7 +143,8 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                /* Sign in with Google  A FAIRE ET PAS OUBLIER*/
+                    val signInIntent = googleSignInClient.signInIntent
+                    launcher.launch(signInIntent)
                 },
                 modifier = Modifier
                     .width(338.dp)

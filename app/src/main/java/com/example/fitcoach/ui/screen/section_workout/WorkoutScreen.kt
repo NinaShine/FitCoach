@@ -15,6 +15,8 @@ import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,12 +33,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
-import com.example.fitcoach.repository.RoutineRepository
+import com.example.fitcoach.viewmodel.WorkoutViewModel
 import com.example.fitcoach.viewmodel.UserProfileViewModel
 
 @Composable
 fun WorkoutScreen(navController: NavController) {
-    val routines = RoutineRepository.getAllRoutines()
+    val viewModel: WorkoutViewModel = viewModel()
+    val workouts by viewModel.savedWorkouts.collectAsState()
     val scrollState = rememberScrollState()
 
     val userViewModel: UserProfileViewModel = viewModel()
@@ -136,10 +139,9 @@ fun WorkoutScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Saved routines
-            Text("Les routines enregistrées", fontSize = 18.sp)
+            Text("Mes entraînements enregistrés", fontSize = 18.sp)
             Spacer(modifier = Modifier.height(8.dp))
-            routines.forEach { routine ->
+            workouts.forEach { workout ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -147,14 +149,14 @@ fun WorkoutScreen(navController: NavController) {
                         .clip(RoundedCornerShape(12.dp))
                         .background(Color(0xFFFBF2ED))
                         .clickable {
-                            navController.navigate("routine_detail/${routine.id}")
+                            // Ajoute ici la navigation vers le détail du workout si tu as un écran
                         }
                         .padding(16.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(routine.title, fontSize = 16.sp)
+                        Text(workout.name, fontSize = 16.sp)
                         Spacer(modifier = Modifier.weight(1f))
-                        Text("${routine.exercises.size} exercices", fontSize = 14.sp)
+                        Text("${workout.exercises.size} exercices", fontSize = 14.sp)
                     }
                 }
             }

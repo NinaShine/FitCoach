@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.fitcoach.viewmodel.ExploreViewModel
+import com.example.fitcoach.viewmodel.UserProfileViewModel
 import com.example.fitcoach.data.model.YouTubeVideo
 
 @Composable
@@ -74,9 +75,31 @@ fun CategoryButton(
 @Composable
 fun ExploreRoutinesScreen(
     viewModel: ExploreViewModel = viewModel(),
+    profileViewModel: UserProfileViewModel = viewModel(),
     onBack: () -> Unit
 ) {
     val videos by viewModel.videos.collectAsState()
+
+    LaunchedEffect(Unit) {
+        profileViewModel.fetchLocation()
+        profileViewModel.fetchLevel()
+        profileViewModel.fetchFitnessGoal()
+    }
+
+    val location = profileViewModel.location.value
+    val level = profileViewModel.level.value
+    val goal = profileViewModel.fitnessGoal.value
+
+    val defaultQuery = when (location?.lowercase()) {
+        "maison" -> "home workout"
+        "salle" -> "gym workout"
+        else -> "fitness routine"
+    }
+
+    LaunchedEffect(location) {
+        viewModel.searchVideos(defaultQuery)
+    }
+
     val levelOptions = listOf("Beginner", "Intermediate", "Advanced")
     val objectiveOptions = listOf("Fat Loss", "Muscle Gain", "Endurance")
     val equipmentOptions = listOf("Dumbbells", "Bodyweight", "Full Gym")

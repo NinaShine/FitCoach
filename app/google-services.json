@@ -12,7 +12,28 @@
           "package_name": "com.example.fitcoach"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "520320356111-7u5afunf2liu1fsu142qhh7rat06khhu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fitcoach",
+            "certificate_hash": "7838941f2d6da0809181fb7bf16934817772d3bc"
+          }
+        },
+        {
+          "client_id": "520320356111-s5rla0bqb781b4cra0no5ab99ljppoj7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fitcoach",
+            "certificate_hash": "de0f9504fc1f4251b71eb4af73411407208c3852"
+          }
+        },
+        {
+          "client_id": "520320356111-lm0armssr796p8er7tjikbk9q0jekqqk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAw_r6U3xePDtN7-9lk8_14YVVUB1PC9Rg"
@@ -20,7 +41,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "520320356111-lm0armssr796p8er7tjikbk9q0jekqqk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

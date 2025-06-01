@@ -12,128 +12,87 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class UserProfileViewModel : ViewModel() {
+
     var username = mutableStateOf<String?>(null)
     var birthDate = mutableStateOf<String?>(null)
     var fN = mutableStateOf<String?>(null)
     var lN = mutableStateOf<String?>(null)
     var bio = mutableStateOf<String?>(null)
     var gender = mutableStateOf<String?>(null)
+
+    // 🆕 Champs pour la personnalisation
+    var location = mutableStateOf<String?>(null)       // Ex: "maison", "salle"
+    var fitnessGoal = mutableStateOf<String?>(null)    // Ex: "perte de poids"
+    var level = mutableStateOf<String?>(null)          // Ex: "débutant"
+
+    private val uid = FirebaseAuth.getInstance().currentUser?.uid
+    private val db = FirebaseFirestore.getInstance()
     var weight = mutableStateOf<Double?>(null)
     var avatarUrl = mutableStateOf<String?>(null)
 
     fun fetchUsername() {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirebaseFirestore.getInstance()
-            .collection("users")
-            .document(uid)
-            .get()
-            .addOnSuccessListener { doc ->
-                username.value = doc.getString("username") ?: "Utilisateur"
-            }
-            .addOnFailureListener {
-                username.value = "Erreur"
-            }
+        fetchField("username") { username.value = it ?: "Utilisateur" }
+    }
+
+    fun fetchFirstName() {
+        fetchField("firstName") { fN.value = it ?: "First Name" }
+    }
+
+    fun fetchLastName() {
+        fetchField("lastName") { lN.value = it ?: "Last Name" }
+    }
+
+    fun fetchBio() {
+        fetchField("bio") { bio.value = it ?: "Bio" }
+    }
+
+    fun fetchGender() {
+        fetchField("gender") { gender.value = it ?: "Genre" }
+    }
+
+    fun fetchBirthDateRaw() {
+        fetchField("birthDate") { birthDate.value = it ?: "Birth Date" }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun fetchAge() {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirebaseFirestore.getInstance()
-            .collection("users")
-            .document(uid)
-            .get()
-            .addOnSuccessListener { doc ->
-                val birthDateStr = doc.getString("birthDate")
-                if (birthDateStr != null) {
-                    try {
-                        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
-                        val birthDateLocal = LocalDate.parse(birthDateStr, formatter)
-                        val today = LocalDate.now()
-                        val ageYears = Period.between(birthDateLocal, today).years
-                        birthDate.value = "$ageYears ans"
-                    } catch (e: Exception) {
-                        birthDate.value = "Format invalide"
-                    }
-                } else {
-                    birthDate.value = "Non renseignée"
-                }
+        fetchField("birthDate") { birthDateStr ->
+            try {
+                val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
+                val birthDateLocal = LocalDate.parse(birthDateStr, formatter)
+                val ageYears = Period.between(birthDateLocal, LocalDate.now()).years
+                birthDate.value = "$ageYears ans"
+            } catch (e: Exception) {
+                birthDate.value = "Format invalide"
             }
-            .addOnFailureListener {
-                birthDate.value = "Erreur"
-            }
+        }
     }
 
-    fun fetchFirstName() {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirebaseFirestore.getInstance()
-            .collection("users")
-            .document(uid)
-            .get()
-            .addOnSuccessListener { doc ->
-                fN.value = doc.getString("firstname") ?: "First Name"
-            }
-            .addOnFailureListener {
-                username.value = "Erreur"
-            }
-
+    // 🔁 Méthodes pour les nouveaux champs de personnalisation
+    fun fetchLocation() {
+        fetchField("location") { location.value = it ?: "maison" }
     }
 
-    fun fetchLastName(){
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirebaseFirestore.getInstance()
-            .collection("users")
-            .document(uid)
-            .get()
-            .addOnSuccessListener { doc ->
-                lN.value = doc.getString("lastname") ?: "Last Name"
-            }
-            .addOnFailureListener {
-                lN.value = "Erreur"
-            }
+    fun fetchFitnessGoal() {
+        fetchField("fitnessGoal") { fitnessGoal.value = it ?: "forme" }
     }
 
-    fun fetchBio(){
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirebaseFirestore.getInstance()
-            .collection("users")
-            .document(uid)
-            .get()
-            .addOnSuccessListener { doc ->
-                bio.value = doc.getString("bio") ?: "Bio"
-            }
-            .addOnFailureListener {
-                bio.value = "Erreur"
-            }
+    fun fetchLevel() {
+        fetchField("level") { level.value = it ?: "débutant" }
     }
 
-    fun fetchGender(){
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirebaseFirestore.getInstance()
-            .collection("users")
-            .document(uid)
+    // ✅ Fonction générique pour factoriser les appels Firestore
+    private fun fetchField(field: String, onResult: (String?) -> Unit) {
+        if (uid == null) return
+        db.collection("users").document(uid)
             .get()
             .addOnSuccessListener { doc ->
-                gender.value = doc.getString("gender") ?: "Gender"
+                onResult(doc.getString(field))
             }
             .addOnFailureListener {
-                gender.value = "Erreur"
+                onResult("Erreur")
             }
     }
-
-    fun fetchBirthDate(){
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        FirebaseFirestore.getInstance()
-            .collection("users")
-            .document(uid)
-            .get()
-            .addOnSuccessListener { doc ->
-                birthDate.value = doc.getString("birthDate") ?: "Birth Date"
-            }
-            .addOnFailureListener {
-                birthDate.value = "Erreur"
-            }
-    }
-
     fun fetchUserWeight(){
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirebaseFirestore.getInstance()
