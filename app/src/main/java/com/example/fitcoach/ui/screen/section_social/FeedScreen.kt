@@ -1,5 +1,7 @@
 package com.example.fitcoach.ui.screen.section_social
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,17 +33,19 @@ import com.example.fitcoach.data.model.UserProfile
 import com.example.fitcoach.viewmodel.FeedViewModel
 import com.example.fitcoach.viewmodel.UserProfileViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FeedScreen(currentUid: String, navController: NavController) {
     val vm: FeedViewModel = viewModel()
     val posts by vm.posts.collectAsState()
     val users by vm.userProfiles.collectAsState()
     val commentCounts by vm.commentCounts.collectAsState()
+    val currentUserFriends by vm.currentUserFriends.collectAsState() // ✅ Nouvelle StateFlow
 
     LaunchedEffect(Unit) {
         vm.loadFeed(currentUid)
+        vm.loadCurrentUserFriends(currentUid) // ✅ Charger les amis de l'utilisateur courant
     }
-
 
     Column(
         modifier = Modifier
@@ -74,14 +78,18 @@ fun FeedScreen(currentUid: String, navController: NavController) {
             items(posts) { post ->
                 val author = users[post.userId]
                 val commentCount = commentCounts[post.id] ?: 0
+                val isFollowing = currentUserFriends.contains(post.userId) // ✅ Vérification correcte
 
                 PostCard(
                     post = post,
                     user = author,
                     currentUserId = currentUid,
                     commentCount = commentCount,
+                    isFollowing = isFollowing, // ✅ Passer le statut de suivi
                     onLikeClick = { vm.likePost(post.id) },
-                    onFollowClick = { vm.followUser(post.userId) },
+                    onFollowClick = {
+                        vm.followUser(post.userId, currentUid) // ✅ Appel correct
+                    },
                     onCommentSubmit = { text ->
                         vm.submitComment(post.id, currentUid, text)
                     }
@@ -119,32 +127,6 @@ fun TopBar(
             modifier = Modifier.align(Alignment.Center)
         )
 
-        /* 🔘 Boutons à droite (emoji + avatar)
-        Row(
-            modifier = Modifier.align(Alignment.CenterEnd),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                "🏆",
-                fontSize = 22.sp,
-                modifier = Modifier
-                    .padding(end = 12.dp)
-                    .clickable { onChallengeClick() }
-            )
-            Image(
-                painter = painterResource(id = R.drawable.july_photo_profile),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(45.dp)
-                    .clip(CircleShape)
-                    .clickable {
-                        navController.navigate("profile")
-                    }
-            )
-        }
-
-         */
 
         // Header
         Row(
@@ -178,13 +160,6 @@ fun TopBar(
             }
         }
 
-        /* 🔙 Optionnel : "Discover" à gauche
-        Text(
-            "Discover",
-            color = Color.Gray,
-            modifier = Modifier.align(Alignment.CenterStart)
-        )
-         */
     }
 }
 
@@ -225,7 +200,6 @@ fun CommentDialog(
     }
 }
 
-
 @Composable
 fun PostCard(
     post: Post,
@@ -234,11 +208,13 @@ fun PostCard(
     commentCount: Int,
     onLikeClick: () -> Unit,
     onFollowClick: () -> Unit,
-    onCommentSubmit: (String) -> Unit
+    onCommentSubmit: (String) -> Unit,
+    isFollowing: Boolean // ✅ Nouveau paramètre pour savoir si on suit déjà
 ) {
     var showCommentDialog by remember { mutableStateOf(false) }
     var liked by remember { mutableStateOf(post.likes.contains(currentUserId)) }
     var likeCount by remember { mutableStateOf(post.likes.size) }
+    var isCurrentlyFollowing by remember { mutableStateOf(isFollowing) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -247,7 +223,7 @@ fun PostCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
-            // 🔼 Top section with avatar, name/date, and follow button
+            // 🔼 En-tête avec avatar, nom, bouton follow/amis
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -268,14 +244,32 @@ fun PostCard(
                     }
                 }
 
-                if (currentUserId != post.userId && user?.friends?.contains(currentUserId) != true) {
-                    Button(
-                        onClick = onFollowClick,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800)), // Orange
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-                        modifier = Modifier.height(36.dp)
-                    ) {
-                        Text("Follow", color = Color.White, fontSize = 14.sp)
+                // ✅ Logique corrigée pour le bouton Follow
+                if (currentUserId != post.userId) {
+                    if (isCurrentlyFollowing) {
+                        // Si on suit déjà, on affiche "Amis" en gris et désactivé
+                        Button(
+                            onClick = { /* déjà amis */ },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                            modifier = Modifier.height(36.dp),
+                            enabled = false
+                        ) {
+                            Text("Amis", color = Color.White, fontSize = 14.sp)
+                        }
+                    } else {
+                        // Si on ne suit pas encore, bouton Follow actif
+                        Button(
+                            onClick = {
+                                isCurrentlyFollowing = true // ✅ Mise à jour immédiate de l'UI
+                                onFollowClick() // ✅ Appel correct du callback
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800)),
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                            modifier = Modifier.height(36.dp)
+                        ) {
+                            Text("Follow", color = Color.White, fontSize = 14.sp)
+                        }
                     }
                 }
             }
@@ -326,15 +320,11 @@ fun PostCard(
                 Text("$commentCount comments")
             }
 
-            // 💬 Comment dialog
             CommentDialog(
                 showDialog = showCommentDialog,
                 onDismiss = { showCommentDialog = false },
-                onSubmit = { commentText ->
-                    onCommentSubmit(commentText)
-                }
+                onSubmit = { commentText -> onCommentSubmit(commentText) }
             )
         }
     }
 }
-
