@@ -302,55 +302,6 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
         }
 
 
-
-        /*
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            brush = Brush.horizontalGradient(listOf(Color(0xFFFFB47E), Color(0xFFFF8762))),
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                        .padding(16.dp)
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Image(
-                            painter = painterResource(id = currentSong.imageRes),
-                            contentDescription = "Current song",
-                            modifier = Modifier.size(64.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(currentSong.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                        Text(currentSong.artist, fontSize = 14.sp, color = Color.Black)
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(4.dp)
-                                .background(Color.White.copy(alpha = 0.5f))
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(0.4f)
-                                    .fillMaxHeight()
-                                    .background(Color.White)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
-                            Icon(Icons.Default.SkipPrevious, contentDescription = null)
-                            Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(48.dp))
-                            Icon(Icons.Default.SkipNext, contentDescription = null)
-                        }
-                    }
-                }
-
-         */
-
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -515,7 +466,8 @@ fun MusicScreenWithNavBar(
                     navController = navController,
                     steps = steps,
                     calories = calories,
-                    distanceKm = distance
+                    distanceKm = distance,
+                    currentlyPlayingVm = currentlyPlayingVm
                     )
                 "music" -> MusicScreen(
                     navController = navController,

@@ -20,6 +20,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,23 +38,58 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
 import com.example.fitcoach.viewmodel.UserProfileViewModel
+import com.example.fitcoach.viewmodel.track_section.LastSessionViewModel
+import com.example.fitcoach.viewmodel.track_section.LiveTrackingViewModel
+import com.google.firebase.Timestamp
+import java.time.LocalDate
+import java.time.ZoneId
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavController, liveTrackingVm: LiveTrackingViewModel) {
     val viewModel: UserProfileViewModel = viewModel()
+    val lastSessionViewModel: LastSessionViewModel = viewModel()
     val username by viewModel.username
     val age by viewModel.birthDate
     val avatarUrl by viewModel.avatarUrl
+
+    val recentSessions = lastSessionViewModel.recentSessions
+
+    val today = remember { LocalDate.now() }
+    val todaySessions = recentSessions.filter {
+        val timestamp = it["timestamp"] as? Timestamp
+        timestamp?.toDate()?.toInstant()?.atZone(ZoneId.systemDefault())?.toLocalDate() == today
+    }
+
+    val totalDurationMin = todaySessions.sumOf {
+        val durationStr = it["durationFormatted"] as? String ?: "00:00:00"
+        val parts = durationStr.split(":").mapNotNull { s -> s.toIntOrNull() }
+        val (h, m, s) = when (parts.size) {
+            3 -> Triple(parts[0], parts[1], parts[2])
+            2 -> Triple(0, parts[0], parts[1])
+            else -> Triple(0, 0, 0)
+        }
+        h * 60 + m + s / 60.0
+    }
+
+    val workoutCount = todaySessions.size
+
+
+    val calories = liveTrackingVm.calories
+
 
     LaunchedEffect(Unit) {
         viewModel.fetchUsername()
         viewModel.fetchAge()
         viewModel.fetchAvatar()
+        lastSessionViewModel.fetchRecentSessions()
+        liveTrackingVm.startListening()
     }
 
     val scrollState = rememberScrollState()
+
+    val daysToDisplay = (-3..3).map { today.plusDays(it.toLong()) }
 
     Column(
         modifier = Modifier
@@ -114,18 +150,20 @@ fun ProfileScreen(navController: NavController) {
             modifier = Modifier.align(Alignment.CenterHorizontally),
             horizontalArrangement = Arrangement.spacedBy(25.dp)
         ) {
-            repeat(3) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_check_circle),
-                    contentDescription = null,
-                    tint = Color(0xFFE86144),
-                    modifier = Modifier.size(32.dp)
-                )
+            daysToDisplay.forEach { day ->
+                val isToday = day == today
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = if (isToday) Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFFE86144))
+                        .padding(4.dp) else Modifier
+                ) {
+                    Text(day.dayOfMonth.toString(), color = if (isToday) Color.White else Color.Black)
+                    Text(day.dayOfWeek.name.first().toString(), fontSize = 12.sp, color = if (isToday) Color.White else Color.Gray)
+                }
             }
-            Text("27", modifier = Modifier.align(Alignment.CenterVertically))
-            Text("28", modifier = Modifier.align(Alignment.CenterVertically))
-            Text("29", modifier = Modifier.align(Alignment.CenterVertically))
-            Text("30", modifier = Modifier.align(Alignment.CenterVertically))
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -140,16 +178,18 @@ fun ProfileScreen(navController: NavController) {
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            StatBlock("16", "Workouts")
-            StatBlock("10540", "KCAL")
-            StatBlock("49", "Minutes")
+            StatBlock("$workoutCount", "Workouts")
+            StatBlockCal(calories, "CAL")
+            StatBlock("${totalDurationMin.toInt()}", "Minutes")
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         ProfileOptionItem("Friends", Icons.Default.Person) { /* navigate to friends */ }
         ProfileOptionItem("Reward Collection", Icons.Default.EmojiEvents) { /* navigate to rewards */ }
-        ProfileOptionItem("Statistics", Icons.Default.ShowChart) { /* navigate to stats */ }
+        ProfileOptionItem("Statistics", Icons.Default.ShowChart) {
+            navController.navigate("profile_stats")
+        }
         ProfileOptionItem("Settings", Icons.Default.Settings) {
             navController.navigate("settings")
         }
@@ -160,6 +200,14 @@ fun ProfileScreen(navController: NavController) {
 fun StatBlock(value: String, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(value, fontWeight = FontWeight.Bold)
+        Text(label, fontSize = 12.sp, color = Color.Gray)
+    }
+}
+
+@Composable
+fun StatBlockCal(value: Double, label: String) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("${value.toInt()}", fontWeight = FontWeight.Bold)
         Text(label, fontSize = 12.sp, color = Color.Gray)
     }
 }
@@ -185,13 +233,15 @@ fun ProfileOptionItem(title: String, icon: ImageVector, onClick: () -> Unit) {
         Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = Color.Gray)
     }
 }
-
+/*
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
     ProfileScreen(navController = NavController(LocalContext.current))
 }
+
+ */
 
 
 

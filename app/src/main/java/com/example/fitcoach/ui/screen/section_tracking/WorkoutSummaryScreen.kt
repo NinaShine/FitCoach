@@ -289,7 +289,8 @@ fun WorkoutSummaryScreenWithNavBar(
                     navController = navController,
                     steps = steps,
                     calories = calories,
-                    distanceKm = distance
+                    distanceKm = distance,
+                    currentlyPlayingVm = CurrentlyPlayingViewModel()
                 )
             } else if (currentRoute == "music") {
                 MusicScreen(

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.section_music.MusicScreen
@@ -81,7 +82,7 @@ val bottomNavItems = listOf(
 
 
 @Composable
-fun AccueilScreen(navController: NavController, steps: Int, calories: Double, distanceKm: Double) {
+fun AccueilScreen(navController: NavController, steps: Int, calories: Double, distanceKm: Double, currentlyPlayingVm: CurrentlyPlayingViewModel) {
     val user = FirebaseAuth.getInstance().currentUser
     val viewModel: UserProfileViewModel = viewModel()
     val username by viewModel.username
@@ -116,6 +117,8 @@ fun AccueilScreen(navController: NavController, steps: Int, calories: Double, di
     val distanceKm = liveTrackingVm.distanceKm
 
  */
+    val playing by currentlyPlayingVm.track.collectAsState()
+
 
 
 
@@ -247,16 +250,44 @@ fun AccueilScreen(navController: NavController, steps: Int, calories: Double, di
                         title = "Music",
                         icon = Icons.Default.MusicNote,
                         content = {
-                            Text("Jul - Wesh Alors", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                            if (playing != null) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    AsyncImage(
+                                        model = playing!!.imageUrl,
+                                        contentDescription = "Album cover",
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .clip(RoundedCornerShape(8.dp))
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column {
+                                        Text(
+                                            text = playing!!.title,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = Color.Black
+                                        )
+                                        Text(
+                                            text = playing!!.artist,
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFFE86144)
+                                        )
+                                    }
+                                }
+                            } else {
+                                Text("Aucune musique en cours", fontSize = 14.sp, color = Color.Gray)
+                            }
                         },
                         gradient = Brush.horizontalGradient(listOf(Color(0xFFFFB47E), Color(0xFFFF8762))),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
                             .clickable {
-                                // Naviguer vers la page musique
+                                navController.navigate("musicWithNavBar")
                             }
                     )
+
 
                     WidgetCalories(
                         title = "Calories",
@@ -591,7 +622,7 @@ fun RecommendedVideosSection(
 
 
 @Composable
-fun AccueilPageWithNavBar(navController: NavController, liveTrackingVm: LiveTrackingViewModel) {
+fun AccueilPageWithNavBar(navController: NavController, liveTrackingVm: LiveTrackingViewModel, currentlyPlayingVm: CurrentlyPlayingViewModel) {
     var currentRoute by remember { mutableStateOf("home") }
 
     val steps = liveTrackingVm.steps
@@ -620,7 +651,9 @@ fun AccueilPageWithNavBar(navController: NavController, liveTrackingVm: LiveTrac
                     navController = navController,
                     steps = steps,
                     calories = calories,
-                    distanceKm = distance)
+                    distanceKm = distance,
+                    currentlyPlayingVm = currentlyPlayingVm
+                )
                 "music" -> MusicScreen(
                     navController = navController,
                     accessToken = getSpotifyAccessToken(LocalContext.current).toString(),
@@ -645,7 +678,8 @@ fun AccueilPageWithNavBar(navController: NavController, liveTrackingVm: LiveTrac
                     navController = navController,
                     steps = steps,
                     calories = calories,
-                    distanceKm = distance)
+                    distanceKm = distance,
+                    currentlyPlayingVm = currentlyPlayingVm)
 
             }
 
