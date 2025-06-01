@@ -147,7 +147,10 @@ fun ProfileScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        ProfileOptionItem("Friends", Icons.Default.Person) { /* navigate to friends */ }
+        ProfileOptionItem("Friends", Icons.Default.Person) {
+            navController.navigate("friends")
+        }
+
         ProfileOptionItem("Reward Collection", Icons.Default.EmojiEvents) { /* navigate to rewards */ }
         ProfileOptionItem("Statistics", Icons.Default.ShowChart) { /* navigate to stats */ }
         ProfileOptionItem("Settings", Icons.Default.Settings) {
