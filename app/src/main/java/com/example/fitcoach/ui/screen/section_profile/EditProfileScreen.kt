@@ -143,7 +143,6 @@ fun EditProfileScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Avatar
         Box(
             modifier = Modifier
                 .size(130.dp)
@@ -326,7 +325,6 @@ fun EditProfileScreen(
         )
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Gender
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -335,7 +333,6 @@ fun EditProfileScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Gender")
-            //Text(gender, color = Color(0xFFE86144))
             Text(text = selectedGender ?: gender, color = Color(0xFFE86144))
 
         }
@@ -344,7 +341,6 @@ fun EditProfileScreen(
         HorizontalDivider(color = Color.Gray)
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Birthdate
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -353,11 +349,6 @@ fun EditProfileScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Birthday")
-            /*
-            Text(birthDate, color = Color(0xFFE86144))
-            Text(text = "${selectedDate.first} ${selectedDate.second} ${selectedDate.third}", color = Color(0xFFE86144))
-
-             */
             Text(
                 text = if (birthDate.isNotEmpty()) birthDate else "${selectedDate.first} ${selectedDate.second} ${selectedDate.third}",
                 color = Color(0xFFE86144)

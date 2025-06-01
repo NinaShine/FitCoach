@@ -32,7 +32,6 @@ class ExerciseViewModel(application: Application) : AndroidViewModel(application
                 println("DEBUG: Exercises fetched from API: ${response.size}")
 
 
-                // Enrichir chaque exercice avec ses instructions
                 val exercisesWithInstructions = response.map { exercise ->
                     exercise.copy(
                         instructions = instructionsRepository.getInstructions(exercise.id)

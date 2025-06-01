@@ -54,17 +54,15 @@ fun RegisterScreen(
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    //var error by remember { mutableStateOf<String?>(null) }
     var passwordVisible by remember { mutableStateOf(false) }
 
     val error by viewModel.errorMessage
     val authSuccess by viewModel.authSuccess
 
-    // Navigation après succès
     LaunchedEffect(authSuccess) {
         if (authSuccess) {
             onRegisterSuccess()
-            viewModel.authSuccess.value = false // reset
+            viewModel.authSuccess.value = false
         }
     }
 

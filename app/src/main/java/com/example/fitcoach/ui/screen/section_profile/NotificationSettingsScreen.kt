@@ -68,7 +68,6 @@ fun NotificationSettingsScreen(
             .background(Color(0xFFFEF3ED))
             .padding(24.dp)
     ) {
-        // Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -96,7 +95,6 @@ fun NotificationSettingsScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Toggle notification
         Row(
             modifier = Modifier
                 .fillMaxWidth()

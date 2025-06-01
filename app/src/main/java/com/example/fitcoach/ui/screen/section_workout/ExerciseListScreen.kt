@@ -36,7 +36,6 @@ import androidx.navigation.NavController
 fun ExerciseListScreen(navController: NavController) {
     val exerciseViewModel: ExerciseViewModel = viewModel()
 
-    // SOLUTION : Utiliser le même scope pour le WorkoutViewModel
     val workoutViewModel: WorkoutViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
         viewModelStoreOwner = LocalContext.current as ComponentActivity
     )
@@ -53,7 +52,6 @@ fun ExerciseListScreen(navController: NavController) {
         it.name.contains(searchQuery, ignoreCase = true)
     }
 
-    // DEBUG: Observer les changements dans workoutExercises
     LaunchedEffect(workoutExercises) {
         println("DEBUG: Current workout exercises count: ${workoutExercises.size}")
         workoutExercises.forEach { exercise ->
@@ -61,7 +59,6 @@ fun ExerciseListScreen(navController: NavController) {
         }
     }
 
-    // Dialog pour ajouter l'exercice avec séries et répétitions
     if (showAddDialog && selectedExercise != null) {
         AddExerciseDialog(
             exercise = selectedExercise!!,
@@ -82,19 +79,16 @@ fun ExerciseListScreen(navController: NavController) {
                     instructions = selectedExercise!!.instructions
                 )
 
-                // DEBUG: Vérifier l'ajout
                 println("DEBUG: About to add exercise: ${workoutExercise.name}")
                 println("DEBUG: ViewModel instance: ${workoutViewModel.hashCode()}")
 
                 workoutViewModel.addExercise(workoutExercise)
 
-                // DEBUG: Vérifier après ajout
                 println("DEBUG: Exercise added, current count: ${workoutViewModel.workoutExercises.value.size}")
 
                 showAddDialog = false
                 selectedExercise = null
 
-                // Navigation avec debug
                 println("DEBUG: Navigating back to quick_workout")
                 navController.popBackStack()
             }
@@ -113,7 +107,7 @@ fun ExerciseListScreen(navController: NavController) {
                     }
                 },
                 actions = {
-                    TextButton(onClick = { /* To create selected list later */ }) {
+                    TextButton(onClick = {}) {
                         Text("Create", color = Color(0xFFE86144))
                     }
                 }
@@ -245,7 +239,6 @@ fun AddExerciseDialog(
                     val repetitionsInt = repetitions.toIntOrNull()
 
                     if (seriesInt != null && seriesInt > 0 && repetitionsInt != null && repetitionsInt > 0) {
-                        // DEBUG: Ajouter des logs
                         println("DEBUG: Adding exercise ${exercise.name} with $seriesInt series and $repetitionsInt reps")
                         onConfirm(seriesInt, repetitionsInt)
                     } else {
@@ -272,7 +265,7 @@ fun AddExerciseDialog(
 @Composable
 fun FilterButton(label: String, modifier: Modifier = Modifier) {
     Button(
-        onClick = { /* TODO */ },
+        onClick = {},
         shape = RoundedCornerShape(40.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFBF2ED)),
         modifier = modifier

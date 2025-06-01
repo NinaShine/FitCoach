@@ -50,14 +50,12 @@ fun WorkoutScreen(navController: NavController) {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Scrollable content
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp) // bottom padding to avoid overlapping the fixed button
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp)
                 .verticalScroll(scrollState)
         ) {
-            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -149,7 +147,6 @@ fun WorkoutScreen(navController: NavController) {
                         .clip(RoundedCornerShape(12.dp))
                         .background(Color(0xFFFBF2ED))
                         .clickable {
-                            // Ajoute ici la navigation vers le détail du workout si tu as un écran
                         }
                         .padding(16.dp)
                 ) {
@@ -162,7 +159,6 @@ fun WorkoutScreen(navController: NavController) {
             }
         }
 
-        // Fixed bottom help button
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)

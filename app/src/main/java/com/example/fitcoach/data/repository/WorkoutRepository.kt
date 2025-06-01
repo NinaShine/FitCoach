@@ -32,35 +32,6 @@ class WorkoutRepository(private val firestore: FirebaseFirestore) {
         }
     }
 
-    suspend fun updateWorkout(userId: String, workoutId: String, workout: Workout): Boolean {
-        return try {
-            firestore.collection("users")
-                .document(userId)
-                .collection("workouts")
-                .document(workoutId)
-                .set(workout)
-                .await()
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    suspend fun deleteWorkout(userId: String, workoutId: String): Boolean {
-        return try {
-            firestore.collection("users")
-                .document(userId)
-                .collection("workouts")
-                .document(workoutId)
-                .delete()
-                .await()
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    // Version callback pour compatibilité si nécessaire
     fun addWorkoutCallback(userId: String, workout: Workout, onComplete: (Boolean) -> Unit) {
         firestore.collection("users")
             .document(userId)

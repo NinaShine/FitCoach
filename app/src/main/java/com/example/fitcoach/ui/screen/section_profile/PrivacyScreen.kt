@@ -56,7 +56,6 @@ fun PrivacyScreen(navController: NavController) {
             .background(Color(0xFFFEF3ED))
             .padding(24.dp)
     ) {
-        // Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically

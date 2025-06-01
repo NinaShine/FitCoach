@@ -35,7 +35,7 @@ fun RoutineDetailScreen(routineId: String, navController: NavController) {
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            painter = painterResource(id = com.example.fitcoach.R.drawable.ic_back), // ou utilisez Icons.Default.ArrowBack
+                            painter = painterResource(id = com.example.fitcoach.R.drawable.ic_back),
                             contentDescription = "Back"
                         )
                     }

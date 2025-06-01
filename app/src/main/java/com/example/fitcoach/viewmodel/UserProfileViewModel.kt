@@ -24,10 +24,9 @@ class UserProfileViewModel : ViewModel() {
     var stepGoal = mutableStateOf<Int?>(null)
     var workoutGoal = mutableStateOf<Int?>(null)
 
-    // 🆕 Champs pour la personnalisation
-    var location = mutableStateOf<String?>(null)       // Ex: "maison", "salle"
-    var fitnessGoal = mutableStateOf<String?>(null)    // Ex: "perte de poids"
-    var level = mutableStateOf<String?>(null)          // Ex: "débutant"
+    var location = mutableStateOf<String?>(null)
+    var fitnessGoal = mutableStateOf<String?>(null)
+    var level = mutableStateOf<String?>(null)
 
     private val uid = FirebaseAuth.getInstance().currentUser?.uid
     private val db = FirebaseFirestore.getInstance()
@@ -95,7 +94,6 @@ class UserProfileViewModel : ViewModel() {
         }
     }
 
-    // 🔁 Méthodes pour les nouveaux champs de personnalisation
     fun fetchLocation() {
         fetchField("location") { location.value = it ?: "maison" }
     }
@@ -108,7 +106,6 @@ class UserProfileViewModel : ViewModel() {
         fetchField("level") { level.value = it ?: "débutant" }
     }
 
-    // ✅ Fonction générique pour factoriser les appels Firestore
     private fun fetchField(field: String, onResult: (String?) -> Unit) {
         if (uid == null) return
         db.collection("users").document(uid)

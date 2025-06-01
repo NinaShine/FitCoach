@@ -49,7 +49,6 @@ fun CreatePostScreen(navController: NavController) {
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var isLoading by remember { mutableStateOf(false) }
 
-    // Défi (Challenge) state
     var challengeTitle by remember { mutableStateOf("") }
     var challengeDesc by remember { mutableStateOf("") }
     var rewardPoints by remember { mutableStateOf("") }
@@ -126,7 +125,6 @@ fun CreatePostScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 🔸 Bouton publier post
             Button(
                 onClick = {
                     if (uid == null) {
@@ -156,7 +154,6 @@ fun CreatePostScreen(navController: NavController) {
                                 .add(post)
                                 .addOnSuccessListener {
                                     Toast.makeText(context, "Post publié", Toast.LENGTH_SHORT).show()
-                                    //navController.popBackStack()
                                 }
                                 .addOnFailureListener {
                                     Toast.makeText(context, "Erreur: ${it.message}", Toast.LENGTH_SHORT).show()
@@ -180,7 +177,6 @@ fun CreatePostScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 🔸 Section création de défi
             Text("Créer un défi", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.height(12.dp))

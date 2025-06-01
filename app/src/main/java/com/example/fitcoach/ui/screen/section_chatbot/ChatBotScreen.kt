@@ -1,6 +1,5 @@
 package com.example.fitcoach.ui.screen.section_chatbot
 
-import android.content.Context
 import android.content.Intent
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
@@ -26,7 +25,6 @@ import java.util.*
 import com.example.fitcoach.data.remote.askMistral
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -39,16 +37,12 @@ import androidx.compose.ui.text.withStyle
 fun ChatBotScreen(navController: NavController) {
     val context = LocalContext.current
     var userInput by remember { mutableStateOf(TextFieldValue()) }
-    //var botResponse by remember { mutableStateOf("") }
-    val messages = remember { mutableStateListOf<Pair<String, Boolean>>() } // (message, isBot)
+    val messages = remember { mutableStateListOf<Pair<String, Boolean>>() }
     var isLoading by remember { mutableStateOf(false) }
     var speakerEnabled by remember { mutableStateOf(true) }
 
 
     val listState = rememberLazyListState()
-
-
-    // Init TTS
     val tts = remember {
         TextToSpeech(context, null)
     }
@@ -61,7 +55,6 @@ fun ChatBotScreen(navController: NavController) {
         }
     }
 
-    // Init microphone
     val voiceLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val spokenText = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()
         if (!spokenText.isNullOrBlank()) {
@@ -101,24 +94,9 @@ fun ChatBotScreen(navController: NavController) {
                 val msg = message.first
                 val isBot = message.second
                 RenderMarkdownText(msg, isBot)
-                /*
-                Text(
-                    text = if (isBot) "🤖 $msg" else "👨‍💻 $msg",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                        .background(
-                            if (isBot) Color(0xFFFFF0E5) else Color(0xFFD3F0FF),
-                            RoundedCornerShape(8.dp)
-                        )
-                        .padding(12.dp)
-                )
-
-                 */
                 Spacer(modifier = Modifier.height(8.dp))
 
             }
-            // Loader pendant la réponse du bot
             if (isLoading) {
                 item {
                     Row(
@@ -146,7 +124,6 @@ fun ChatBotScreen(navController: NavController) {
                     askMistral(context, userInput.text) { response ->
                         isLoading = false
                         messages.add(response to true)
-                        //speak(response)
                         if (speakerEnabled) {
                             speak(response)
                         }
@@ -199,35 +176,6 @@ fun ChatBotScreen(navController: NavController) {
         }
     }
 }
-
-/*
-@Composable
-fun RenderMarkdownText(text: String, isBot: Boolean) {
-    val lines = text.lines()
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(if (isBot) Color(0xFFFFF0E5) else Color(0xFFD3F0FF), RoundedCornerShape(8.dp))
-            .padding(12.dp)
-    ) {
-        for (line in lines) {
-            when {
-                line.startsWith("###") -> Text(line.removePrefix("### ").trim(), style = MaterialTheme.typography.bodySmall)
-                line.startsWith("##") -> Text(line.removePrefix("## ").trim(), style = MaterialTheme.typography.bodyMedium)
-                line.startsWith("#") -> Text(line.removePrefix("# ").trim(), style = MaterialTheme.typography.titleLarge)
-                line.startsWith("- ") -> Text("• " + line.removePrefix("- ").trim(), style = MaterialTheme.typography.bodyMedium)
-                line.startsWith("* ") -> Text("• " + line.removePrefix("* ").trim(), style = MaterialTheme.typography.bodyMedium)
-                line.startsWith("> ") -> Text(line.removePrefix("> ").trim(), style = MaterialTheme.typography.bodyMedium)
-                line.startsWith("`") -> Text(line.trim(), style = MaterialTheme.typography.bodyMedium)
-                line.startsWith("```") -> Text(line.trim(), style = MaterialTheme.typography.bodyMedium)
-                else -> Text(line.trim(), style = MaterialTheme.typography.bodyMedium)
-            }
-        }
-    }
-}
-
- */
 
 @Composable
 fun RenderMarkdownText(text: String, isBot: Boolean) {

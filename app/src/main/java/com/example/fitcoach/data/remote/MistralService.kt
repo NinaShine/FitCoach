@@ -27,10 +27,10 @@ fun askMistral(context: Context, message: String, onResponse: (String) -> Unit) 
                     onResponse(content)
                 }
             } else {
-                Log.e("Mistral", "❌ Erreur API Retrofit : ${response.code()}")
+                Log.e("Mistral", "Erreur API Retrofit : ${response.code()}")
             }
         } catch (e: Exception) {
-            Log.e("Mistral", "❌ Exception Retrofit : ${e.message}")
+            Log.e("Mistral", "Exception Retrofit : ${e.message}")
         }
     }
 }

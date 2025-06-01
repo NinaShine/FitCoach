@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -61,13 +60,6 @@ import com.google.firebase.auth.FirebaseAuth
 
 data class Recommendation(val title: String, val duration: String, val imageRes: Int)
 
-val recommendations = listOf(
-    Recommendation("Abdo", "45 min", R.drawable.exercice_abs),
-    Recommendation("Cardio", "30 min", R.drawable.ex_cardio),
-    Recommendation("Yoga", "60 min", R.drawable.ex_yoga),
-    Recommendation("Abdo", "45 min", R.drawable.ex2_abs)
-)
-
 data class BottomNavItem(
     val label: String,
     val icon: ImageVector,
@@ -85,7 +77,7 @@ val bottomNavItems = listOf(
 
 @Composable
 fun AccueilScreen(navController: NavController, steps: Int, calories: Double, distanceKm: Double, currentlyPlayingVm: CurrentlyPlayingViewModel) {
-    val user = FirebaseAuth.getInstance().currentUser
+    //val user = FirebaseAuth.getInstance().currentUser
     val viewModel: UserProfileViewModel = viewModel()
     val username by viewModel.username
     val avatarUrl by viewModel.avatarUrl
@@ -132,7 +124,6 @@ fun AccueilScreen(navController: NavController, steps: Int, calories: Double, di
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
-            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -152,7 +143,6 @@ fun AccueilScreen(navController: NavController, steps: Int, calories: Double, di
                     Spacer(modifier = Modifier.width(8.dp))
                     Image(
                         //painter = painterResource(id = R.drawable.july_photo_profile),
-                        // afficher avatarUrl
                         painter = rememberAsyncImagePainter(avatarUrl),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
@@ -179,7 +169,6 @@ fun AccueilScreen(navController: NavController, steps: Int, calories: Double, di
         }
 
         item {
-            // Grid 2x2
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -205,7 +194,7 @@ fun AccueilScreen(navController: NavController, steps: Int, calories: Double, di
                             if (lastSession != null) {
                                 val time = lastSession["durationFormatted"] as? String ?: "Inconnu"
                                 val distance = lastSession["distanceKm"] as? String ?: "0.0"
-                                val type = lastSession["activityType"] as? String ?: "Unknown" // facultatif
+                                val type = lastSession["activityType"] as? String ?: "Unknown"
 
                                 Text("Latest: $type", fontSize = 12.sp, color = Color(0xFFE86144))
                                 Text("Time: $time", fontSize = 12.sp, textAlign = TextAlign.Center)
@@ -447,31 +436,6 @@ fun WidgetCalories(
     }
 }
 
-@Composable
-fun RecommendationItem(item: Recommendation) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .background(Color(0xFFFFF3E0), shape = RoundedCornerShape(12.dp))
-            .padding(9.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = item.imageRes),
-            contentDescription = item.title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(100.dp)
-                .clip(RoundedCornerShape(10.dp))
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column {
-            Text(item.title, fontSize = 16.sp, color = Color(0xFFE86144))
-            Text("Duration : ${item.duration}", fontSize = 14.sp)
-        }
-    }
-}
 
 @Composable
 fun FitBottomBar(
@@ -480,7 +444,6 @@ fun FitBottomBar(
     onCentralClick: () -> Unit
 ) {
     Box {
-        /* ---------- Barre de navigation ---------- */
         NavigationBar(
             containerColor = Color.White,
             tonalElevation = 8.dp,
@@ -523,7 +486,6 @@ fun FitBottomBar(
             }
         }
 
-        /* ---------- Bouton central flottant + ---------- */
         Box(
             modifier = Modifier
                 .size(56.dp)
@@ -612,7 +574,7 @@ fun RecommendedVideosSection(
                 fontSize = 14.sp,
                 modifier = Modifier
                     .clickable {
-                        // Navigation vers écran Explore si souhaité
+                        //a faire apres si jai le temps
                     }
                     .padding(top = 8.dp)
             )

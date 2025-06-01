@@ -10,7 +10,6 @@ import kotlinx.coroutines.tasks.await
 object PostRepository {
     private val db = FirebaseFirestore.getInstance()
 
-    // ✅ Récupère tous les posts
     suspend fun getAllPosts(): List<Post> {
         val snapshot = db.collection("posts").get().await()
         return snapshot.documents.mapNotNull {
@@ -19,14 +18,12 @@ object PostRepository {
     }
 
 
-    // ✅ Liker un post (ajoute userId dans le champ "likes")
     suspend fun likePost(postId: String, userId: String) {
         db.collection("posts").document(postId)
             .update("likes", FieldValue.arrayUnion(userId))
             .await()
     }
 
-    // ✅ Optionnel : unliker un post
     suspend fun unlikePost(postId: String, userId: String) {
         db.collection("posts").document(postId)
             .update("likes", FieldValue.arrayRemove(userId))
@@ -42,7 +39,6 @@ object PostRepository {
             val doc = db.collection("users").document(uid).get().await()
             val profile = doc.toObject(UserProfile::class.java)?.copy(uid = uid)
 
-            // ✅ Récupérer la sous-collection "friends"
             val friendsSnapshot = db.collection("users")
                 .document(uid)
                 .collection("friends")

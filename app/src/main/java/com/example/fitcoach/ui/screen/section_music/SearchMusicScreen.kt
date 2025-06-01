@@ -68,13 +68,11 @@ fun SearchMusicScreen(navController: NavController, currentlyPlayingVm : Current
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header
             Text("Music Assistant", fontSize = 22.sp, fontWeight = FontWeight.Bold)
             Text("Your rhythm, your energy", fontSize = 14.sp, color = Color.Gray)
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // Barre de recherche
             OutlinedTextField(
                 value = searchText,
                 onValueChange = { searchText = it },
@@ -127,7 +125,6 @@ fun SearchMusicScreen(navController: NavController, currentlyPlayingVm : Current
                         TrackItem(track = track, onClick = {
                             currentlyPlayingVm.setTrack(track)
                             navController.navigate("musicWithNavBar")
-                            //navController.popBackStack() // retourne à MusicScreen
                         })
                     }
                 }
@@ -174,7 +171,6 @@ fun TrackItem(track: TrackResult,  onClick: () -> Unit) {
                 .size(24.dp)
                 .clickable {
                     isLiked = !isLiked
-                    // TODO : Ajouter ici l'action pour insérer dans une playlist (pour apres)
                 }
         )
     }

@@ -39,59 +39,6 @@ object UserRepository {
             .addOnFailureListener { onFailure(it) }
     }
 
-    // ✅ Méthode pour FOLLOW (ajouter un uid dans friends)
-    fun followUser(
-        targetUserId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        val currentUserId = auth.currentUser?.uid
-        if (currentUserId == null) {
-            onFailure(Exception("Utilisateur non connecté"))
-            return
-        }
-
-        db.collection("users").document(currentUserId)
-            .update("friends", FieldValue.arrayUnion(targetUserId))
-            .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener { onFailure(it) }
-    }
-
-    // ✅ (optionnel) pour récupérer un profil
-    fun getUserProfile(
-        userId: String,
-        onSuccess: (UserProfile) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        db.collection("users").document(userId)
-            .get()
-            .addOnSuccessListener { doc ->
-                val user = doc.toObject(UserProfile::class.java)
-                if (user != null) {
-                    onSuccess(user.copy(uid = doc.id))
-                } else {
-                    onFailure(Exception("Utilisateur introuvable"))
-                }
-            }
-            .addOnFailureListener { onFailure(it) }
-    }
-
-    // ✅ Récupérer tous les utilisateurs triés par points (pour LeaderBoard)
-    fun getUsersSortedByPoints(
-        onSuccess: (List<UserProfile>) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        db.collection("users")
-            .orderBy("points", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { snapshot ->
-                val users = snapshot.documents.mapNotNull { doc ->
-                    doc.toObject(UserProfile::class.java)?.copy(uid = doc.id)
-                }
-                onSuccess(users)
-            }
-            .addOnFailureListener { onFailure(it) }
-    }
 
     suspend fun getAllUserLeaderboard(): List<UserLeaderboard> {
         val snapshot = FirebaseFirestore.getInstance()

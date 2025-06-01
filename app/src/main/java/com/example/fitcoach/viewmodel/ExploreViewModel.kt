@@ -16,7 +16,7 @@ class ExploreViewModel : ViewModel() {
     private val pamelaChannelId = "UChVRfsT_ASBZk10o0An7Ucg"
 
     init {
-        searchVideos("abs") // Exemple de filtre initial
+        searchVideos("abs")
     }
 
     fun searchVideos(query: String = "") {

@@ -2,7 +2,9 @@ package com.example.fitcoach.ui.screen.section_music
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,7 +72,6 @@ import java.io.IOException
 @Composable
 fun MusicScreen(navController: NavController, accessToken: String, currentlyPlayingVm : CurrentlyPlayingViewModel, steps: Int, calories: Double, distanceKm: Double) {
     val context = LocalContext.current
-    //var playlists by remember { mutableStateOf<List<SpotifyPlaylist>>(emptyList()) }
     val scope = rememberCoroutineScope()
 
     val userViewModel: UserProfileViewModel = viewModel()
@@ -113,14 +114,7 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
         artist = "Nekfeu",
         imageRes = R.drawable.spotify_icon
     )
-/*
-    LaunchedEffect(accessToken) {
-        scope.launch(Dispatchers.IO) {
-            playlists = fetchSpotifyPlaylists(accessToken)
-        }
-    }
 
- */
 
     LaunchedEffect(accessToken) {
         viewModel.loadPlaylists(accessToken)
@@ -146,7 +140,7 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
             .background(Color.White)
             .padding(16.dp)
     ) {
-        // Header
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -211,7 +205,6 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                        // Info musique
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
@@ -235,7 +228,6 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Barre de progression
                         val progress = now.progressMs.toFloat() / now.durationMs
                         LinearProgressIndicator(
                             progress = { progress.coerceIn(0f, 1f) },
@@ -259,7 +251,6 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
                         }
 
 
-                        // Contrôles
                         Row(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             modifier = Modifier.fillMaxWidth()
@@ -312,7 +303,6 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Add a song
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable(
@@ -330,7 +320,6 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Login with Spotify button
 
         if (isTokenValid == false) {
             Button(
@@ -351,7 +340,6 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        // Playlist
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(playlists) { playlist ->
                 Card(
@@ -410,7 +398,7 @@ fun isSpotifyTokenValid(context: Context, callback: (Boolean) -> Unit) {
 
     client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            callback(false)  // échec réseau ou autre
+            callback(false)
         }
 
         override fun onResponse(call: Call, response: Response) {
@@ -434,6 +422,7 @@ fun FilterChip(label: String, selected: Boolean) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MusicScreenWithNavBar(
     navController: NavController,
@@ -454,7 +443,7 @@ fun MusicScreenWithNavBar(
                 },
                 currentRoute = currentRoute,
                 onCentralClick = {
-                    // TODO : rediriger vers création séance
+                    //a faire pour redirigers vers la page de creation de workout
                 }
             )
         }
@@ -500,20 +489,3 @@ fun MusicScreenWithNavBar(
         }
     }
 }
-
-
-
-/*
-@Preview
-@Composable
-fun MusicScreenPreview() {
-    val navController = rememberNavController()
-    val context = LocalContext.current
-    val accessToken = getSpotifyAccessToken(context).orEmpty()
-
-    MusicScreen(navController = navController, accessToken = accessToken)
-}
-
- */
-
-

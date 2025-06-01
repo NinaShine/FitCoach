@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
 
-    // ⚙️ API de exercices (existe déjà)
     val api: ExerciseApi by lazy {
         Retrofit.Builder()
             .baseUrl("https://exercisedb.p.rapidapi.com/")
@@ -16,7 +15,6 @@ object RetrofitInstance {
             .create(ExerciseApi::class.java)
     }
 
-    // 🎥 API YouTube
     val youtubeApi: YouTubeApi by lazy {
         Retrofit.Builder()
             .baseUrl("https://www.googleapis.com/youtube/v3/")
@@ -25,7 +23,6 @@ object RetrofitInstance {
             .create(YouTubeApi::class.java)
     }
 
-    // API Mistral
     private val mistralHttpClient = OkHttpClient.Builder()
         .connectTimeout(15, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
@@ -36,7 +33,7 @@ object RetrofitInstance {
         Retrofit.Builder()
             .baseUrl("https://fitcoachspotify.vercel.app")
             .client(mistralHttpClient)
-            .addConverterFactory(GsonConverterFactory.create()) // JSON si tu veux
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(MistralApi::class.java)
     }

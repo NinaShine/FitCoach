@@ -39,15 +39,12 @@ class FeedViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                // 1. Charger tous les posts
                 val postList = PostRepository.getAllPosts()
                 _posts.value = postList.sortedByDescending { it.timestamp }
 
-                // 2. Charger les auteurs de chaque post
                 val users = PostRepository.getUserProfilesForPosts(postList)
                 _userProfiles.value = users
 
-                // 3. Charger le nombre de commentaires pour chaque post
                 val commentMap = mutableMapOf<String, Int>()
                 for (post in postList) {
                     val count = PostRepository.getCommentCount(post.id)
@@ -92,7 +89,6 @@ class FeedViewModel : ViewModel() {
             try {
                 PostRepository.addComment(postId, comment)
 
-                // ✅ Met à jour uniquement le compteur du post concerné
                 val updatedCount = PostRepository.getCommentCount(postId)
                 _commentCounts.value = _commentCounts.value.toMutableMap().apply {
                     this[postId] = updatedCount
@@ -124,11 +120,9 @@ class FeedViewModel : ViewModel() {
         _userProfiles.value = updatedProfiles
     }
 
-    // ✅ Nouvelle StateFlow pour suivre les amis de l'utilisateur courant
     private val _currentUserFriends = MutableStateFlow<Set<String>>(emptySet())
     val currentUserFriends: StateFlow<Set<String>> = _currentUserFriends.asStateFlow()
 
-    // ✅ Méthode pour charger les amis de l'utilisateur courant
     fun loadCurrentUserFriends(currentUserId: String) {
         db.collection("users")
             .document(currentUserId)
@@ -144,14 +138,12 @@ class FeedViewModel : ViewModel() {
             }
     }
 
-    // ✅ Méthode followUser corrigée
     @RequiresApi(Build.VERSION_CODES.O)
     fun followUser(targetUserId: String, currentUserId: String) {
-        // Ajouter dans la collection "friends" de l'utilisateur courant
         val friendRef = db.collection("users")
-            .document(currentUserId) // ✅ Document de l'utilisateur courant
+            .document(currentUserId)
             .collection("friends")
-            .document(targetUserId) // ✅ Document avec l'ID de la personne suivie
+            .document(targetUserId)
 
         val friendData = mapOf(
             "followedAt" to Instant.now().toString(),
@@ -160,15 +152,14 @@ class FeedViewModel : ViewModel() {
 
         friendRef.set(friendData)
             .addOnSuccessListener {
-                println("✅ Utilisateur $targetUserId ajouté aux amis de $currentUserId")
+                println("Utilisateur $targetUserId ajouté aux amis de $currentUserId")
 
-                // ✅ Mise à jour immédiate de la StateFlow locale
                 val currentFriends = _currentUserFriends.value.toMutableSet()
                 currentFriends.add(targetUserId)
                 _currentUserFriends.value = currentFriends
             }
             .addOnFailureListener { e ->
-                println("❌ Erreur lors de l'ajout d'un ami : ${e.message}")
+                println(" Erreur lors de l'ajout d'un ami : ${e.message}")
             }
     }
 }

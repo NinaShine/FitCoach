@@ -49,7 +49,6 @@ fun OnboardingScreens(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Barre de progression
                 Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     pages.forEachIndexed { index, _ ->
                         Box(

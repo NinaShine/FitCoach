@@ -2,7 +2,6 @@ package com.example.fitcoach.data.repository
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okio.IOException

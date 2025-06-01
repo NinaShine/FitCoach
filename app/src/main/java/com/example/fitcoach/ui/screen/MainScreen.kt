@@ -101,7 +101,7 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
                 onLoginClick = { navController.navigate("login") },
                 onGetStartedClick = {
                     navController.navigate("secondOnboarding")
-                    //onGetStartedClick = { navController.navigate("music") //  pour tester music screen (a enlever apres)
+                    //onGetStartedClick = { navController.navigate("music")
 
                 }
             )
@@ -151,26 +151,11 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
         }
         composable("question5") {
             QuestionFiveScreen(navController, viewModel)
-            /*
-            QuestionFiveScreen(
-                navController = navController,
-                onNextClick = { stepGoal ->
-                    navController.navigate("createProfile")
-                }
-            )
-             */
+
         }
         composable("createProfile") {
             CreateProfileScreen(navController, viewModel)
-            /*
-            CreateProfileScreen(
-                navController = navController,
-                onProfileCreated = { avatarUri, firstName, lastName ->
-                    navController.navigate("onboarding1")
-                }
-            )
 
-             */
         }
         composable("onboarding1") {
             OnboardingScreens(navController)

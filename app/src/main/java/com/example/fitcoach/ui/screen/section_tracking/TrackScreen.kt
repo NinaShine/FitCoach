@@ -130,7 +130,6 @@ fun TrackScreen(
             title = { Text("Enregistrer la séance ?") },
             text = { Text("Souhaitez-vous enregistrer cette session d'entraînement ?") },
             confirmButton = {
-                // enregistrer puis remettre tout à zero
                 TextButton(onClick = {
                     viewModel.saveSessionToFirestore(
                         steps = steps,
@@ -188,7 +187,6 @@ fun TrackScreen(
 
         }
 
-        // INFOS EN BAS
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -255,7 +253,6 @@ fun TrackScreen(
                         Text("hh/min/seconds", color = Color.White, fontSize = 10.sp)
                     }
 
-                    // Bouton Play
                     IconButton(onClick = {
                         if (isTracking){
                             viewModel.stopTracking()
@@ -277,8 +274,7 @@ fun TrackScreen(
                         )
                     }
 
-                    // Icône musique
-                    IconButton(onClick = { /* aller à music */ }) {
+                    IconButton(onClick = { }) {
                         Icon(
                             imageVector = Icons.Default.MusicNote,
                             contentDescription = "Music",
@@ -308,7 +304,6 @@ fun TrackScreen(
 
                     }
 
-                    //Spacer(modifier = Modifier.height(12.dp))
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -338,7 +333,7 @@ fun TrackScreenWithPermission(navController : NavController, trackingVm : Tracki
     if (permissionGranted) {
         LaunchedEffect(permissionGranted) {
             if (permissionGranted) {
-                trackingVm.startLocationUpdates() // démarre le GPS dès qu’on entre dans l’écran
+                trackingVm.startLocationUpdates()
             }
         }
 

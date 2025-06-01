@@ -85,7 +85,6 @@ fun StatsScreen(navController: NavController,liveTrackingVm: LiveTrackingViewMod
         lastSessionViewModel.fetchRecentSessions()
     }
 
-    // Calcul de la durée totale
     val totalDurationMin = recentSessions.sumOf {
         val durationStr = it["durationFormatted"] as? String ?: "00:00:00"
         val parts = durationStr.split(":").mapNotNull { s -> s.toIntOrNull() }
@@ -94,7 +93,7 @@ fun StatsScreen(navController: NavController,liveTrackingVm: LiveTrackingViewMod
             2 -> Triple(0, parts[0], parts[1])
             else -> Triple(0, 0, 0)
         }
-        h * 60 + m + s / 60.0
+        h*60+m+s/60.0
     }
 
     var selectedTab by remember { mutableStateOf("daily") }
@@ -107,7 +106,6 @@ fun StatsScreen(navController: NavController,liveTrackingVm: LiveTrackingViewMod
             .background(Color(0xFFFEF3ED))
             .padding(16.dp)
     ) {
-        // Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -131,7 +129,6 @@ fun StatsScreen(navController: NavController,liveTrackingVm: LiveTrackingViewMod
 
         Spacer(Modifier.height(16.dp))
 
-        // Tabs
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             Button(
                 onClick = { selectedTab = "daily" },
@@ -160,37 +157,7 @@ fun StatsScreen(navController: NavController,liveTrackingVm: LiveTrackingViewMod
         }
 
         Spacer(Modifier.height(24.dp))
-/*
-        Text("STATISTICS", color = Color(0xFFE86144))
 
-        Spacer(Modifier.height(12.dp))
-
-        // Stat grid
-        StatsGrid(calories, steps, distance, totalDurationMin)
-
-        Spacer(Modifier.height(24.dp))
-        Text("REWARDS", color = Color(0xFFE86144))
-        Spacer(Modifier.height(12.dp))
-
-        RewardCard("🔥", "Reach a 7 day streak", 0.4f)
-        Spacer(modifier = Modifier.height(12.dp))
-        RewardCard("🏋️", "Complete 3 workouts", 0.7f)
-        Spacer(modifier = Modifier.height(12.dp))
-        RewardCard("🏃", "Reach 10 000 steps in one day", 0.6f)
-
-
-        Spacer(Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                navController.popBackStack()
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
-        ) {
-            Text("Return", color = Color.Black)
-        }
-        */
         when (selectedTab) {
             "daily" -> {
                 Spacer(Modifier.height(24.dp))
@@ -243,7 +210,6 @@ fun StatsGrid(calories: Double, steps: Int, distance: Double, totalDurationMin: 
             StatCard(
                 modifier = Modifier.weight(1f),
                 icon = Icons.Default.Timer,
-                //value = "%.1f min".format(totalDurationMin),
                 value = "${totalDurationMin.toInt()}",
                 label = "Duration"
             )
@@ -282,7 +248,6 @@ fun StatsGridMonthly() {
                     .weight(1f),
                 icon = Icons.Default.GolfCourse,
                 value = "16 rewards received",
-                //🏅
                 label = ""
             )
         }
@@ -379,7 +344,6 @@ fun RewardCard(emoji: String, label: String, progress: Float) {
 @Composable
 fun WeeklyStatsSection(stepGoal: Int, workoutGoal: Int, navController: NavController) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        // Graphique hebdo (peut être un composant personnalisé ou image temporaire)
 
         Image(
             painter = painterResource(id = R.drawable.weekly),
@@ -393,7 +357,6 @@ fun WeeklyStatsSection(stepGoal: Int, workoutGoal: Int, navController: NavContro
 
         Spacer(Modifier.height(16.dp))
 
-        // Workouts
         Text("WORKOUTS", fontWeight = FontWeight.SemiBold)
         Text("Goal: $workoutGoal workouts/day", fontSize = 12.sp, color = Color.Gray)
         Box(
@@ -421,7 +384,6 @@ fun WeeklyStatsSection(stepGoal: Int, workoutGoal: Int, navController: NavContro
             }
         }
 
-        // Steps
         Text("Steps", fontWeight = FontWeight.SemiBold)
         Text("Goal: $stepGoal steps/day", fontSize = 12.sp, color = Color.Gray)
         Box(
@@ -469,7 +431,6 @@ fun MonthlyStatsSection(navController: NavController) {
         Text("Monthly Progress", style = MaterialTheme.typography.titleMedium, color = Color(0xFFF5B01A))
         Spacer(Modifier.height(12.dp))
 
-        // Affichage de l'image
         Image(
             painter = painterResource(id = R.drawable.monthly),
             contentDescription = "Weight Chart",
@@ -482,7 +443,6 @@ fun MonthlyStatsSection(navController: NavController) {
 
         Spacer(Modifier.height(16.dp))
 
-        // Autres éléments (streak, rewards...)
         StatsGridMonthly()
 
         Spacer(Modifier.height(16.dp))

@@ -42,7 +42,6 @@ fun CreateRoutineScreen(navController: NavController) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Top Bar
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -67,7 +66,6 @@ fun CreateRoutineScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Routine Title Input
         TextField(
             value = routineTitle,
             onValueChange = { routineTitle = it },
@@ -86,7 +84,6 @@ fun CreateRoutineScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Add Exercise Button
         Button(
             onClick = { navController.navigate("exercise_list_2") },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFBF2ED)),
@@ -102,7 +99,6 @@ fun CreateRoutineScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // List of Exercises Added
         if (exercises.isNotEmpty()) {
             Text("Exercises in this routine:", fontSize = 16.sp, modifier = Modifier.padding(bottom = 8.dp))
             LazyColumn {
@@ -137,7 +133,6 @@ fun CreateRoutineScreen(navController: NavController) {
                 }
             }
         } else {
-            // Empty placeholder
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()

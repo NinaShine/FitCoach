@@ -36,7 +36,7 @@ fun SessionSummaryScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
-            .background(Color(0xFFFDF6F4)), // fond très clair
+            .background(Color(0xFFFDF6F4)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(

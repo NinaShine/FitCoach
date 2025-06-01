@@ -74,87 +74,27 @@ class SpotifyAuthActivity : ComponentActivity() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("SpotifyAuth", "❌ Erreur réseau vers backend Vercel : ${e.message}")
+                Log.e("SpotifyAuth", "Erreur réseau vers backend Vercel : ${e.message}")
             }
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     val json = JSONObject(response.body?.string() ?: "")
                     val accessToken = json.getString("access_token")
-                    Log.d("SpotifyAuth", "✅ Token reçu via backend : $accessToken")
+                    Log.d("SpotifyAuth", "Token reçu via backend : $accessToken")
 
                     onSuccess(accessToken)
                 } else {
-                    Log.e("SpotifyAuth", "❌ Réponse backend invalide : ${response.code}")
+                    Log.e("SpotifyAuth", "Réponse backend invalide : ${response.code}")
                 }
             }
         })
     }
-/*
-    private fun exchangeCodeForAccessToken(code: String) {
-        val client = OkHttpClient()
-
-        val requestBody = FormBody.Builder()
-            .add("grant_type", "authorization_code")
-            .add("code", code)
-            .add("redirect_uri", redirectUri)
-            .add("client_id", clientId)
-            .add("client_secret", clientSecret)
-            .build()
-
-        val request = Request.Builder()
-            .url("https://accounts.spotify.com/api/token")
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("SpotifyAuth", "Erreur réseau : ${e.message}")
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body?.string()
-                    Log.d("SpotifyAuth", "Réponse brute: $responseBody")
-
-                    val json = JSONObject(responseBody ?: "")
-                    val accessToken = json.getString("access_token")
-
-                    Log.d("SpotifyAuth", "AccessToken récupéré : $accessToken")
-
-
-
-                    fetchSpotifyProfile(accessToken)
-                    fetchSpotifyPlaylists(accessToken)
-
-                    saveAccessTokenLocally(accessToken)
-
-
-                    runOnUiThread {
-                        val intent =
-                            Intent(this@SpotifyAuthActivity, MainActivity::class.java).apply {
-                                putExtra("navigateTo", "musicWithNavBar")
-                            }
-                        //intent.putExtra("accessToken", accessToken)
-                        startActivity(intent)
-                        finish()
-                    }
-
-                } else {
-                    Log.e("SpotifyAuth", "Erreur de réponse: ${response.message}")
-                }
-            }
-        })
-
-
-    }
-
- */
 
     private fun saveAccessTokenLocally(token: String) {
         val prefs = getSharedPreferences("SpotifyPrefs", Context.MODE_PRIVATE)
         prefs.edit() { putString("access_token", token) }
-        Log.d("SpotifyAuth", "✅ Token sauvegardé dans SharedPreferences")
+        Log.d("SpotifyAuth", "Token sauvegardé dans SharedPreferences")
     }
 
 
@@ -184,39 +124,7 @@ class SpotifyAuthActivity : ComponentActivity() {
             }
         }
     }
-    /*
-    fun fetchSpotifyPlaylists(accessToken: String) {
-        val client = OkHttpClient()
 
-        val request = Request.Builder()
-            .url("https://api.spotify.com/v1/me/playlists")
-            .addHeader("Authorization", "Bearer $accessToken")
-            .build()
-
-        client.newCall(request).execute().use { response ->
-            if (response.isSuccessful) {
-                val responseBody = response.body?.string()
-                Log.d("SpotifyPlaylist", "Réponse : $responseBody")
-
-                responseBody?.let {
-                    val json = JSONObject(it)
-                    val items = json.getJSONArray("items")
-
-                    for (i in 0 until items.length()) {
-                        val playlist = items.getJSONObject(i)
-                        val name = playlist.getString("name")
-                        val id = playlist.getString("id")
-
-                        Log.d("SpotifyPlaylist", "Playlist : $name (ID: $id)")
-                    }
-                }
-            } else {
-                Log.e("SpotifyPlaylist", "Erreur : ${response.code}")
-            }
-        }
-    }
-
-     */
 
     fun fetchSpotifyPlaylists(accessToken: String) {
         val client = OkHttpClient()
@@ -228,13 +136,13 @@ class SpotifyAuthActivity : ComponentActivity() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("SpotifyPlaylist", "❌ Erreur réseau : ${e.message}")
+                Log.e("SpotifyPlaylist", "Erreur réseau : ${e.message}")
             }
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     val responseBody = response.body?.string()
-                    Log.d("SpotifyPlaylist", "✅ Réponse : $responseBody")
+                    Log.d("SpotifyPlaylist", "Réponse : $responseBody")
 
                     responseBody?.let {
                         val json = JSONObject(it)
@@ -245,7 +153,7 @@ class SpotifyAuthActivity : ComponentActivity() {
                             val name = playlist.getString("name")
                             val id = playlist.getString("id")
 
-                            Log.d("SpotifyPlaylist", "🎵 Playlist : $name (ID: $id)")
+                            Log.d("SpotifyPlaylist", "Playlist : $name (ID: $id)")
                         }
                     }
                 } else {

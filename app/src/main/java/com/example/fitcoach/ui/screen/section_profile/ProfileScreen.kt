@@ -98,7 +98,6 @@ fun ProfileScreen(navController: NavController, liveTrackingVm: LiveTrackingView
             .background(Color(0xFFFDF4EF))
             .padding(28.dp)
     ) {
-        // Profile info + Close button
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -168,7 +167,6 @@ fun ProfileScreen(navController: NavController, liveTrackingVm: LiveTrackingView
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Progress Stats
         Row(
             modifier = Modifier
                 .width(320.dp)
@@ -189,7 +187,7 @@ fun ProfileScreen(navController: NavController, liveTrackingVm: LiveTrackingView
             navController.navigate("friends")
         }
 
-        ProfileOptionItem("Reward Collection", Icons.Default.EmojiEvents) { /* navigate to rewards */ }
+        ProfileOptionItem("Reward Collection", Icons.Default.EmojiEvents) { }
         ProfileOptionItem("Statistics", Icons.Default.ShowChart) {
             navController.navigate("profile_stats")
         }
@@ -236,15 +234,6 @@ fun ProfileOptionItem(title: String, icon: ImageVector, onClick: () -> Unit) {
         Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = Color.Gray)
     }
 }
-/*
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun ProfileScreenPreview() {
-    ProfileScreen(navController = NavController(LocalContext.current))
-}
-
- */
 
 
 

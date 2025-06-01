@@ -28,7 +28,7 @@ class LiveTrackingViewModel(application: Application) : AndroidViewModel(applica
 
     private var sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private var stepSensor: Sensor? = null
-    private var isSimulatingSteps = false // quand capteur de pas n'existe pas mdrr
+    private var isSimulatingSteps = false
 
 
     var steps by mutableStateOf(0)
@@ -49,7 +49,6 @@ class LiveTrackingViewModel(application: Application) : AndroidViewModel(applica
                 val savedInitial = prefs.getInt("initial_steps", -1)
 
                 if (savedDate == null || savedDate != today || savedInitial == -1) {
-                    // Nouvelle journée ou première fois : on sauvegarde les valeurs
                     prefs.edit() {
                         putString("step_date", today)
                             .putInt("initial_steps", totalSteps)
@@ -60,7 +59,6 @@ class LiveTrackingViewModel(application: Application) : AndroidViewModel(applica
                     steps = totalSteps - savedInitial
                 }
 
-                // Calcul des calories et distance
                 calories = steps * 0.04 * (weightKg / 70.0)
                 distanceKm = (steps * averageStepLengthMeters) / 1000.0
             }
@@ -76,11 +74,10 @@ class LiveTrackingViewModel(application: Application) : AndroidViewModel(applica
             isSimulatingSteps = true
             viewModelScope.launch {
                 while (isSimulatingSteps) {
-                    delay(2000) // toutes les 2 secondes
+                    delay(2000)
                     steps += 1
                     calories = steps * 0.04 * (weightKg / 70.0)
                     distanceKm = (steps * averageStepLengthMeters) / 1000.0
-                    //Log.d("LiveTracking", "Pas simulé : $steps")
                 }
             }
         }

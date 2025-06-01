@@ -41,7 +41,7 @@ class TrackingViewModel(application: Application) : AndroidViewModel(application
     var distance by mutableStateOf(0.0)
     var speed by mutableStateOf(0.0)
     var calories by mutableStateOf(0.0)
-    var userWeightKg = 75.0 // à personnaliser plus tard avec Firestore
+    var userWeightKg = 75.0
     var selectedActivity by mutableStateOf("Walking")
 
 
@@ -52,7 +52,7 @@ class TrackingViewModel(application: Application) : AndroidViewModel(application
     private var locationCallback: LocationCallback? = null
 
 
-    private val MET = 8.0 // ou adapte selon le type d’activité
+    private val MET = 8.0
 
     data class SessionData(
         val distanceKm: Double,
@@ -137,14 +137,6 @@ class TrackingViewModel(application: Application) : AndroidViewModel(application
     fun stopTracking() {
         isTracking = false
         timerJob?.cancel()
-        /*
-        locationJob?.cancel()
-        locationCallback?.let {
-            fusedLocation.removeLocationUpdates(it)
-        }
-        locationCallback = null
-
-         */
 
     }
 
@@ -160,8 +152,8 @@ class TrackingViewModel(application: Application) : AndroidViewModel(application
         val db = FirebaseFirestore.getInstance()
 
         val session = mapOf(
-            "timestamp" to FieldValue.serverTimestamp(),  // plus lisible que millis
-            "durationFormatted" to formatTime(),  // lisible directement
+            "timestamp" to FieldValue.serverTimestamp(),
+            "durationFormatted" to formatTime(),
             "distanceKm" to "%.2f".format(distance),
             "speedKmH" to "%.2f".format(speed),
             "calories" to "%.0f".format(calories),

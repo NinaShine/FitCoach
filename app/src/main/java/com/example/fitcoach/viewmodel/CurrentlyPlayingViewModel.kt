@@ -83,7 +83,7 @@ class CurrentlyPlayingViewModel : ViewModel() {
             val client = OkHttpClient()
             val req = Request.Builder()
                 .url("https://api.spotify.com/v1/me/player/pause")
-                .post(RequestBody.create(null, ByteArray(0))) // Nécessaire pour POST sans body
+                .post(RequestBody.create(null, ByteArray(0)))
                 .addHeader("Authorization", "Bearer $accessToken")
                 .build()
             client.newCall(req).execute().close()
@@ -109,11 +109,6 @@ class CurrentlyPlayingViewModel : ViewModel() {
 
             _track.value = _track.value?.copy(isPlaying = response.isSuccessful)
             response.close()
-            /*
-            client.newCall(req).execute().close()
-            _track.value = _track.value?.copy(isPlaying = true)
-
-             */
         }
     }
 

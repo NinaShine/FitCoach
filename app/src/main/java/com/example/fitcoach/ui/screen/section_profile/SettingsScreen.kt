@@ -50,7 +50,6 @@ fun SettingsScreen(
             .background(Color(0xFFFEF3ED))
             .padding(26.dp)
     ) {
-        // Header
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -60,7 +59,6 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Bloc principal
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -70,9 +68,9 @@ fun SettingsScreen(
                 navController.navigate("edit_profile")
             }
             Divider()
-            SettingsItem(Icons.Default.FitnessCenter, "Workout Preferences") { /* Navigate */ }
+            SettingsItem(Icons.Default.FitnessCenter, "Workout Preferences") { }
             Divider()
-            SettingsItem(Icons.Default.MusicNote, "Music Preferences") { /* Navigate */ }
+            SettingsItem(Icons.Default.MusicNote, "Music Preferences") {  }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -81,7 +79,6 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Bloc notifications & privacy
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -98,7 +95,6 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Log out
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),

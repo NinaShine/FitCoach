@@ -21,7 +21,7 @@ class ChallengeViewModel : ViewModel() {
     fun joinChallenge(challengeId: String, userId: String) {
         viewModelScope.launch {
             ChallengeRepository.joinChallenge(challengeId, userId)
-            loadChallenges() // refresh UI
+            loadChallenges()
         }
     }
 }

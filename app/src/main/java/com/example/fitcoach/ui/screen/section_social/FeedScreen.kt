@@ -40,11 +40,11 @@ fun FeedScreen(currentUid: String, navController: NavController) {
     val posts by vm.posts.collectAsState()
     val users by vm.userProfiles.collectAsState()
     val commentCounts by vm.commentCounts.collectAsState()
-    val currentUserFriends by vm.currentUserFriends.collectAsState() // ✅ Nouvelle StateFlow
+    val currentUserFriends by vm.currentUserFriends.collectAsState()
 
     LaunchedEffect(Unit) {
         vm.loadFeed(currentUid)
-        vm.loadCurrentUserFriends(currentUid) // ✅ Charger les amis de l'utilisateur courant
+        vm.loadCurrentUserFriends(currentUid)
     }
 
     Column(
@@ -78,17 +78,17 @@ fun FeedScreen(currentUid: String, navController: NavController) {
             items(posts) { post ->
                 val author = users[post.userId]
                 val commentCount = commentCounts[post.id] ?: 0
-                val isFollowing = currentUserFriends.contains(post.userId) // ✅ Vérification correcte
+                val isFollowing = currentUserFriends.contains(post.userId)
 
                 PostCard(
                     post = post,
                     user = author,
                     currentUserId = currentUid,
                     commentCount = commentCount,
-                    isFollowing = isFollowing, // ✅ Passer le statut de suivi
+                    isFollowing = isFollowing,
                     onLikeClick = { vm.likePost(post.id) },
                     onFollowClick = {
-                        vm.followUser(post.userId, currentUid) // ✅ Appel correct
+                        vm.followUser(post.userId, currentUid)
                     },
                     onCommentSubmit = { text ->
                         vm.submitComment(post.id, currentUid, text)
@@ -119,7 +119,6 @@ fun TopBar(
             .fillMaxWidth()
             .padding(6.dp)
     ) {
-        // 🏷️ Titre centré
         Text(
             text = "Feed",
             fontWeight = FontWeight.Bold,
@@ -128,7 +127,6 @@ fun TopBar(
         )
 
 
-        // Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -209,7 +207,7 @@ fun PostCard(
     onLikeClick: () -> Unit,
     onFollowClick: () -> Unit,
     onCommentSubmit: (String) -> Unit,
-    isFollowing: Boolean // ✅ Nouveau paramètre pour savoir si on suit déjà
+    isFollowing: Boolean
 ) {
     var showCommentDialog by remember { mutableStateOf(false) }
     var liked by remember { mutableStateOf(post.likes.contains(currentUserId)) }
@@ -223,7 +221,6 @@ fun PostCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
-            // 🔼 En-tête avec avatar, nom, bouton follow/amis
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -244,12 +241,10 @@ fun PostCard(
                     }
                 }
 
-                // ✅ Logique corrigée pour le bouton Follow
                 if (currentUserId != post.userId) {
                     if (isCurrentlyFollowing) {
-                        // Si on suit déjà, on affiche "Amis" en gris et désactivé
                         Button(
-                            onClick = { /* déjà amis */ },
+                            onClick = { },
                             colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
                             modifier = Modifier.height(36.dp),
@@ -258,11 +253,10 @@ fun PostCard(
                             Text("Amis", color = Color.White, fontSize = 14.sp)
                         }
                     } else {
-                        // Si on ne suit pas encore, bouton Follow actif
                         Button(
                             onClick = {
-                                isCurrentlyFollowing = true // ✅ Mise à jour immédiate de l'UI
-                                onFollowClick() // ✅ Appel correct du callback
+                                isCurrentlyFollowing = true
+                                onFollowClick()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800)),
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),

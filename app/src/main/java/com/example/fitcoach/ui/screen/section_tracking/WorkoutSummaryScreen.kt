@@ -1,5 +1,7 @@
 package com.example.fitcoach.ui.screen.section_tracking
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -79,7 +81,6 @@ fun WorkoutSummaryScreen(navController: NavController, steps: Int, calories: Dou
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
-            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -121,7 +122,6 @@ fun WorkoutSummaryScreen(navController: NavController, steps: Int, calories: Dou
 
         item {
 
-            // 🟠 STATIC WIDGETS
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Box(
                     modifier = Modifier
@@ -198,7 +198,6 @@ fun WorkoutSummaryScreen(navController: NavController, steps: Int, calories: Dou
             Spacer(modifier = Modifier.height(12.dp))
         }
 
-        // 🟠 DYNAMIC LIST
         itemsIndexed(sessions) {_,  session ->
             WorkoutCard(session)
             Spacer(modifier = Modifier.height(8.dp))
@@ -252,6 +251,7 @@ fun WorkoutCard(session: Map<String, Any>) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WorkoutSummaryScreenWithNavBar(
     navController: NavController,
@@ -318,12 +318,5 @@ fun WorkoutSummaryScreenWithNavBar(
         }
     }
 }
-/*
-@Preview(showBackground = true)
-@Composable
-fun WorkoutSummaryPreviewWithNav() {
-    WorkoutSummaryScreenWithNavBar(navController = NavController(LocalContext.current), liveTrackingVm = )
-}
 
- */
 

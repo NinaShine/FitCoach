@@ -43,13 +43,11 @@ class MainActivity : ComponentActivity() {
             if (task.isSuccessful) {
                 val token = task.result
                 Log.d("FCM Token", "Device token: $token")
-                // TODO : Enregistrer ce token sur Firestore si besoin
             } else {
                 Log.e("FCM Token", "Failed to get token", task.exception)
             }
         }
 
-        //handleSpotifyRedirect(intent)
 
         val navigateTo = intent.getStringExtra("navigateTo")
 
@@ -65,32 +63,6 @@ class MainActivity : ComponentActivity() {
                 initialRoute = navigateTo)
         }
     }
-    /*
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        handleSpotifyRedirect(intent)
-    }
-
-    private fun handleSpotifyRedirect(intent: Intent?) {
-        intent?.data?.let { uri ->
-            if (uri.toString().startsWith("fitcoach://callback")) {
-                Log.d("Spotify", "Spotify callback URL: $uri")
-
-                val fragment = uri.fragment // après le "#"
-                val params = fragment?.split("&")?.associate {
-                    val (key, value) = it.split("=")
-                    key to value
-                }
-
-                val accessToken = params?.get("access_token")
-                accessToken?.let {
-                    Log.d("Spotify", "AccessToken = $accessToken")
-                }
-            }
-        }
-    }
-
-     */
 
 
 }

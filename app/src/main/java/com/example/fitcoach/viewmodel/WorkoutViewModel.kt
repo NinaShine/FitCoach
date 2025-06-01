@@ -55,14 +55,11 @@ class WorkoutViewModel : ViewModel() {
     fun addExercise(exercise: WorkoutExercise) {
         val currentList = _workoutExercises.value.toMutableList()
 
-        // Vérifier si l'exercice existe déjà
         val existingIndex = currentList.indexOfFirst { it.id == exercise.id }
 
         if (existingIndex != -1) {
-            // Mettre à jour l'exercice existant
             currentList[existingIndex] = exercise
         } else {
-            // Ajouter le nouvel exercice
             currentList.add(exercise)
         }
 
@@ -145,7 +142,6 @@ class WorkoutViewModel : ViewModel() {
 
     fun endWorkout() {
         _isWorkoutActive.value = false
-        // Ici vous pourriez sauvegarder l'entraînement dans une base de données
     }
 
     fun updateDuration(seconds: Int) {

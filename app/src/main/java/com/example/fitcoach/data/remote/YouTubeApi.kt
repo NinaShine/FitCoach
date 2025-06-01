@@ -17,7 +17,6 @@ interface YouTubeApi {
     ): YouTubeResponse
 
 
-    // ✅ Nouvelle méthode : vidéos depuis une playlist (plus stable)
     @GET("playlistItems")
     suspend fun getVideosFromPlaylist(
         @Query("part") part: String = "snippet",

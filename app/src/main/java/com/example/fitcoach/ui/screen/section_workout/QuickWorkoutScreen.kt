@@ -56,15 +56,6 @@ fun QuickWorkoutScreen(navController: NavController) {
             Log.e("TTS", "Langue non supportée")
         }
     }
-/*
-    DisposableEffect(Unit) {
-        onDispose {
-            tts.stop()
-            tts.shutdown()
-        }
-    }
-
- */
 
     fun speakMessage(message: String) {
         tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, null)
@@ -78,7 +69,6 @@ fun QuickWorkoutScreen(navController: NavController) {
     val totalSeries = workoutViewModel.getTotalSeries()
     var showConfirmDialog by remember { mutableStateOf(false) }
 
-    // Calculer le volume total (poids * répétitions * séries)
     val totalVolume = workoutExercises.sumOf { exercise ->
         (exercise.weight ?: 0) * exercise.repetitions * exercise.series
     }
@@ -93,7 +83,6 @@ fun QuickWorkoutScreen(navController: NavController) {
         }
     }
 
-    // Mettre à jour le volume quand les exercices changent
     LaunchedEffect(workoutExercises) {
         volume = totalVolume
     }
@@ -131,7 +120,6 @@ fun QuickWorkoutScreen(navController: NavController) {
             .verticalScroll(scrollState)
             .padding(16.dp)
     ) {
-        // Header avec titre et bouton fin d'entraînement
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -142,7 +130,6 @@ fun QuickWorkoutScreen(navController: NavController) {
                     if (isRunning) {
                         isRunning = false
                     }
-                    // TODO: Sauvegarder l'entraînement
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF8E79)),
                 shape = RoundedCornerShape(8.dp)
@@ -155,7 +142,6 @@ fun QuickWorkoutScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Statistiques de l'entraînement
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
@@ -167,7 +153,6 @@ fun QuickWorkoutScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Bouton Start/Pause
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -195,7 +180,6 @@ fun QuickWorkoutScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Liste des exercices ajoutés
         if (workoutExercises.isNotEmpty()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -234,7 +218,6 @@ fun QuickWorkoutScreen(navController: NavController) {
                                 exercise = exercise,
                                 onRemove = { workoutViewModel.removeExercise(exercise.id) },
                                 onEdit = {
-                                    // TODO: Implémenter l'édition des séries/reps
                                 }
                             )
                         }
@@ -244,7 +227,6 @@ fun QuickWorkoutScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
         } else {
-            // Message quand aucun exercice n'est ajouté
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFFBF2ED)),
@@ -279,7 +261,6 @@ fun QuickWorkoutScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Bouton Ajouter un exercice
         Button(
             onClick = { navController.navigate("exercise_list") },
             modifier = Modifier
@@ -299,7 +280,6 @@ fun QuickWorkoutScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Boutons Settings et Abandon
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -325,7 +305,6 @@ fun QuickWorkoutScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Bot assistant
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -370,7 +349,6 @@ fun QuickWorkoutScreen(navController: NavController) {
     }
 }
 
-// Composant amélioré pour afficher les exercices
 @Composable
 fun WorkoutExerciseCard(
     exercise: com.example.fitcoach.data.model.WorkoutExercise,

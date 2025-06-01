@@ -1,7 +1,5 @@
 package com.example.fitcoach.ui.screen
 
-import android.app.Activity
-import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -42,7 +40,6 @@ fun LoginScreen(
     val error by viewModel.errorMessage
     val authSuccess by viewModel.authSuccess
 
-    // Navigation après succès
     LaunchedEffect(authSuccess) {
         if (authSuccess) {
             onLoginSuccess()
@@ -52,7 +49,6 @@ fun LoginScreen(
 
     val context = LocalContext.current
 
-    // 🎯 Google Sign-In launcher
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
@@ -68,7 +64,6 @@ fun LoginScreen(
         }
     }
 
-    // 🔐 Configuration GoogleSignInOptions
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestIdToken("520320356111-lm0armssr796p8er7tjikbk9q0jekqqk.apps.googleusercontent.com") // ton client ID Web
         .requestEmail()
@@ -119,7 +114,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            //Spacer(modifier = Modifier.height(12.dp))
             Button(
                 onClick = {
                     val signInIntent = googleSignInClient.signInIntent

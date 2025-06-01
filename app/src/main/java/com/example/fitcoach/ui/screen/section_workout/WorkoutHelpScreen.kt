@@ -21,7 +21,6 @@ fun WorkoutHelpScreen(navController: NavController) {
             .fillMaxSize()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        // Top bar
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -45,7 +44,6 @@ fun WorkoutHelpScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Section: First step
         Text(
             "First step",
             fontSize = 18.sp,
@@ -63,7 +61,6 @@ fun WorkoutHelpScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Section: Creating routines
         Text(
             "Creating routines",
             fontSize = 18.sp,

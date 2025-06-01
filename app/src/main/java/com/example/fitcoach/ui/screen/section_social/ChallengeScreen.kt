@@ -38,7 +38,6 @@ fun ChallengeScreen(currentUid: String, navController: NavController) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // 🔝 TopBar avec retour, titre, et icône vers classement
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(),
@@ -62,7 +61,7 @@ fun ChallengeScreen(currentUid: String, navController: NavController) {
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Image(
-                    painter = rememberAsyncImagePainter("https://placehold.co/40x40"), // remplace par l’avatar du user connecté
+                    painter = rememberAsyncImagePainter("https://placehold.co/40x40"),
                     contentDescription = null,
                     modifier = Modifier
                         .size(36.dp)
@@ -81,7 +80,6 @@ fun ChallengeScreen(currentUid: String, navController: NavController) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(Modifier.padding(16.dp)) {
-                        // Header: nom & points
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -107,7 +105,6 @@ fun ChallengeScreen(currentUid: String, navController: NavController) {
                         Spacer(Modifier.height(12.dp))
                         Text("Join my challenge!", fontWeight = FontWeight.Bold)
 
-                        // Red inner card
                         Card(
                             colors = CardDefaults.cardColors(containerColor = Color(0xFFFF7043)),
                             shape = RoundedCornerShape(12.dp),
