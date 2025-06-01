@@ -10,7 +10,6 @@ data class Exercise(
     val instructions: List<String> = emptyList()
 )
 
-// Modèle pour les instructions locales
 data class ExerciseInstructions(
     val exerciseId: String,
     val instructions: List<String>

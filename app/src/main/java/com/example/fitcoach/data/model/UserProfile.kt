@@ -23,9 +23,9 @@ data class UserProfile(
     val achievements: List<String> = emptyList(),
     val progress: List<Int> = emptyList(),
     val points: Int = 0,
-    val location: String = "", // ← Exemple : "maison", "salle", "extérieur"
-    val fitnessGoal: String = "", // ← perte de poids, prise de masse…
-    val level: String = "" // débutant, intermédiaire…
+    val location: String = "",
+    val fitnessGoal: String = "",
+    val level: String = ""
 
 
 )
