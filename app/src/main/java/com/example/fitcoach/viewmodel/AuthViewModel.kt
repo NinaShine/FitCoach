@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -84,6 +85,20 @@ class AuthViewModel : ViewModel() {
                 Log.e("FCM", "Échec d'enregistrement du token FCM : ${it.message}")
             }
     }
+
+    fun signInWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        FirebaseAuth.getInstance().signInWithCredential(credential)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    authSuccess.value = true
+                    errorMessage.value = null
+                } else {
+                    errorMessage.value = task.exception?.message
+                }
+            }
+    }
+
 
 
 }
