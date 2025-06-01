@@ -62,7 +62,8 @@ class SpotifyAuthActivity : ComponentActivity() {
 
     private fun getAccessTokenFromBackend(context: Context, code: String, onSuccess: (String) -> Unit) {
         val client = OkHttpClient()
-        val requestUrl = "$backendUrl?code=$code"
+        val requestUrl = "$backendUrl&code=$code"
+        Log.d("SpotifyBack", "backend récupéré: $requestUrl")
 
 
         val request = Request.Builder()

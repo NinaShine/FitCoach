@@ -1,5 +1,6 @@
 package com.example.fitcoach.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fitcoach.data.model.CurrentlyPlaying
@@ -99,8 +100,20 @@ class CurrentlyPlayingViewModel : ViewModel() {
                 .post(RequestBody.create(null, ByteArray(0)))
                 .addHeader("Authorization", "Bearer $accessToken")
                 .build()
+            val response = client.newCall(req).execute()
+            Log.d("SpotifyResume", "Code réponse = ${response.code}")
+
+            if (!response.isSuccessful) {
+                Log.e("SpotifyResume", "Erreur de lecture : ${response.body?.string()}")
+            }
+
+            _track.value = _track.value?.copy(isPlaying = response.isSuccessful)
+            response.close()
+            /*
             client.newCall(req).execute().close()
             _track.value = _track.value?.copy(isPlaying = true)
+
+             */
         }
     }
 
