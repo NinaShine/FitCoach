@@ -349,6 +349,7 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
             FriendsScreen(navController = navController)
         }
 
+
         composable("profile_stats"){
             StatsScreen(navController = navController, liveTrackingVm)
         }
