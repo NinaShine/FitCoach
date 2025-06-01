@@ -68,7 +68,7 @@ fun UserAnswers.toUserProfile(): UserProfile {
         bio = bio,
         notificationsEnabled = notificationsEnabled,
         fcmToken = fcmToken,
-        friends = friends,
+        friends = friends.toMutableList(),
         workouts = workouts,
         rewards = rewards,
         achievements = achievements,

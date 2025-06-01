@@ -1,5 +1,7 @@
 package com.example.fitcoach.viewmodel
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fitcoach.data.model.Comment
@@ -7,9 +9,12 @@ import com.example.fitcoach.data.model.Post
 import com.example.fitcoach.data.model.UserProfile
 import com.example.fitcoach.data.repository.PostRepository
 import com.example.fitcoach.data.repository.UserRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.Instant
 
 class FeedViewModel : ViewModel() {
 
@@ -19,11 +24,14 @@ class FeedViewModel : ViewModel() {
     private val _userProfiles = MutableStateFlow<Map<String, UserProfile>>(emptyMap())
     val userProfiles: StateFlow<Map<String, UserProfile>> = _userProfiles
 
+
     private val _currentUserId = MutableStateFlow<String?>(null)
     val currentUserId: StateFlow<String?> = _currentUserId
 
     private val _commentCounts = MutableStateFlow<Map<String, Int>>(emptyMap())
     val commentCounts: StateFlow<Map<String, Int>> = _commentCounts
+
+    private val db = FirebaseFirestore.getInstance()
 
 
     fun loadFeed(currentUid: String) {
@@ -67,20 +75,6 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun followUser(targetUserId: String) {
-        viewModelScope.launch {
-            try {
-                UserRepository.followUser(
-                    targetUserId,
-                    onSuccess = { /* Optionnel : afficher message */ },
-                    onFailure = { it.printStackTrace() }
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
     private fun refreshPosts() {
         val uid = _currentUserId.value ?: return
         loadFeed(uid)
@@ -109,7 +103,79 @@ class FeedViewModel : ViewModel() {
             }
         }
     }
+    fun loadFriends(currentUserId: String, onLoaded: (List<String>) -> Unit) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("friends")
+            .get()
+            .addOnSuccessListener { result ->
+                val friendIds = result.documents.mapNotNull { it.id }
+                onLoaded(friendIds)
+            }
+            .addOnFailureListener { e ->
+                e.printStackTrace()
+                onLoaded(emptyList())
+            }
+    }
+    fun updateCurrentUserFriends(friends: List<String>) {
+        val updatedProfiles = _userProfiles.value.toMutableMap()
+        val currentUser = updatedProfiles[_currentUserId.value] ?: return
+        updatedProfiles[_currentUserId.value!!] = currentUser.copy(friends = friends as MutableList<String>)
+        _userProfiles.value = updatedProfiles
+    }
 
+    // ✅ Nouvelle StateFlow pour suivre les amis de l'utilisateur courant
+    private val _currentUserFriends = MutableStateFlow<Set<String>>(emptySet())
+    val currentUserFriends: StateFlow<Set<String>> = _currentUserFriends.asStateFlow()
 
+    // ✅ Méthode pour charger les amis de l'utilisateur courant
+    fun loadCurrentUserFriends(currentUserId: String) {
+        db.collection("users")
+            .document(currentUserId)
+            .collection("friends")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    println("Erreur lors du chargement des amis : ${error.message}")
+                    return@addSnapshotListener
+                }
 
+                val friendIds = snapshot?.documents?.map { it.id }?.toSet() ?: emptySet()
+                _currentUserFriends.value = friendIds
+            }
+    }
+
+    // ✅ Méthode followUser corrigée
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun followUser(targetUserId: String, currentUserId: String) {
+        // Ajouter dans la collection "friends" de l'utilisateur courant
+        val friendRef = db.collection("users")
+            .document(currentUserId) // ✅ Document de l'utilisateur courant
+            .collection("friends")
+            .document(targetUserId) // ✅ Document avec l'ID de la personne suivie
+
+        val friendData = mapOf(
+            "followedAt" to Instant.now().toString(),
+            "userId" to targetUserId
+        )
+
+        friendRef.set(friendData)
+            .addOnSuccessListener {
+                println("✅ Utilisateur $targetUserId ajouté aux amis de $currentUserId")
+
+                // ✅ Mise à jour immédiate de la StateFlow locale
+                val currentFriends = _currentUserFriends.value.toMutableSet()
+                currentFriends.add(targetUserId)
+                _currentUserFriends.value = currentFriends
+            }
+            .addOnFailureListener { e ->
+                println("❌ Erreur lors de l'ajout d'un ami : ${e.message}")
+            }
+    }
 }
+
+
+
+
+
+
+
