@@ -26,7 +26,7 @@ class ExploreViewModel : ViewModel() {
                     part = "snippet",
                     channelId = pamelaChannelId,
                     query = query,
-                    apiKey = "AIzaSyD0qZg1K1UNL8BzCb0mXd99HkSqJzOvSaw"
+                    apiKey = "AIzaSyDtQWHQobT6-zR0e4udK8WbRmKJ1XX2ANg"
                 )
                 _videos.value = response.items
             } catch (e: Exception) {
