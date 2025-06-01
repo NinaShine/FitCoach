@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
 import com.example.fitcoach.viewmodel.UserProfileViewModel
 
@@ -44,10 +45,12 @@ fun ProfileScreen(navController: NavController) {
     val viewModel: UserProfileViewModel = viewModel()
     val username by viewModel.username
     val age by viewModel.birthDate
+    val avatarUrl by viewModel.avatarUrl
 
     LaunchedEffect(Unit) {
         viewModel.fetchUsername()
         viewModel.fetchAge()
+        viewModel.fetchAvatar()
     }
 
     val scrollState = rememberScrollState()
@@ -69,7 +72,7 @@ fun ProfileScreen(navController: NavController) {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(id = R.drawable.july_photo_profile),
+                    painter = rememberAsyncImagePainter(avatarUrl),
                     contentDescription = "Profile picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
