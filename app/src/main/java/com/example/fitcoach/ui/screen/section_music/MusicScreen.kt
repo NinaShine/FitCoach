@@ -305,9 +305,9 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip("Training", selected = true)
-            FilterChip("Chill", selected = false)
-            FilterChip("Cardio", selected = false)
+            FilterChip("Playlists", selected = true)
+            FilterChip("Favorites", selected = false)
+            //FilterChip("Cardio", selected = false)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
