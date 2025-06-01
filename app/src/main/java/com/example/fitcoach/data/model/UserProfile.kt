@@ -17,7 +17,7 @@ data class UserProfile(
     val bio: String? = null,
     val notificationsEnabled: Boolean = true,
     val fcmToken : String? = null,
-    val friends: List<String> = emptyList(),
+    var friends: MutableList<String> = mutableListOf(),
     val workouts: List<String> = emptyList(),
     val rewards: List<String> = emptyList(),
     val achievements: List<String> = emptyList(),

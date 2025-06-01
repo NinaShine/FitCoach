@@ -33,19 +33,32 @@ object PostRepository {
             .await()
     }
 
-    // ✅ Récupérer le UserProfile de l’auteur d’un post
     suspend fun getUserProfilesForPosts(posts: List<Post>): Map<String, UserProfile> {
-        val userIds = posts.map { it.userId }.distinct()
-        val usersMap = mutableMapOf<String, UserProfile>()
+        val db = FirebaseFirestore.getInstance()
+        val userIds = posts.map { it.userId }.toSet()
+        val profiles = mutableMapOf<String, UserProfile>()
 
         for (uid in userIds) {
             val doc = db.collection("users").document(uid).get().await()
-            doc.toObject(UserProfile::class.java)?.let {
-                usersMap[uid] = it.copy(uid = doc.id)
+            val profile = doc.toObject(UserProfile::class.java)?.copy(uid = uid)
+
+            // ✅ Récupérer la sous-collection "friends"
+            val friendsSnapshot = db.collection("users")
+                .document(uid)
+                .collection("friends")
+                .get()
+                .await()
+
+            val friendsList = friendsSnapshot.documents.map { it.id }
+
+            if (profile != null) {
+                profiles[uid] = profile.copy(friends = friendsList as MutableList<String>)
             }
         }
-        return usersMap
+
+        return profiles
     }
+
 
     suspend fun addComment(postId: String, comment: Comment) {
         val db = FirebaseFirestore.getInstance()
