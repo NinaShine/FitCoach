@@ -119,28 +119,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
-                onClick = {
-                    // À implémenter si tu veux Apple Sign-In plus tard
-                },
-                modifier = Modifier
-                    .width(338.dp)
-                    .height(68.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF5F5F5))
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.apple),
-                    contentDescription = "Apple icon",
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Sign in with Apple", color = Color.Black)
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
+            //Spacer(modifier = Modifier.height(12.dp))
             Button(
                 onClick = {
                     val signInIntent = googleSignInClient.signInIntent

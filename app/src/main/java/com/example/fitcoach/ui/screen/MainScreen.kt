@@ -77,6 +77,8 @@ import com.example.fitcoach.viewmodel.track_section.TrackingViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+
+
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: LiveTrackingViewModel, initialRoute: String? = null) {

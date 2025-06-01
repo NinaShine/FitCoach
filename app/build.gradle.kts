@@ -160,6 +160,16 @@ dependencies {
     //google sign in
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
+    // BoM Firebase (permet de ne pas spécifier les versions)
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+
+// Auth Firebase
+    implementation("com.google.firebase:firebase-auth-ktx")
+
+// Firestore
+    implementation("com.google.firebase:firebase-firestore-ktx")
+
+
 
 
 
