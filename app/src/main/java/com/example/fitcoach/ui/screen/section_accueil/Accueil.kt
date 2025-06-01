@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,8 +45,10 @@ import com.example.fitcoach.ui.screen.section_music.MusicScreen
 import com.example.fitcoach.ui.screen.getSpotifyAccessToken
 import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
 import com.example.fitcoach.ui.screen.section_social.FeedScreen
+import com.example.fitcoach.ui.screen.section_workout.VideoCard
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
+import com.example.fitcoach.viewmodel.ExploreViewModel
 import com.example.fitcoach.viewmodel.UserProfileViewModel
 import com.example.fitcoach.viewmodel.track_section.LastSessionViewModel
 import com.example.fitcoach.viewmodel.track_section.LiveTrackingViewModel
@@ -333,15 +336,13 @@ fun AccueilScreen(navController: NavController, steps: Int, calories: Double, di
         }
 
         item {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Recommendation", fontWeight = FontWeight.SemiBold)
+            //Spacer(modifier = Modifier.height(16.dp))
+            //Text("Recommendation", fontWeight = FontWeight.SemiBold)
+            //Spacer(modifier = Modifier.height(8.dp))
+            RecommendedVideosSection()
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        items(recommendations) { item ->
-            RecommendationItem(item)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
     }
 }
 
@@ -535,6 +536,57 @@ fun DividerVertical(
         thickness = thickness
     )
 }
+
+@Composable
+fun RecommendedVideosSection(
+    exploreViewModel: ExploreViewModel = viewModel(),
+    profileViewModel: UserProfileViewModel = viewModel()
+) {
+    val videos by exploreViewModel.videos.collectAsState()
+    val location by profileViewModel.location
+    val level by profileViewModel.level
+    val goal by profileViewModel.fitnessGoal
+
+    LaunchedEffect(Unit) {
+        profileViewModel.fetchLocation()
+        profileViewModel.fetchLevel()
+        profileViewModel.fetchFitnessGoal()
+    }
+
+    LaunchedEffect(location, level, goal) {
+        val query = listOfNotNull(location, level, goal).joinToString(" ")
+        if (query.isNotBlank()) {
+            exploreViewModel.searchVideos(query)
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Text(
+            text = "Recommended for you",
+            style = MaterialTheme.typography.titleMedium,
+            color = Color(0xFFE86144)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        videos.take(3).forEach { video ->
+            VideoCard(video)
+        }
+
+        if (videos.size > 3) {
+            Text(
+                text = "See more",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .clickable {
+                        // Navigation vers écran Explore si souhaité
+                    }
+                    .padding(top = 8.dp)
+            )
+        }
+    }
+}
+
 
 
 
