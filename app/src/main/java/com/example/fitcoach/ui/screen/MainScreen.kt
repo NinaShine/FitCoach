@@ -53,6 +53,7 @@ import com.example.fitcoach.ui.screen.section_music.MusicScreenWithNavBar
 import com.example.fitcoach.ui.screen.section_profile.EditProfileScreen
 import com.example.fitcoach.ui.screen.section_profile.FriendsScreen
 import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
+import com.example.fitcoach.ui.screen.section_profile.StatsScreen
 import com.example.fitcoach.ui.screen.section_tracking.TrackScreenWithPermission
 import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
 import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
@@ -192,7 +193,7 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
         }
 
         composable("accueil"){
-            AccueilPageWithNavBar(navController = navController, liveTrackingVm = liveTrackingVm)
+            AccueilPageWithNavBar(navController = navController, liveTrackingVm = liveTrackingVm, currentlyPlayingVm = currentlyPlayingVm)
         }
 
         composable("forgotPassword") {
@@ -205,7 +206,7 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
         }
 
         composable("profile"){
-            ProfileScreen(navController = navController)
+            ProfileScreen(navController = navController, liveTrackingVm)
         }
         composable("workout") {
             WorkoutScreen(navController)
@@ -346,6 +347,11 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: 
 
         composable("friends") {
             FriendsScreen(navController = navController)
+        }
+
+
+        composable("profile_stats"){
+            StatsScreen(navController = navController, liveTrackingVm)
         }
 
 

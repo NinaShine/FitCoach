@@ -21,6 +21,8 @@ class UserProfileViewModel : ViewModel() {
     var lN = mutableStateOf<String?>(null)
     var bio = mutableStateOf<String?>(null)
     var gender = mutableStateOf<String?>(null)
+    var stepGoal = mutableStateOf<Int?>(null)
+    var workoutGoal = mutableStateOf<Int?>(null)
 
     // 🆕 Champs pour la personnalisation
     var location = mutableStateOf<String?>(null)       // Ex: "maison", "salle"
@@ -143,6 +145,34 @@ class UserProfileViewModel : ViewModel() {
             }
             .addOnFailureListener {
                 avatarUrl.value = null
+            }
+    }
+
+    fun fetchStepGoal(){
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                stepGoal.value = doc.getLong("stepGoal")?.toInt() ?: 0
+            }
+            .addOnFailureListener {
+                stepGoal.value = 0
+            }
+    }
+
+    fun fetchWorkoutGoal(){
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                workoutGoal.value = doc.getLong("workoutGoal")?.toInt() ?: 0
+            }
+            .addOnFailureListener {
+                workoutGoal.value = 0
             }
     }
 
