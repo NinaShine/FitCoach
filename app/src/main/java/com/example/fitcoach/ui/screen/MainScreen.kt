@@ -47,9 +47,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.section_accueil.AccueilPageWithNavBar
+import com.example.fitcoach.ui.screen.section_chatbot.ChatBotScreen
+import com.example.fitcoach.ui.screen.section_music.MusicScreen
+import com.example.fitcoach.ui.screen.section_music.MusicScreenWithNavBar
+import com.example.fitcoach.ui.screen.section_profile.EditProfileScreen
 import com.example.fitcoach.ui.screen.section_profile.ProfileScreen
+import com.example.fitcoach.ui.screen.section_tracking.TrackScreenWithPermission
 import com.example.fitcoach.ui.screen.section_social.ChallengeScreen
 import com.example.fitcoach.ui.screen.section_social.CreatePostScreen
+import com.example.fitcoach.ui.screen.section_tracking.TrackScreen
+import com.example.fitcoach.ui.screen.section_tracking.TrackScreenWithPermission
+import com.example.fitcoach.ui.screen.section_tracking.WorkoutSummaryScreenWithNavBar
 import com.example.fitcoach.ui.screen.section_social.LeaderboardScreen
 import com.example.fitcoach.ui.screen.section_workout.CreateRoutineScreen
 import com.example.fitcoach.ui.screen.section_workout.ExerciseDetailScreen
@@ -62,19 +70,25 @@ import com.example.fitcoach.ui.screen.section_workout.WorkoutHelpScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.UserOnboardingViewModel
+import com.example.fitcoach.viewmodel.track_section.LiveTrackingViewModel
+import com.example.fitcoach.viewmodel.track_section.SessionSummaryScreen
+import com.example.fitcoach.viewmodel.track_section.StepCounterViewModel
+import com.example.fitcoach.viewmodel.track_section.TrackingViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: String? = null) {
+fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: LiveTrackingViewModel, initialRoute: String? = null) {
     val navController = rememberNavController()
     val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
-    val defaultStart = "onboarding"
-    //val defaultStart = if (FirebaseAuth.getInstance().currentUser != null) "accueil" else "onboarding"
+    //val defaultStart = "onboarding"
+    val defaultStart = if (FirebaseAuth.getInstance().currentUser != null) "accueil" else "onboarding"
     val startDestination = initialRoute ?: defaultStart
 
     val viewModel: UserOnboardingViewModel = viewModel()
+    val stepViewModel: StepCounterViewModel = viewModel()
+    val trackViewModel: TrackingViewModel = viewModel()
 
 
     NavHost(navController = navController, startDestination = startDestination) {
@@ -160,10 +174,14 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: St
 
         composable("music") {
             val accessToken = getSpotifyAccessToken(LocalContext.current).orEmpty()
-            MusicScreen(navController = navController, accessToken = accessToken, currentlyPlayingVm = currentlyPlayingVm)
+            MusicScreen(navController = navController, accessToken = accessToken, currentlyPlayingVm = currentlyPlayingVm, steps = 0, calories = 0.0, distanceKm = 0.0)
         }
         composable ("musicWithNavBar"){
-            MusicScreenWithNavBar(navController = navController, currentlyPlayingVm = currentlyPlayingVm)
+            MusicScreenWithNavBar(
+                navController = navController,
+                currentlyPlayingVm = currentlyPlayingVm,
+                liveTrackingVm = liveTrackingVm
+            )
         }
 
         composable("searchMusic"){
@@ -171,7 +189,7 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: St
         }
 
         composable("accueil"){
-            AccueilPageWithNavBar(navController = navController)
+            AccueilPageWithNavBar(navController = navController, liveTrackingVm = liveTrackingVm)
         }
 
         composable("forgotPassword") {
@@ -285,6 +303,44 @@ fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, initialRoute: St
         composable("createPost") {
             CreatePostScreen(navController = navController)
         }
+
+
+        composable("track") {
+            TrackScreenWithPermission(
+                navController,
+                trackViewModel,
+                stepViewModel
+                )
+        }
+
+        composable("session_summary") {
+            val session = trackViewModel.lastSessionData
+
+            if (session != null) {
+                SessionSummaryScreen(
+                    navController = navController,
+                    distanceKm = session.distanceKm,
+                    durationMs = session.durationMs,
+                    speedKmH = session.speedKmH,
+                    calories = session.calories,
+                    steps = session.steps,
+                    activityType = session.activityType
+                )
+            } else {
+                Text("Aucune session enregistrée")
+            }
+        }
+
+        composable("workout_summary") {
+            WorkoutSummaryScreenWithNavBar(
+                navController = navController,
+                liveTrackingVm = liveTrackingVm)
+        }
+
+        composable("chatbot") {
+            ChatBotScreen(navController = navController)
+        }
+
 
 
 

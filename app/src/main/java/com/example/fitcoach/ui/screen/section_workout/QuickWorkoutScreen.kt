@@ -1,5 +1,7 @@
 package com.example.fitcoach.ui.screen.section_workout
 
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +33,8 @@ import com.example.fitcoach.R
 import com.example.fitcoach.viewmodel.WorkoutViewModel
 import kotlinx.coroutines.delay
 import coil.compose.AsyncImage
+import com.example.fitcoach.utils.SpeechHelper
+import java.util.Locale
 
 @Composable
 fun QuickWorkoutScreen(navController: NavController) {
@@ -39,6 +43,32 @@ fun QuickWorkoutScreen(navController: NavController) {
     )
     val workoutExercises by workoutViewModel.workoutExercises.collectAsState()
     val scrollState = rememberScrollState()
+
+    val context = LocalContext.current
+
+    val tts = remember {
+        TextToSpeech(context, null)
+    }
+
+    LaunchedEffect(tts) {
+        val result = tts.setLanguage(Locale.US)
+        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            Log.e("TTS", "Langue non supportée")
+        }
+    }
+/*
+    DisposableEffect(Unit) {
+        onDispose {
+            tts.stop()
+            tts.shutdown()
+        }
+    }
+
+ */
+
+    fun speakMessage(message: String) {
+        tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, null)
+    }
 
 
     var durationSeconds by remember { mutableStateOf(0) }
@@ -54,6 +84,9 @@ fun QuickWorkoutScreen(navController: NavController) {
     }
 
     LaunchedEffect(isRunning) {
+        if (isRunning) {
+            speakMessage("Workout started! Let's go!")
+        }
         while (isRunning) {
             delay(1000L)
             durationSeconds++

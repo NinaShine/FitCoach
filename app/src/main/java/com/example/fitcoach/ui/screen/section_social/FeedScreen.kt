@@ -29,6 +29,7 @@ import com.example.fitcoach.R
 import com.example.fitcoach.data.model.Post
 import com.example.fitcoach.data.model.UserProfile
 import com.example.fitcoach.viewmodel.FeedViewModel
+import com.example.fitcoach.viewmodel.UserProfileViewModel
 
 @Composable
 fun FeedScreen(currentUid: String, navController: NavController) {
@@ -41,13 +42,28 @@ fun FeedScreen(currentUid: String, navController: NavController) {
         vm.loadFeed(currentUid)
     }
 
-    Column {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(8.dp)
+    ) {
         TopBar(
             user = users[currentUid],
             navController = navController,
             onProfileClick = { navController.navigate("profile") },
             onChallengeClick = { navController.navigate("challenges") }
         )
+        HorizontalDivider(
+            color = Color.Black,
+            thickness = 1.dp,
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .width(80.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn(
             modifier = Modifier
@@ -83,10 +99,17 @@ fun TopBar(
     navController: NavController,
     onChallengeClick: () -> Unit
 ) {
+    val userViewModel: UserProfileViewModel = viewModel()
+
+    val avatarUrl by userViewModel.avatarUrl
+
+    LaunchedEffect(Unit) {
+        userViewModel.fetchAvatar()
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(6.dp)
     ) {
         // 🏷️ Titre centré
         Text(
@@ -96,7 +119,7 @@ fun TopBar(
             modifier = Modifier.align(Alignment.Center)
         )
 
-        // 🔘 Boutons à droite (emoji + avatar)
+        /* 🔘 Boutons à droite (emoji + avatar)
         Row(
             modifier = Modifier.align(Alignment.CenterEnd),
             verticalAlignment = Alignment.CenterVertically
@@ -121,12 +144,47 @@ fun TopBar(
             )
         }
 
-        // 🔙 Optionnel : "Discover" à gauche
+         */
+
+        // Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("fit’fy", fontWeight = FontWeight.Bold, fontSize = 22.sp, modifier = Modifier.align(Alignment.CenterVertically))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(id = R.drawable.robot_assistant),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            navController.navigate("chatbot")
+                        }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Image(
+                    painter = rememberAsyncImagePainter(avatarUrl),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(45.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            navController.navigate("profile")
+                        }
+                )
+            }
+        }
+
+        /* 🔙 Optionnel : "Discover" à gauche
         Text(
             "Discover",
             color = Color.Gray,
             modifier = Modifier.align(Alignment.CenterStart)
         )
+         */
     }
 }
 

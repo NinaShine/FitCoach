@@ -17,6 +17,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,18 +26,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
 import com.example.fitcoach.viewmodel.WorkoutViewModel
+import com.example.fitcoach.viewmodel.UserProfileViewModel
 
 @Composable
 fun WorkoutScreen(navController: NavController) {
     val viewModel: WorkoutViewModel = viewModel()
     val workouts by viewModel.savedWorkouts.collectAsState()
     val scrollState = rememberScrollState()
+
+    val userViewModel: UserProfileViewModel = viewModel()
+    val avatarUrl by userViewModel.avatarUrl
+
+    LaunchedEffect(Unit) {
+        userViewModel.fetchAvatar()
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Scrollable content
@@ -45,30 +57,43 @@ fun WorkoutScreen(navController: NavController) {
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp) // bottom padding to avoid overlapping the fixed button
                 .verticalScroll(scrollState)
         ) {
-            // Top Bar
+            // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("fit’fy", fontSize = 24.sp, color = Color.Black)
-                Row {
+                Text("fit’fy", fontWeight = FontWeight.Bold, fontSize = 22.sp, modifier = Modifier.align(Alignment.CenterVertically))
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Image(
-                        painter = painterResource(R.drawable.robot_assistant),
+                        painter = painterResource(id = R.drawable.robot_assistant),
                         contentDescription = null,
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                navController.navigate("chatbot")
+                            }
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Image(
-                        painter = painterResource(R.drawable.july_photo_profile),
+                        painter = rememberAsyncImagePainter(avatarUrl),
                         contentDescription = null,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
+                            .size(45.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                navController.navigate("profile")
+                            }
                     )
                 }
             }
+
+            Divider(
+                color = Color.Black,
+                thickness = 1.dp,
+                modifier = Modifier.width(80.dp)
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
             Text("Quick Start", fontSize = 20.sp)

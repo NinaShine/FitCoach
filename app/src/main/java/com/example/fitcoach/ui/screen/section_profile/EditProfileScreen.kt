@@ -1,4 +1,4 @@
-package com.example.fitcoach.ui.screen
+package com.example.fitcoach.ui.screen.section_profile
 
 import android.net.Uri
 import android.util.Log

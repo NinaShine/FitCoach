@@ -27,6 +27,8 @@ class UserProfileViewModel : ViewModel() {
 
     private val uid = FirebaseAuth.getInstance().currentUser?.uid
     private val db = FirebaseFirestore.getInstance()
+    var weight = mutableStateOf<Double?>(null)
+    var avatarUrl = mutableStateOf<String?>(null)
 
     fun fetchUsername() {
         fetchField("username") { username.value = it ?: "Utilisateur" }
@@ -91,4 +93,32 @@ class UserProfileViewModel : ViewModel() {
                 onResult("Erreur")
             }
     }
+    fun fetchUserWeight(){
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                weight.value = doc.getDouble("weight") ?: 0.0
+            }
+            .addOnFailureListener {
+                weight.value = 0.0
+            }
+    }
+
+    fun fetchAvatar(){
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                avatarUrl.value = doc.getString("avatarUrl")
+            }
+            .addOnFailureListener {
+                avatarUrl.value = null
+            }
+    }
+
 }

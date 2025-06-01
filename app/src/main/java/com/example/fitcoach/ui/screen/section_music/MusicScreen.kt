@@ -1,4 +1,4 @@
-package com.example.fitcoach.ui.screen
+package com.example.fitcoach.ui.screen.section_music
 
 import android.content.Context
 import android.content.Intent
@@ -47,12 +47,16 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
 import com.example.fitcoach.data.model.Song
+import com.example.fitcoach.ui.screen.getSpotifyAccessToken
 import com.example.fitcoach.ui.screen.section_accueil.AccueilScreen
 import com.example.fitcoach.ui.screen.section_accueil.FitBottomBar
 import com.example.fitcoach.ui.screen.section_social.FeedScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
 import com.example.fitcoach.viewmodel.MusicViewModel
+import com.example.fitcoach.viewmodel.UserProfileViewModel
+import com.example.fitcoach.viewmodel.track_section.LiveTrackingViewModel
+
 import com.google.firebase.auth.FirebaseAuth
 import okhttp3.Call
 import okhttp3.Callback
@@ -64,10 +68,17 @@ import java.io.IOException
 
 // lien du tuto : https://developer.spotify.com/documentation/android/tutorials/getting-started
 @Composable
-fun MusicScreen(navController: NavController, accessToken: String, currentlyPlayingVm : CurrentlyPlayingViewModel) {
+fun MusicScreen(navController: NavController, accessToken: String, currentlyPlayingVm : CurrentlyPlayingViewModel, steps: Int, calories: Double, distanceKm: Double) {
     val context = LocalContext.current
     //var playlists by remember { mutableStateOf<List<SpotifyPlaylist>>(emptyList()) }
     val scope = rememberCoroutineScope()
+
+    val userViewModel: UserProfileViewModel = viewModel()
+    val avatarUrl by userViewModel.avatarUrl
+
+    LaunchedEffect(Unit) {
+        userViewModel.fetchAvatar()
+    }
 
     val viewModel: MusicViewModel = viewModel()
     val playlists by viewModel.playlists.collectAsState()
@@ -148,10 +159,13 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
                     modifier = Modifier
                         .size(50.dp)
                         .clip(CircleShape)
+                        .clickable {
+                            navController.navigate("chatbot")
+                        }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Image(
-                    painter = painterResource(id = R.drawable.july_photo_profile),
+                    painter = rememberAsyncImagePainter(avatarUrl),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -470,8 +484,16 @@ fun FilterChip(label: String, selected: Boolean) {
 }
 
 @Composable
-fun MusicScreenWithNavBar(navController: NavController, currentlyPlayingVm : CurrentlyPlayingViewModel) {
+fun MusicScreenWithNavBar(
+    navController: NavController,
+    currentlyPlayingVm : CurrentlyPlayingViewModel,
+    liveTrackingVm: LiveTrackingViewModel
+) {
     var currentRoute by remember { mutableStateOf("music") }
+
+    val steps = liveTrackingVm.steps
+    val calories = liveTrackingVm.calories
+    val distance = liveTrackingVm.distanceKm
 
     Scaffold(
         bottomBar = {
@@ -489,11 +511,19 @@ fun MusicScreenWithNavBar(navController: NavController, currentlyPlayingVm : Cur
         Box(modifier = Modifier.padding(padding)) {
             val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
             when (currentRoute) {
-                "home" -> AccueilScreen(navController = navController)
+                "home" -> AccueilScreen(
+                    navController = navController,
+                    steps = steps,
+                    calories = calories,
+                    distanceKm = distance
+                    )
                 "music" -> MusicScreen(
                     navController = navController,
                     accessToken = getSpotifyAccessToken(LocalContext.current).toString(),
-                    currentlyPlayingVm = currentlyPlayingVm
+                    currentlyPlayingVm = currentlyPlayingVm,
+                    steps = steps,
+                    calories = calories,
+                    distanceKm = distance
                 )
                 "workout" -> WorkoutScreen(navController)
                 "social" -> {
@@ -509,7 +539,10 @@ fun MusicScreenWithNavBar(navController: NavController, currentlyPlayingVm : Cur
                 else -> MusicScreen(
                     navController = navController,
                     accessToken = getSpotifyAccessToken(LocalContext.current).toString(),
-                    currentlyPlayingVm = currentlyPlayingVm
+                    currentlyPlayingVm = currentlyPlayingVm,
+                    steps = steps,
+                    calories = calories,
+                    distanceKm = distance
                 )
             }
         }
