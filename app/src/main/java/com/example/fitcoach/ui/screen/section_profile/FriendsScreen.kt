@@ -1,5 +1,7 @@
 package com.example.fitcoach.ui.screen.section_profile
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -10,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +26,12 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.fitcoach.data.model.UserProfile
 import com.example.fitcoach.viewmodel.UserProfileViewModel
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FriendsScreen(navController: NavController) {
     val viewModel: UserProfileViewModel = viewModel()
@@ -72,9 +78,11 @@ fun FriendsScreen(navController: NavController) {
     }
 }
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FriendCard(user: UserProfile) {
+    val age = calculateAge(user.birthDate)
+
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier
@@ -105,12 +113,22 @@ fun FriendCard(user: UserProfile) {
                     .align(Alignment.BottomStart)
                     .padding(12.dp)
             ) {
-                Text(
-                    text = user.firstName ?: "Unknown",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = user.firstName ?: "Unknown",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                    if (age != null) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "$age ans",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 13.sp
+                        )
+                    }
+                }
 
                 if (!user.bio.isNullOrBlank()) {
                     Text(
@@ -137,5 +155,17 @@ fun FriendCard(user: UserProfile) {
                 }
             }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun calculateAge(birthDateString: String?): Int? {
+    return try {
+        if (birthDateString.isNullOrBlank()) return null
+        val formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH)
+        val birthDate = LocalDate.parse(birthDateString, formatter)
+        Period.between(birthDate, LocalDate.now()).years
+    } catch (e: Exception) {
+        null
     }
 }
