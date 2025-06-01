@@ -2,8 +2,10 @@ package com.example.fitcoach.viewmodel
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.fitcoach.data.model.UserProfile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
@@ -53,6 +55,29 @@ class UserProfileViewModel : ViewModel() {
     fun fetchBirthDateRaw() {
         fetchField("birthDate") { birthDate.value = it ?: "Birth Date" }
     }
+    val friends = mutableStateListOf<UserProfile>()
+
+    fun fetchFriends() {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("users")
+            .document(currentUserId)
+            .collection("friends")
+            .get()
+            .addOnSuccessListener { result ->
+                friends.clear()
+                for (doc in result.documents) {
+                    val friendId = doc.id
+                    db.collection("users").document(friendId).get()
+                        .addOnSuccessListener { userDoc ->
+                            val profile = userDoc.toObject(UserProfile::class.java)
+                            profile?.let { friends.add(it) }
+                        }
+                }
+            }
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun fetchAge() {
