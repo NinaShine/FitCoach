@@ -37,6 +37,9 @@ import org.json.JSONObject
 import java.io.IOException
 import com.example.fitcoach.data.model.TrackResult
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -135,7 +138,23 @@ fun SearchMusicScreen(navController: NavController, currentlyPlayingVm : Current
 
 @Composable
 fun TrackItem(track: TrackResult,  onClick: () -> Unit) {
+    val context = LocalContext.current
     var isLiked by remember { mutableStateOf(false) }
+    val uid = FirebaseAuth.getInstance().currentUser?.uid
+    val db = FirebaseFirestore.getInstance()
+
+    LaunchedEffect(track.name, track.artist) {
+        uid?.let {
+            db.collection("users").document(it)
+                .collection("favorites")
+                .whereEqualTo("name", track.name)
+                .whereEqualTo("artist", track.artist)
+                .get()
+                .addOnSuccessListener { result ->
+                    isLiked = !result.isEmpty
+                }
+        }
+    }
 
     Row(
         modifier = Modifier
@@ -170,9 +189,35 @@ fun TrackItem(track: TrackResult,  onClick: () -> Unit) {
             modifier = Modifier
                 .size(24.dp)
                 .clickable {
-                    isLiked = !isLiked
+                    if (uid == null) return@clickable
+
+                    val favsRef = db.collection("users").document(uid).collection("favorites")
+
+                    if (isLiked) {
+                        favsRef
+                            .whereEqualTo("name", track.name)
+                            .whereEqualTo("artist", track.artist)
+                            .get()
+                            .addOnSuccessListener { query ->
+                                for (doc in query) {
+                                    favsRef.document(doc.id).delete()
+                                }
+                                isLiked = false
+                            }
+                    } else {
+                        val trackMap = mapOf(
+                            "name" to track.name,
+                            "artist" to track.artist,
+                            "imageUrl" to track.imageUrl,
+                            "timestamp" to FieldValue.serverTimestamp()
+                        )
+                        favsRef.add(trackMap).addOnSuccessListener {
+                            isLiked = true
+                        }
+                    }
                 }
         )
+
     }
 }
 

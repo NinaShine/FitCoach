@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.R
 import com.example.fitcoach.ui.screen.section_music.MusicScreen
 import com.example.fitcoach.ui.screen.getSpotifyAccessToken
@@ -56,6 +57,7 @@ import com.example.fitcoach.ui.screen.section_accueil.FitBottomBar
 import com.example.fitcoach.ui.screen.section_social.FeedScreen
 import com.example.fitcoach.ui.screen.section_workout.WorkoutScreen
 import com.example.fitcoach.viewmodel.CurrentlyPlayingViewModel
+import com.example.fitcoach.viewmodel.UserProfileViewModel
 import com.example.fitcoach.viewmodel.track_section.LiveTrackingViewModel
 import com.example.fitcoach.viewmodel.track_section.RecentWorkoutsViewModel
 import com.google.firebase.Timestamp
@@ -67,9 +69,12 @@ import java.util.Locale
 fun WorkoutSummaryScreen(navController: NavController, steps: Int, calories: Double, distanceKm: Double) {
     val viewModel: RecentWorkoutsViewModel = viewModel()
     val sessions = viewModel.recentSessions
+    val profileViewModel: UserProfileViewModel = viewModel()
+    val avatarUrl by profileViewModel.avatarUrl
 
     LaunchedEffect(Unit) {
         viewModel.fetchRecentSessions()
+        profileViewModel.fetchAvatar()
     }
 
 
@@ -96,7 +101,7 @@ fun WorkoutSummaryScreen(navController: NavController, steps: Int, calories: Dou
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Image(
-                        painter = painterResource(id = R.drawable.july_photo_profile),
+                        painter = rememberAsyncImagePainter(avatarUrl),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

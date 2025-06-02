@@ -23,14 +23,20 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.fitcoach.data.model.Challenge
 import com.example.fitcoach.viewmodel.ChallengeViewModel
+import com.example.fitcoach.viewmodel.UserProfileViewModel
 
 @Composable
 fun ChallengeScreen(currentUid: String, navController: NavController) {
     val vm: ChallengeViewModel = viewModel()
     val challenges by vm.challenges.collectAsState()
+    val viewModel: UserProfileViewModel = viewModel()
+    val avatarUrl by viewModel.avatarUrl
+
 
     LaunchedEffect(Unit) {
         vm.loadChallenges()
+        viewModel.fetchAvatar()
+
     }
 
     Column(
@@ -61,7 +67,7 @@ fun ChallengeScreen(currentUid: String, navController: NavController) {
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 Image(
-                    painter = rememberAsyncImagePainter("https://placehold.co/40x40"),
+                    painter = rememberAsyncImagePainter(avatarUrl),
                     contentDescription = null,
                     modifier = Modifier
                         .size(36.dp)

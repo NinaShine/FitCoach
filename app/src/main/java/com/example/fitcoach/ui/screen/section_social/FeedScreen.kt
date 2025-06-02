@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubbleOutline
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -133,14 +134,14 @@ fun TopBar(
         ) {
             Text("fit’fy", fontWeight = FontWeight.Bold, fontSize = 22.sp, modifier = Modifier.align(Alignment.CenterVertically))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.robot_assistant),
-                    contentDescription = null,
+                Icon(
+                    imageVector = Icons.Default.EmojiEvents,
+                    contentDescription = "Challenges",
+                    tint = Color(0xFFE86144),
                     modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
+                        .size(32.dp)
                         .clickable {
-                            navController.navigate("chatbot")
+                            onChallengeClick()
                         }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -152,7 +153,7 @@ fun TopBar(
                         .size(45.dp)
                         .clip(CircleShape)
                         .clickable {
-                            navController.navigate("profile")
+                            onProfileClick()
                         }
                 )
             }

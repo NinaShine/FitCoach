@@ -85,7 +85,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun FitCoachApp(currentlyPlayingVm : CurrentlyPlayingViewModel, liveTrackingVm: LiveTrackingViewModel, initialRoute: String? = null) {
     val navController = rememberNavController()
-    val isUserLoggedIn = FirebaseAuth.getInstance().currentUser != null
     //val defaultStart = "onboarding"
     val defaultStart = if (FirebaseAuth.getInstance().currentUser != null) "accueil" else "onboarding"
     val startDestination = initialRoute ?: defaultStart

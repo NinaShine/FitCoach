@@ -63,7 +63,7 @@ fun CreatePostScreen(navController: NavController) {
             TopAppBar(
                 title = { Text("Nouveau post") },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate("social") }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Retour")
                     }
                 },

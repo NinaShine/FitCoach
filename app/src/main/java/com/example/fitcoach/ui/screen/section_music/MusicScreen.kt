@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -83,6 +84,8 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
 
     val viewModel: MusicViewModel = viewModel()
     val playlists by viewModel.playlists.collectAsState()
+    val favorites by viewModel.favorites.collectAsState()
+
 
     var isTokenValid by remember { mutableStateOf<Boolean?>(null) }
     LaunchedEffect(Unit) {
@@ -90,6 +93,18 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
             isTokenValid = valid
         }
     }
+
+    var selectedTab by rememberSaveable { mutableStateOf("Playlists") }
+
+    LaunchedEffect(selectedTab, accessToken) {
+        if (selectedTab == "Favorites") {
+            viewModel.loadFavorites()
+        } else {
+            viewModel.loadPlaylists(accessToken)
+        }
+    }
+
+
 
 
     Log.d("MusicScreen", "Access token utilisé = $accessToken")
@@ -109,16 +124,12 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
             "&redirect_uri=$redirectUri" +
             "&scope=$scopes"
 
-    val currentSong = Song(
-        title = "On verra",
-        artist = "Nekfeu",
-        imageRes = R.drawable.spotify_icon
-    )
-
-
+/*
     LaunchedEffect(accessToken) {
         viewModel.loadPlaylists(accessToken)
     }
+
+ */
 
 
     //val currentlyPlayingVm: CurrentlyPlayingViewModel = viewModel()
@@ -145,7 +156,12 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("fit’fy", fontWeight = FontWeight.Bold, fontSize = 22.sp, modifier = Modifier.align(Alignment.CenterVertically))
+            Text(
+                "fit’fy",
+                fontWeight = FontWeight.Bold,
+                fontSize = 22.sp,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(id = R.drawable.robot_assistant),
@@ -198,7 +214,12 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
                 Box(
                     modifier = Modifier
                         .background(
-                            brush = Brush.horizontalGradient(listOf(Color(0xFFFFB47E), Color(0xFFFF8762))),
+                            brush = Brush.horizontalGradient(
+                                listOf(
+                                    Color(0xFFFFB47E),
+                                    Color(0xFFFF8762)
+                                )
+                            ),
                             shape = RoundedCornerShape(20.dp)
                         )
                         .padding(16.dp)
@@ -294,11 +315,22 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
 
 
         Spacer(modifier = Modifier.height(16.dp))
-
+        /*
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip("Playlists", selected = true)
             FilterChip("Favorites", selected = false)
             //FilterChip("Cardio", selected = false)
+        }
+
+ */
+
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip("Playlists", selected = selectedTab == "Playlists") {
+                selectedTab = "Playlists"
+            }
+            FilterChip("Favorites", selected = selectedTab == "Favorites") {
+                selectedTab = "Favorites"
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -339,7 +371,7 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
 
 
         Spacer(modifier = Modifier.height(5.dp))
-
+        /*
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(playlists) { playlist ->
                 Card(
@@ -368,13 +400,78 @@ fun MusicScreen(navController: NavController, accessToken: String, currentlyPlay
             }
         }
 
+ */
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (selectedTab == "Playlists") {
+                items(playlists) { playlist ->
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(70.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = rememberAsyncImagePainter(playlist.imageUrl),
+                                contentDescription = playlist.name,
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .clip(RoundedCornerShape(12.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(playlist.name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        }
+                    }
+                }
+            } else {
+                items(favorites) { song ->
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(70.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = rememberAsyncImagePainter(song.imageUrl),
+                                contentDescription = song.title,
+                                modifier = Modifier
+                                    .size(56.dp)
+                                    .clip(RoundedCornerShape(12.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(song.title, fontWeight = FontWeight.Bold)
+                                Text(
+                                    song.artist,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 13.sp
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-
-
-
-
-
 }
+
+
+
+
+
 
 fun formatMs(ms: Int): String {
     val totalSeconds = ms / 1000
@@ -407,12 +504,29 @@ fun isSpotifyTokenValid(context: Context, callback: (Boolean) -> Unit) {
     })
 }
 
-
+/*
 @Composable
 fun FilterChip(label: String, selected: Boolean) {
     Surface(
         color = if (selected) Color(0xFFE86144) else Color(0xFFFFF3E0),
         shape = RoundedCornerShape(20.dp)
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            color = if (selected) Color.White else Color.Black
+        )
+    }
+}
+
+ */
+
+@Composable
+fun FilterChip(label: String, selected: Boolean, onClick: () -> Unit) {
+    Surface(
+        color = if (selected) Color(0xFFE86144) else Color(0xFFFFF3E0),
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier.clickable { onClick() }
     ) {
         Text(
             text = label,
